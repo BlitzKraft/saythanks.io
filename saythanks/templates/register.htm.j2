@@ -1,0 +1,26 @@
+{% extends "base.htm.j2" %}
+
+{% block title %}Create an Account{% endblock %}
+
+
+{% block content %}
+
+    <h2>Create a Thankfulness Inbox</h1>
+
+    <p></p>
+
+    <h3>Register for a Thankfulness Inbox</h3>
+
+    <p>
+        Provide an email address (TODO: or GitHub account) to have a Thankfulness
+        Inbox, and receive emails when a user of your open source project sends
+        a note of thanks.
+    </p>
+
+    {# GitHub Auth button #}
+
+    <form method=post action="/create-account">
+    <input name=_csrf_token type=hidden value="{{ csrf_token() }}">
+    <hr />
+
+{% endblock %}

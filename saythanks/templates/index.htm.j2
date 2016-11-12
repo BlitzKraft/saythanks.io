@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.htm.j2" %}
 
 {% block title %}Thankfulness for Open Source{% endblock %}
 
@@ -13,5 +13,20 @@
         This project will be open source, and is hosted
         <a href="https://github.com/kennethreitz/saythanks.io">on GitHub</a>.
     </p>
+
+    <hr />
+
+    <h3>Register for a Thankfulness Inbox</h3>
+
+    <p>
+        Create an account to receive emails when users of your open source project
+        say thank you.
+    </p>
+    <form action="/register">
+        <button type="submit">Create Your Thankfulness Inbox</button>
+
+    </form>
+
+    <hr />
 
 {% endblock %}
