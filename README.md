@@ -1,4 +1,4 @@
-# SayThanks.io: Thankfulness as a Service
+# SayThanks.io: Thankfulness for Open Source
 
 SayThanks will exist as a thankfulness button/link/inbox for open source
 projects to add to their repositories and documentation — like a reverse
