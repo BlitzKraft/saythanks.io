@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') -->
+    {# <link rel="stylesheet" href="{{ url_for('static', filename='style.css') #}
     <title>SayThanks.io &#9728; {% block title %}{% endblock %} {</title>
+
     {% block extra-head %}
     {% endblock %}
 </head>
@@ -14,11 +14,14 @@
 
 <div class="container">
 
-<div class="page">
+<div class="content">{% block content %}{% endblock %}</div>
 
+<div id="footer">
+      {% block footer %}
+      &copy; 2016. A <a href="https://kennethreitz.org/">Kenneth Reitz</a>Project <a href="http://domain.invalid/">you</a>.
+      {% endblock %}
+    </div>
 
-
-</div>
 </div>
 </body>
-</html>
+</html>f
