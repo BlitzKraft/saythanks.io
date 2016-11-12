@@ -1,0 +1,4 @@
+flask
+gunicorn
+stormpath
+flask-stormpath
