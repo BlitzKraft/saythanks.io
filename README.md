@@ -1,5 +1,7 @@
 # SayThanks.io: Thankfulness for Open Source
 
+**This project is a work in progress.**
+
 SayThanks will exist as a thankfulness button/link/inbox for open source
 projects to add to their repositories and documentation — like a reverse
 mailing list for users to send little notes of thanks for building something
