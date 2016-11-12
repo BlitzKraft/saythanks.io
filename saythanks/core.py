@@ -14,6 +14,7 @@ from flask import Flask, request, render_template, session
 from uuid import uuid4
 
 app = Flask(__name__)
+app.secret_key = 'CHANGEME'
 
 
 # Application Security
@@ -31,7 +32,7 @@ def csrf_protect():
 def generate_csrf_token():
     """Generates a CSRF token."""
     if '_csrf_token' not in session:
-        session['_csrf_token'] = str(uuid.uuid4())
+        session['_csrf_token'] = str(uuid4())
     return session['_csrf_token']
 
 # Register the CSRF token with jinja2.

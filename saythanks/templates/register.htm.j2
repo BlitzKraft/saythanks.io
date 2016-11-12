@@ -5,11 +5,11 @@
 
 {% block content %}
 
-    <h2>Create a Thankfulness Inbox</h1>
+    <h2>Register for a Thankfulness Inbox</h1>
 
     <p></p>
 
-    <h3>Register for a Thankfulness Inbox</h3>
+    <h3>Create an Account</h3>
 
     <p>
         Provide an email address (TODO: or GitHub account) to have a Thankfulness
@@ -20,6 +20,8 @@
     {# GitHub Auth button #}
 
     <form method=post action="/create-account">
+    Name (or Project name, if desired)
+    Email
     <input name=_csrf_token type=hidden value="{{ csrf_token() }}">
     <hr />
 
