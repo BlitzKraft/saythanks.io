@@ -19,4 +19,8 @@ awesome.
 - Tom Matthews (Logo and Graphic Design)
 - me—hopefully not  (Frontned Design)
 
+## Other Places
+
+- [Say Thanks for Package Control](https://packagecontrol.io/say_thanks)
+
 ## Thanks.
