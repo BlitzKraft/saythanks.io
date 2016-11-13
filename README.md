@@ -26,4 +26,4 @@ awesome.
 
 - [Say Thanks for Package Control](https://packagecontrol.io/say_thanks)
 
-## Thanks.
+## Oh, and Thanks :)
