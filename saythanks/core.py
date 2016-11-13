@@ -21,7 +21,7 @@ from flask import _request_ctx_stack
 
 
 app = Flask(__name__)
-app.secret_key = 'CHANGEME'
+app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
 app.debug = True
 
 
