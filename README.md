@@ -14,16 +14,14 @@ The author can then enjoy a nice inbox (ideally) filled with very small,
 thoughtful messages from the happy users of the software they enjoy to 
 toil over. 
 
-☤
-
 ## Implementation Concepts
 
-### The Basics
+### ☤ The Basics
 
 - Email a when a new message of thankfulness is submitted (csrf enabled).
 - Inbox page for each user/project with simple aggregation of messages (private).
 
-### The Architecture
+### ☤ The Architecture
 
 - Flask for API and Frontend, single application
 - Auth0 for credential storage (in progress)
