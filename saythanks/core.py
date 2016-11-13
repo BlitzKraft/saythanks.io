@@ -12,7 +12,8 @@ import jwt
 from base64 import b64decode
 from functools import wraps
 from uuid import uuid4
-from flask import Flask, request, jsonify, _request_ctx_stack, render_template
+from flask import Flask, request, session, render_template, abort, jsonify
+from flask import _request_ctx_stack
 
 
 # Application Basics
@@ -21,13 +22,14 @@ from flask import Flask, request, jsonify, _request_ctx_stack, render_template
 
 app = Flask(__name__)
 app.secret_key = 'CHANGEME'
+app.debug = True
 
 
 # Application Security
 # --------------------
 
 # CSRF Protection.
-@app.before_request
+# @app.before_request
 def csrf_protect():
     """Blocks incoming POST requests if a proper CSRF token is not provided."""
     if request.method == "POST":
@@ -63,6 +65,7 @@ def requires_auth(f):
     """Decorator—used for API routes that reuqire authorization."""
     @wraps(f)
     def decorated(*args, **kwargs):
+        raise Exception
         auth = request.headers.get('Authorization', None)
         if not auth:
             return handle_error({'code': 'authorization_header_missing', 'description': 'Authorization header is expected'}, 401)
