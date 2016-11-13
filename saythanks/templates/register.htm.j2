@@ -19,10 +19,23 @@
 
     {# GitHub Auth button #}
 
-    <form method=post action="/create-account">
-    Name (or Project name, if desired)
-    Email
-    <input name=_csrf_token type=hidden value="{{ csrf_token() }}">
-    <hr />
+    <div id="root" style="width: 320px; margin: 40px auto; padding: 10px; border-style: dashed; border-width: 1px; box-sizing: border-box;">
+        embedded area
+    </div>
+    <script src="https://cdn.auth0.com/js/lock/10.4/lock.min.js"></script>
+    <script>
+        var lock = new Auth0Lock('igVLaJdbA3MeUFa416Jad65JN2mZVyaB', 'jetblackpope.auth0.com', {
+        container: 'root',
+        auth: {
+            redirectUrl: 'http://localhost:5000/callback',
+            responseType: 'token',
+            responseMode: 'form_post',
+            params: {
+          scope: 'openid email name picture' // Learn about scopes: https://auth0.com/docs/scopes
+      }
+    }
+  });
+  lock.show();
+    </script>
 
 {% endblock %}
