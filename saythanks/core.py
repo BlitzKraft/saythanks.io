@@ -50,8 +50,8 @@ app.jinja_env.globals['csrf_token'] = generate_csrf_token
 # Auth0 Integration
 # -----------------
 
-auth_id = os.environ['AUTH0_auth_id']
-auth_secret = os.environ['AUTH0_auth_SECRET']
+auth_id = os.environ['AUTH0_CLIENT_ID']
+auth_secret = os.environ['AUTH0_CLIENT_SECRET']
 auth_callback_url = os.environ['AUTH0_CALLBACK_URL']
 auth_domain = os.environ['AUTH0_DOMAIN']
 
