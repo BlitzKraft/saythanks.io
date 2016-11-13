@@ -22,15 +22,20 @@ from functools import wraps
 app = Flask(__name__)
 app.secret_key = 'CHANGEME'
 
+# Auth0 Integration
+# -----------------
+
 client_id = 'igVLaJdbA3MeUFa416Jad65JN2mZVyaB'
 client_secret = 'YGsf-9XYZyEVmLxisj8wOiJDnYuNHVYMXqYFGJEz9VtdyquSJkLMFlNUY8OVejwB'
 
 def handle_error(error, status_code):
-  resp = jsonify(error)
-  resp.status_code = status_code
-  return resp
+    """Error handler for incorrect authorization usage."""
+    resp = jsonify(error)
+    resp.status_code = status_code
+    return resp
 
 def requires_auth(f):
+    """Decorator—used for API routes that reuqire authorization."""
     @wraps(f)
     def decorated(*args, **kwargs):
         auth = request.headers.get('Authorization', None)
@@ -62,11 +67,11 @@ def requires_auth(f):
         except Exception:
             return handle_error({'code': 'invalid_header', 'description':'Unable to parse authentication token.'}, 400)
 
+        # Inject 'current_user' into request context local.
         _request_ctx_stack.top.current_user = user = payload
         return f(*args, **kwargs)
 
     return decorated
-
 
 
 # Application Routes
