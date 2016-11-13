@@ -1,6 +1,6 @@
 # The "Say Thanks" Project™
 
-☼ **NOTICE: This project is in development, and your contributions are welcome!**
+☼ **NOTICE**: This project is in development, and your contributions are welcome!
 
 ## Spreading Thankfulness in Open Source
 
