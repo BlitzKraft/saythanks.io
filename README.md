@@ -33,7 +33,7 @@ toil over.
 
 - Erin "The X" O'Connell (Python)
 - Tom "The Pythonist" Baker (Javascript)
-- Tom "Matthews (Logo and Graphic Design)
+- Tom "Sea of Clouds" Matthews (Logo and Graphic Design)
 - Kenneth "Your Name Here Instead, Idan?" Reitz (Frontned Design)
 
 ## Random Inspirational Links
