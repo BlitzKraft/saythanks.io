@@ -1,8 +1,8 @@
-# ☼ The *Say Thanks* Project*
+# ☼ The *Say Thanks* Project
 
 **NOTICE: This project is in development, and your contributions are welcome!**
 
-## ☤ Spreading Thankfulness in Open Source
+## Spreading Thankfulness in Open Source
 
 ***saythanks.io** will provide a button/link for use by open source projects, to
 encourage users to send a simple *thank you* note to the creator (or creators)
@@ -12,7 +12,9 @@ This simple button/link can be addded to READMEs and project documentation.
 
 The author can then enjoy a nice inbox (ideally) filled with very small, 
 thoughtful messages from the happy users of the software they enjoy to 
-toil over.
+toil over. 
+
+☤
 
 ## Implementation Concepts
 
