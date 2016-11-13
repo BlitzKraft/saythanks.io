@@ -94,7 +94,7 @@ def ping():
     return "All good. You don't need to be authenticated to call this"
 
 
-@app.route("/secured/ping")
+@app.route('/secured/ping')
 @requires_auth
 def securedPing():
     return "All good. You only get this message if you're authenticated"
