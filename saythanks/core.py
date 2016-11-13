@@ -48,9 +48,10 @@ app.jinja_env.globals['csrf_token'] = generate_csrf_token
 # Auth0 Integration
 # -----------------
 
-# TODO: these are temporary and will be revoked.
-client_id = 'igVLaJdbA3MeUFa416Jad65JN2mZVyaB'
-client_secret = 'YGsf-9XYZyEVmLxisj8wOiJDnYuNHVYMXqYFGJEz9VtdyquSJkLMFlNUY8OVejwB'
+auth_id = os.environ['AUTH0_auth_id']
+auth_secret = os.environ['AUTH0_auth_SECRET-j7uvvu-FiytQ']
+auth_callback_url = os.environ['AUTH0_CALLBACK_URL']
+auth_domain = os.environ['AUTH0_DOMAIN']
 
 def handle_error(error, status_code):
     """Error handler for incorrect authorization usage."""
@@ -79,13 +80,13 @@ def requires_auth(f):
         try:
             payload = jwt.decode(
                 token,
-                b64decode(client_secret.replace("_","/").replace("-","+")),
-                audience=client_id
+                b64decode(auth_secret.replace('_','/').replace('-','+')),
+                audience=auth_id
             )
         except jwt.ExpiredSignature:
             return handle_error({'code': 'token_expired', 'description': 'token is expired'}, 401)
         except jwt.InvalidAudienceError:
-            return handle_error({'code': 'invalid_audience', 'description': 'incorrect audience, expected: ' + client_id}, 401)
+            return handle_error({'code': 'invalid_audience', 'description': 'incorrect audience, expected: ' + auth_id}, 401)
         except jwt.DecodeError:
             return handle_error({'code': 'token_invalid_signature', 'description': 'token signature is invalid'}, 401)
         except Exception:
@@ -110,7 +111,11 @@ def index():
 
 @app.route('/register')
 def registration():
-    return render_template('register.htm.j2')
+    return render_template('register.htm.j2',
+        callback_url=auth_callback_url,
+        auth_id=auth_id,
+        auth_domain=auth_domain
+    )
 
 
 @app.route('/ping')

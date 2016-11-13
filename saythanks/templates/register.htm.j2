@@ -12,9 +12,8 @@
     <h3>Create an Account</h3>
 
     <p>
-        Provide an email address (TODO: or GitHub account) to have a Thankfulness
-        Inbox, and receive emails when a user of your open source project sends
-        a note of thanks.
+        Provide an email address to have a Thankfulness Inbox, and receive
+        emails when a user of your open source project sends a note of thanks.
     </p>
 
     {# GitHub Auth button #}
@@ -24,10 +23,10 @@
     </div>
     <script src="https://cdn.auth0.com/js/lock/10.4/lock.min.js"></script>
     <script>
-        var lock = new Auth0Lock('igVLaJdbA3MeUFa416Jad65JN2mZVyaB', 'jetblackpope.auth0.com', {
+        var lock = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', {
         container: 'root',
         auth: {
-            redirectUrl: 'http://localhost:5000/callback',
+            redirectUrl: '{{ callback_url }}',
             responseType: 'token',
             responseMode: 'form_post',
             params: {
