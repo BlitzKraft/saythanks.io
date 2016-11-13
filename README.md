@@ -2,7 +2,7 @@
 
 **NOTICE**: This project is in development, and your contributions are welcome!
 
-## Spreading Thankfulness in Open Source
+## Spreading Thankfulness in Open Source™
 
 ***saythanks.io*** will provide a button/link for use by open source projects, to
 encourage users to send a simple *thank you* note to the creator (or creators)
