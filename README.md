@@ -1,28 +1,34 @@
 # SayThanks.io: Thankfulness for Open Source
 
-**This project is a work in progress.**
+**NOTICE: This project is in development, and your contributions are welcome!**
 
-SayThanks will exist as a thankfulness button/link/inbox for open source
-projects to add to their repositories and documentation — like a reverse
-mailing list for users to send little notes of thanks for building something
-awesome.
+***Say Thanks** will be a button/link for use by open source projects, to
+encourage users to send a simple *thank you* note to the creator (or creators)
+of that project.
 
 ## Implementation Concepts
 
-- Flask for API and Frontend (possibly single-app)
-- Stormpath for credential storage
-- GitHub account creation (as well as manual username)
-- Email a when a new message of thankfulness is submitted (csrf enabled)
+### The Basics
+
+- Email a when a new message of thankfulness is submitted (csrf enabled).
 - Inbox page for each user/project with simple aggregation of messages (private).
+
+### The Architecture
+
+- Flask for API and Frontend, single application
+- Auth0 for credential storage (in progress)
+- Heroku for Hosting (done!)
+- CloudFlare for SSL termination (done!)
+- GitHub account creation, as well as passwordless email accounts
 
 ## Intended Collaborators
 
-- Erin "X" O'Connell (Python)
-- Tom Baker (Javascript)
-- Tom Matthews (Logo and Graphic Design)
-- me—hopefully not  (Frontned Design)
+- Erin "The X" O'Connell (Python)
+- Tom "The Pythonist" Baker (Javascript)
+- Tom "Matthews (Logo and Graphic Design)
+- Kenneth "Your Name Here Instead, Idan?" Reitz (Frontned Design)
 
-## Other Places
+## Random Inspirational Links
 
 - [Say Thanks for Package Control](https://packagecontrol.io/say_thanks)
 
