@@ -1,4 +1,4 @@
-# ☼ The *Say Thanks* Project
+# ☼ The Say Thanks Project™
 
 **NOTICE: This project is in development, and your contributions are welcome!**
 
