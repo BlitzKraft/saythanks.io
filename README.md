@@ -1,4 +1,4 @@
-# saythanks.io: Spreading Thankfulness in Open Source
+# *Say Thanks* ☤ Spreading Thankfulness in Open Source
 
 **NOTICE: This project is in development, and your contributions are welcome!**
 
