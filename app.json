@@ -1,4 +1,7 @@
 {
+    "addons": {
+        "0auth"
+    },
     "scripts": {
         "test": "TEST=1 python t.py"
     }
