@@ -27,3 +27,5 @@ awesome.
 - [Say Thanks for Package Control](https://packagecontrol.io/say_thanks)
 
 ## Oh, and Thanks :)
+
+✨🍰✨
