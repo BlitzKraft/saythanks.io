@@ -1,0 +1,5 @@
+{
+    "scripts": {
+        "test": "TEST=1 python t.py"
+    }
+}
