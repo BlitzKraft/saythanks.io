@@ -6,25 +6,49 @@
 # |_____|__,|_  | |_| |_|_|__,|_|_|_,_|___|
 #           |___|
 
+import os
+import jwt
+
+from base64 import b64decode
+from functools import wraps
+from uuid import uuid4
+from flask import Flask, request, jsonify, _request_ctx_stack, render_template
+
 
 # Application Basics
 # ------------------
 
-import jwt
-import base64
-import os
-
-from functools import wraps
-from flask import Flask, request, jsonify, _request_ctx_stack, render_template
-from uuid import uuid4
-from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = 'CHANGEME'
 
+
+# Application Security
+# --------------------
+
+# CSRF Protection.
+@app.before_request
+def csrf_protect():
+    """Blocks incoming POST requests if a proper CSRF token is not provided."""
+    if request.method == "POST":
+        token = session.pop('_csrf_token', None)
+        if not token or token != request.form.get('_csrf_token'):
+            abort(403)
+
+def generate_csrf_token():
+    """Generates a CSRF token."""
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = str(uuid4())
+    return session['_csrf_token']
+
+# Register the CSRF token with jinja2.
+app.jinja_env.globals['csrf_token'] = generate_csrf_token
+
+
 # Auth0 Integration
 # -----------------
 
+# TODO: these are temporary and will be revoked.
 client_id = 'igVLaJdbA3MeUFa416Jad65JN2mZVyaB'
 client_secret = 'YGsf-9XYZyEVmLxisj8wOiJDnYuNHVYMXqYFGJEz9VtdyquSJkLMFlNUY8OVejwB'
 
@@ -55,7 +79,7 @@ def requires_auth(f):
         try:
             payload = jwt.decode(
                 token,
-                base64.b64decode(client_secret.replace("_","/").replace("-","+")),
+                b64decode(client_secret.replace("_","/").replace("-","+")),
                 audience=client_id
             )
         except jwt.ExpiredSignature:
