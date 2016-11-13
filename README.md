@@ -1,5 +1,5 @@
-# The ☼ *Say Thanks* ☼ Project*
-# ☤ Spreading Thankfulness in Open Source ☤
+# ☼ The *Say Thanks* Project*
+# ☤ Spreading Thankfulness in Open Source
 
 **NOTICE: This project is in development, and your contributions are welcome!**
 
