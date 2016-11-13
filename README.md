@@ -12,11 +12,12 @@ awesome.
 - Flask for API and Frontend (possibly single-app)
 - Stormpath for credential storage
 - GitHub account creation (as well as manual username)
-- Email a user when a new message of thankfulness is submitted (csrf enabled)
+- Email a when a new message of thankfulness is submitted (csrf enabled)
 - Inbox page for each user/project with simple aggregation of messages (private).
 
-## Potential Collaborators
+## Intended Collaborators
 
+- Erin "X" O'Connell (Python)
 - Tom Baker (Javascript)
 - Tom Matthews (Logo and Graphic Design)
 - me—hopefully not  (Frontned Design)
