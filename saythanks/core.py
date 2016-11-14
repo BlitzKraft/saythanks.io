@@ -90,7 +90,7 @@ def ping():
 def securedPing():
     return "All good. You only get this message if you're authenticated"
 
-@app.route("/about")
+@app.route('/about')
 @requires_auth
 def dashboard():
     return render_template('about.htm.j2', user=session['profile'])
@@ -101,18 +101,18 @@ def callback_handling():
 
     json_header = {'content-type': 'application/json'}
 
-    token_url = "https://{0}/oauth/token".format(auth_domain)
+    token_url = 'https://{0}/oauth/token'.format(auth_domain)
     token_payload = {
-        'client_id' : auth_id, \
-        'client_secret' : auth_secret, \
-        'redirect_uri' : auth_callback_url, \
-        'code' : code, \
-        'grant_type': 'authorization_code' \
+        'client_id' : auth_id,
+        'client_secret' : auth_secret,
+        'redirect_uri' : auth_callback_url,
+        'code' : code,
+        'grant_type': 'authorization_code'
     }
 
     token_info = requests.post(token_url, data=json.dumps(token_payload), headers = json_header).json()
 
-    user_url = "https://{0}/userinfo?access_token={1}".format(auth_domain, token_info['access_token'])
+    user_url = 'https://{0}/userinfo?access_token={1}'.format(auth_domain, token_info['access_token'])
 
     user_info = requests.get(user_url).json()
 
