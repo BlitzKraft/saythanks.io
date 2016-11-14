@@ -55,6 +55,7 @@ auth_secret = os.environ['AUTH0_CLIENT_SECRET']
 auth_callback_url = os.environ['AUTH0_CALLBACK_URL']
 auth_domain = os.environ['AUTH0_DOMAIN']
 
+# Format error response and append status code.
 def handle_error(error, status_code):
     """Error handler for incorrect authorization usage."""
     resp = jsonify(error)
@@ -65,7 +66,6 @@ def requires_auth(f):
     """Decorator—used for API routes that reuqire authorization."""
     @wraps(f)
     def decorated(*args, **kwargs):
-        raise Exception
         auth = request.headers.get('Authorization', None)
         if not auth:
             return handle_error({'code': 'authorization_header_missing', 'description': 'Authorization header is expected'}, 401)
@@ -83,19 +83,18 @@ def requires_auth(f):
         try:
             payload = jwt.decode(
                 token,
-                b64decode(auth_secret.replace('_','/').replace('-','+')),
+                b64decode(auth_secret.replace("_","/").replace("-","+")),
                 audience=auth_id
             )
         except jwt.ExpiredSignature:
             return handle_error({'code': 'token_expired', 'description': 'token is expired'}, 401)
         except jwt.InvalidAudienceError:
-            return handle_error({'code': 'invalid_audience', 'description': 'incorrect audience, expected: ' + auth_id}, 401)
+            return handle_error({'code': 'invalid_audience', 'description': 'incorrect audience, expected: ' + client_id}, 401)
         except jwt.DecodeError:
             return handle_error({'code': 'token_invalid_signature', 'description': 'token signature is invalid'}, 401)
         except Exception:
             return handle_error({'code': 'invalid_header', 'description':'Unable to parse authentication token.'}, 400)
 
-        # Inject 'current_user' into request context local.
         _request_ctx_stack.top.current_user = user = payload
         return f(*args, **kwargs)
 
@@ -109,9 +108,6 @@ def requires_auth(f):
 def index():
     return render_template('index.htm.j2')
 
-# Application Routes
-# ------------------
-
 @app.route('/register')
 def registration():
     return render_template('register.htm.j2',
@@ -120,11 +116,14 @@ def registration():
         auth_domain=auth_domain
     )
 
-
 @app.route('/ping')
 def ping():
     return "All good. You don't need to be authenticated to call this"
 
+@app.route('/me')
+@requires_auth
+def me():
+    return jsonify(me=_request_ctx_stack.top.current_user)
 
 @app.route('/secured/ping')
 @requires_auth
