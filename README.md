@@ -39,6 +39,7 @@ toil over.
 ## Random Inspirational Links
 
 - [Say Thanks for Package Control](https://packagecontrol.io/say_thanks)
+- [Random 'Thanks' Issue on GH](https://github.com/foxmask/wallabag_api/issues/1)
 
 ## Oh, Thanks!
 
