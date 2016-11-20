@@ -119,4 +119,6 @@ def callback_handling():
 
     session['profile'] = user_info
 
+    # records.query_file('saythanks/sql/add-inbox.sql', slug, auth_id)
+
     return redirect('/home')
