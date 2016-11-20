@@ -14,14 +14,20 @@ class Note(object):
 
     @classmethod
     def from_inbox(cls, inbox, body, byline):
+        """Creates a Note instance from a given inbox."""
         self.body = body
         self.byline = byline
         self.inbox = Inbox(inbox)
 
-    def store():
+    def store(self):
+        """Stores the Note instance to the database."""
         q = 'INERT into notes (body, byline) (:body, :byline)'
         r = db.query(q, body=self.body, byline=self.byline).all()
         return bool(len(r))
+
+    def notify(self):
+        # TODO: emails the user when they have received a new note of thanks.
+        pass
 
 
 class Inbox(object):
@@ -42,6 +48,12 @@ class Inbox(object):
         r = db.query(q, slug=slug, auth_id=auth_id)
 
         return Inbox(self.slug, body, byline)
+
+    @classmethod
+    def does_exist(cls, slug):
+        q = 'SELECT * from inboxes where slug = :slug'
+        r = db.query(q, slug=slug).all()
+        return bool(len(r))
 
     def submit_note(self, body, byline):
         return Note.from_inbox().store()
