@@ -20,7 +20,7 @@ class Note(object):
 
     def store():
         q = 'INERT into notes (body, byline) (:body, :byline)'
-        r = db.query(q, body=self.body, self.byline).all()
+        r = db.query(q, body=self.body, byline=self.byline).all()
         return bool(len(r))
 
 
