@@ -5,7 +5,7 @@ import records
 
 class Inbox(object):
     """docstring for Inbox"""
-    def __init__(self, slug)
+    def __init__(self, slug):
         self.slug = slug
         self.auth_id = None
 
