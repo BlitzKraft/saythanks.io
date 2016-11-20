@@ -20,5 +20,8 @@ class Inbox(object):
         r = records.query(q, slug=slug, auth_id=auth_id)
         return Inbox(slug)
 
-# def add_note(inbox, ):
-#     pass
+    def notes(self):
+        """Returns a list of notes, ordered reverse-chronologically."""
+        q = 'SELECT * from notes where inbox_id = :slug'
+        r = records.query(q, slug=self.slug)
+
