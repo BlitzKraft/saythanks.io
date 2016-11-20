@@ -1,0 +1,42 @@
+<html>
+    <head>
+    </head>
+    <body>
+Send a note to {{ user }}!
+
+<form class="form-horizontal">
+<fieldset>
+
+<!-- Form Name -->
+<legend>THANK YOU</legend>
+
+<!-- Textarea -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="body">Thank you,</label>
+  <div class="col-md-4">
+    <textarea class="form-control" id="body" name="body" placeholder="{{ user }}"></textarea>
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="byline">Sincerely, </label>
+  <div class="col-md-4">
+  <input id="byline" name="byline" type="text" placeholder="" class="form-control input-md">
+
+  </div>
+</div>
+
+<!-- Button -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="submit"></label>
+  <div class="col-md-4">
+    <button id="submit" name="submit" class="btn btn-primary">Say Thanks</button>
+  </div>
+</div>
+
+</fieldset>
+</form>
+
+    </body>
+</html>

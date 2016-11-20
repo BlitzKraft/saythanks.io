@@ -84,16 +84,23 @@ def registration():
         auth_domain=auth_domain
     )
 
+
 @app.route('/home')
 @requires_auth
 def dashboard():
     return render_template('about.htm.j2', user=session['profile'])
 
-@app.route('/<inbox>')
-@requires_auth
-def public_inbox(inbox):
-    return render_template('about.htm.j2', user=session['profile'])
 
+@app.route('/to/<inbox>', methods=['GET'])
+def display_submit_note(inbox):
+    if not storage.Inbox.does_exist(inbox):
+        abort(404)
+    return render_template('submit_note.htm.j2', user=inbox)
+
+
+@app.route('/to/<inbox>/submit', methods=['POST'])
+def submit_note(inbox):
+    return "Thanks you!"
 
 
 @app.route('/callback')
