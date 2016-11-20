@@ -86,6 +86,13 @@ def registration():
 def dashboard():
     return render_template('about.htm.j2', user=session['profile'])
 
+@app.route('/<username>')
+@requires_auth
+def public_inbox(username):
+    return render_template('about.htm.j2', user=session['profile'])
+
+
+
 @app.route('/callback')
 def callback_handling():
     code = request.args.get('code')

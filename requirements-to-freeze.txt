@@ -2,3 +2,6 @@ flask
 gunicorn
 PyJWT
 requests
+psycopg2
+records
+docopt
