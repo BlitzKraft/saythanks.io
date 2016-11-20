@@ -66,6 +66,7 @@ def requires_auth(f):
 
     return decorated
 
+
 # Application Routes
 # ------------------
 
