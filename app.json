@@ -1,7 +1,8 @@
 {
-    "addons": {
-        "0auth"
-    },
+    "addons": [
+        "0auth",
+        "heroku-postgresql"
+    ],
     "scripts": {
         "test": "TEST=1 python t.py"
     }
