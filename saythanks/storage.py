@@ -7,7 +7,7 @@ class Inbox(object):
     """docstring for Inbox"""
     def __init__(self, slug):
         self.slug = slug
-        self.auth_id = None
+        self._auth_id = None
 
     @property
     def auth_id(self):
@@ -15,7 +15,7 @@ class Inbox(object):
 
     @auth_id.setter
     def auth_id(self, value):
-        self.auth_id = value
+        self._auth_id = value
 
     def does_exist(self):
         return bool(self.auth_id)
