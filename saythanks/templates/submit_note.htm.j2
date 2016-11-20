@@ -4,7 +4,7 @@
     <body>
 Send a note to {{ user }}!
 
-<form class="form-horizontal">
+<form class="form-horizontal" action="./{{ user }}/submit" method="post">
 <fieldset>
 
 <!-- Form Name -->
@@ -27,11 +27,13 @@ Send a note to {{ user }}!
   </div>
 </div>
 
+<input name=_csrf_token type=hidden value="{{ csrf_token() }}">
+
 <!-- Button -->
 <div class="form-group">
   <label class="col-md-4 control-label" for="submit"></label>
   <div class="col-md-4">
-    <button id="submit" name="submit" class="btn btn-primary">Say Thanks</button>
+    <button id="submit" name="submit" class="btn btn-primary" type="submit">Say Thanks</button>
   </div>
 </div>
 
