@@ -1,6 +1,6 @@
 {
     "addons": [
-        "0auth",
+        "auth0",
         "heroku-postgresql"
     ],
     "scripts": {
