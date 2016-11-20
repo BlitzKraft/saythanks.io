@@ -11,7 +11,7 @@ class Note(object):
         self.inbox = None
 
     @classmethod
-    def from_inbox(inbox, body, byline)
+    def from_inbox(inbox, body, byline):
         self.body = body
         self.byline = byline
         self.inbox = Inbox(inbox)
