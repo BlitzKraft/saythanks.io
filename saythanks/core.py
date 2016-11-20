@@ -120,6 +120,6 @@ def callback_handling():
     session['profile'] = user_info
 
     # if not Inbox.is_stored('auth_id'):
-
+        # Inbox.store('slug, auth_id')
 
     return redirect('/home')
