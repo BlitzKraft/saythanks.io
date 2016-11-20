@@ -9,12 +9,12 @@
 import os
 import json
 import requests
-import records
 
 from functools import wraps
 from uuid import uuid4
 from flask import Flask, request, session, render_template, abort, redirect
 
+import storage
 
 # Application Basics
 # ------------------
