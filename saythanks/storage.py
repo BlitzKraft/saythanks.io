@@ -28,7 +28,7 @@ class Inbox(object):
     @classmethod
     def is_linked(cls, auth_id):
         q = 'SELECT * from inboxes where auth_id = :auth_id'
-        r = db.query(q, auth_id=auth_id)
+        r = db.query(q, auth_id=auth_id).all()
         return bool(len(r))
 
     @classmethod
