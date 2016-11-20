@@ -13,10 +13,15 @@ class Note(object):
         self.inbox = None
 
     @classmethod
-    def from_inbox(inbox, body, byline):
+    def from_inbox(cls, inbox, body, byline):
         self.body = body
         self.byline = byline
         self.inbox = Inbox(inbox)
+
+    def store():
+        q = 'INERT into notes (body, byline) (:body, :byline)'
+        r = db.query(q, body=self.body, self.byline).all()
+        return bool(len(r))
 
 
 class Inbox(object):
@@ -36,7 +41,10 @@ class Inbox(object):
         q = 'INSERT into inboxes (slug, auth_id) VALUES (:slug, :auth_id)'
         r = db.query(q, slug=slug, auth_id=auth_id)
 
-        return Inbox(slug)
+        return Inbox(self.slug, body, byline)
+
+    def submit_note(self, body, byline):
+        return Note.from_inbox().store()
 
     def notes(self):
         """Returns a list of notes, ordered reverse-chronologically."""
