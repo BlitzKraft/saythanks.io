@@ -14,7 +14,7 @@ CREATE TABLE inboxes (
 
 -- Table: notes
 CREATE TABLE notes (
-    uuid UUID DEFAULT gen_random_uuid()
+    uuid UUID DEFAULT gen_random_uuid(),
     inboxes_auth_id text  NOT NULL,
     body text  NOT NULL,
     byline text,
