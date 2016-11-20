@@ -10,12 +10,9 @@ import os
 import json
 import requests
 
-from base64 import b64decode
 from functools import wraps
 from uuid import uuid4
-from flask import Flask, request, session, render_template, abort, jsonify, redirect
-from flask import _request_ctx_stack
-
+from flask import Flask, request, session, render_template, abort, redirect
 
 
 # Application Basics
@@ -72,7 +69,6 @@ def requires_auth(f):
 # Application Routes
 # ------------------
 
-
 @app.route('/')
 def index():
     return render_template('index.htm.j2')
@@ -108,7 +104,7 @@ def callback_handling():
         'grant_type': 'authorization_code'
     }
 
-    token_info = requests.post(token_url, data=json.dumps(token_payload), headers = json_header).json()
+    token_info = requests.post(token_url, data=json.dumps(token_payload), headers=json_header).json()
 
     user_url = 'https://{0}/userinfo?access_token={1}'.format(auth_domain, token_info['access_token'])
 
