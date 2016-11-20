@@ -39,11 +39,13 @@ def csrf_protect():
         if not token or token != request.form.get('_csrf_token'):
             abort(403)
 
+
 def generate_csrf_token():
     """Generates a CSRF token."""
     if '_csrf_token' not in session:
         session['_csrf_token'] = str(uuid4())
     return session['_csrf_token']
+
 
 # Register the CSRF token with jinja2.
 app.jinja_env.globals['csrf_token'] = generate_csrf_token
@@ -57,6 +59,7 @@ auth_secret = os.environ['AUTH0_CLIENT_SECRET']
 auth_callback_url = os.environ['AUTH0_CALLBACK_URL']
 auth_domain = os.environ['AUTH0_DOMAIN']
 
+
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -69,9 +72,11 @@ def requires_auth(f):
 # Application Routes
 # ------------------
 
+
 @app.route('/')
 def index():
     return render_template('index.htm.j2')
+
 
 @app.route('/register')
 def registration():
@@ -81,10 +86,12 @@ def registration():
         auth_domain=auth_domain
     )
 
+
 @app.route('/home')
 @requires_auth
 def dashboard():
     return render_template('about.htm.j2', user=session['profile'])
+
 
 @app.route('/callback')
 def callback_handling():
@@ -94,10 +101,10 @@ def callback_handling():
 
     token_url = 'https://{0}/oauth/token'.format(auth_domain)
     token_payload = {
-        'client_id' : auth_id,
-        'client_secret' : auth_secret,
-        'redirect_uri' : auth_callback_url,
-        'code' : code,
+        'client_id': auth_id,
+        'client_secret': auth_secret,
+        'redirect_uri': auth_callback_url,
+        'code': code,
         'grant_type': 'authorization_code'
     }
 
@@ -110,6 +117,3 @@ def callback_handling():
     session['profile'] = user_info
 
     return redirect('/home')
-
-
-
