@@ -17,7 +17,9 @@ class Inbox(object):
 
     @classmethod
     def store(cls, slug, auth_id):
-        pass
+        q = 'INSERT into inboxes VALUES :slug :auth_id'
+        r = records.query(q, slug=slug, auth_id=auth_id)
+        # TODO: Return Inbox instance.
 
     @property
     def auth_id(self):
