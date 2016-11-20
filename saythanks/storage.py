@@ -6,7 +6,7 @@ db = records.Database()
 
 
 class Note(object):
-    """docstring for Note"""
+    """A generic note of thankfulness."""
     def __init__(self):
         self.body = None
         self.byline = None
@@ -25,7 +25,7 @@ class Note(object):
 
 
 class Inbox(object):
-    """docstring for Inbox"""
+    """A registered inbox for a given user (provided by Auth0)."""
     def __init__(self, slug):
         self.slug = slug
 
