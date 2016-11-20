@@ -122,7 +122,7 @@ def callback_handling():
     nickname = user_info['nickname']
     userid = user_info['user_id']
 
-    if is not storage.Inbox.is_linked(userid):
+    if not storage.Inbox.is_linked(userid):
         # Using nickname by default, can be changed manually later if needed.
         storage.Inbox.store(nickname, userid)
 
