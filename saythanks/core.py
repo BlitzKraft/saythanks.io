@@ -81,16 +81,7 @@ def registration():
         auth_domain=auth_domain
     )
 
-@app.route('/ping')
-def ping():
-    return "All good. You don't need to be authenticated to call this"
-
-@app.route('/secured/ping')
-@requires_auth
-def securedPing():
-    return "All good. You only get this message if you're authenticated"
-
-@app.route('/about')
+@app.route('/home')
 @requires_auth
 def dashboard():
     return render_template('about.htm.j2', user=session['profile'])
@@ -118,7 +109,7 @@ def callback_handling():
 
     session['profile'] = user_info
 
-    return redirect('/about')
+    return redirect('/home')
 
 
 
