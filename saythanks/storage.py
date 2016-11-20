@@ -6,21 +6,32 @@ db = records.Database()
 
 
 class Note(object):
-    """docstring for Note"""
+    """A generic note of thankfulness."""
     def __init__(self):
         self.body = None
         self.byline = None
         self.inbox = None
 
     @classmethod
-    def from_inbox(inbox, body, byline):
+    def from_inbox(cls, inbox, body, byline):
+        """Creates a Note instance from a given inbox."""
         self.body = body
         self.byline = byline
         self.inbox = Inbox(inbox)
 
+    def store(self):
+        """Stores the Note instance to the database."""
+        q = 'INERT into notes (body, byline) (:body, :byline)'
+        r = db.query(q, body=self.body, byline=self.byline).all()
+        return bool(len(r))
+
+    def notify(self):
+        # TODO: emails the user when they have received a new note of thanks.
+        pass
+
 
 class Inbox(object):
-    """docstring for Inbox"""
+    """A registered inbox for a given user (provided by Auth0)."""
     def __init__(self, slug):
         self.slug = slug
 
@@ -36,7 +47,16 @@ class Inbox(object):
         q = 'INSERT into inboxes (slug, auth_id) VALUES (:slug, :auth_id)'
         r = db.query(q, slug=slug, auth_id=auth_id)
 
-        return Inbox(slug)
+        return Inbox(self.slug, body, byline)
+
+    @classmethod
+    def does_exist(cls, slug):
+        q = 'SELECT * from inboxes where slug = :slug'
+        r = db.query(q, slug=slug).all()
+        return bool(len(r))
+
+    def submit_note(self, body, byline):
+        return Note.from_inbox().store()
 
     def notes(self):
         """Returns a list of notes, ordered reverse-chronologically."""
