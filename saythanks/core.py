@@ -9,6 +9,7 @@
 import os
 import json
 import requests
+import records
 
 from functools import wraps
 from uuid import uuid4
@@ -88,9 +89,9 @@ def registration():
 def dashboard():
     return render_template('about.htm.j2', user=session['profile'])
 
-@app.route('/<username>')
+@app.route('/<inbox>')
 @requires_auth
-def public_inbox(username):
+def public_inbox(inbox):
     return render_template('about.htm.j2', user=session['profile'])
 
 
