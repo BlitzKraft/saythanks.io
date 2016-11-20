@@ -119,9 +119,10 @@ def callback_handling():
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
-    if is not storage.Inbox.is_linked():
-        nickname = user_info['nickname']
-        userid = user_info['user_id']
+    nickname = user_info['nickname']
+    userid = user_info['user_id']
+
+    if is not storage.Inbox.is_linked(userid):
         storage.Inbox.store(nickname, userid)
 
     return redirect('/home')
