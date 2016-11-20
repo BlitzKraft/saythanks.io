@@ -33,7 +33,7 @@ class Inbox(object):
 
     @classmethod
     def store(cls, slug, auth_id):
-        q = 'INSERT into inboxes VALUES :slug :auth_id'
+        q = 'INSERT slug, auth_id into inboxes VALUES :slug, :auth_id'
         r = db.query(q, slug=slug, auth_id=auth_id)
 
         return Inbox(slug)
