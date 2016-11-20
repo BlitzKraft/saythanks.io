@@ -1,6 +1,9 @@
 -- Created by Vertabelo (http://vertabelo.com)
 -- Last modification date: 2016-11-20 21:08:56.471
 
+-- Enable pgcrypto for UUID support.
+CREATE EXTENSION pgcrypto;
+
 -- tables
 -- Table: inboxes
 CREATE TABLE inboxes (
@@ -11,10 +14,10 @@ CREATE TABLE inboxes (
 
 -- Table: notes
 CREATE TABLE notes (
-    uuid text  NOT NULL,
+    uuid UUID DEFAULT gen_random_uuid()
     inboxes_auth_id text  NOT NULL,
     body text  NOT NULL,
-    byline text  NOT NULL,
+    byline text,
     CONSTRAINT notes_pk PRIMARY KEY (uuid)
 );
 
