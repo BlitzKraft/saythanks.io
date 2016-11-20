@@ -9,6 +9,16 @@ class Inbox(object):
         self.slug = slug
         self._auth_id = None
 
+    @classmethod
+    def is_linked(cls, auth_id):
+        q = 'SELECT * from inboxes where auth_id = :auth_id'
+        r = records.query(q, auth_id=auth_id)
+        return bool(len(r))
+
+    @classmethod
+    def store(cls, slug, auth_id):
+        pass
+
     @property
     def auth_id(self):
         pass
