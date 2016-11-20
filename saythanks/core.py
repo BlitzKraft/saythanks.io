@@ -119,6 +119,7 @@ def callback_handling():
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
-    # records.query_file('saythanks/sql/add-inbox.sql', slug, auth_id)
+    # if not Inbox.is_stored('auth_id'):
+
 
     return redirect('/home')
