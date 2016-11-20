@@ -111,12 +111,12 @@ def callback_handling():
         'grant_type': 'authorization_code'
     }
 
+    # Fetch User info from Auth0.
     token_info = requests.post(token_url, data=json.dumps(token_payload), headers=json_header).json()
-
     user_url = 'https://{0}/userinfo?access_token={1}'.format(auth_domain, token_info['access_token'])
-
     user_info = requests.get(user_url).json()
 
+    # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
     # records.query_file('saythanks/sql/add-inbox.sql', slug, auth_id)
