@@ -61,10 +61,18 @@ def registration():
     )
 
 
-@app.route('/home')
+@app.route('/inbox')
 @requires_auth
 def dashboard():
-    return render_template('about.htm.j2', user=session['profile'])
+
+    # Auth0 stored account information.
+    profile = session['profile']
+
+    # Grab the inbox from the database.
+    inbox = storage.Inbox(profile['nickname'])
+
+    # Send over the list of all given notes for the user.
+    return render_template('about.htm.j2', user=profile, notes=inbox.notes)
 
 
 @app.route('/to/<inbox>', methods=['GET'])
@@ -116,4 +124,4 @@ def callback_handling():
         # Using nickname by default, can be changed manually later if needed.
         storage.Inbox.store(nickname, userid)
 
-    return redirect('/home')
+    return redirect('/inbox')

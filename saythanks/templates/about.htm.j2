@@ -6,5 +6,24 @@
         <img class="avatar" src="{{user['picture']}}"/>
         <h2>Welcome {{user['name']}}</h2>
         <pre>Nickname: {{user['nickname']}}</pre>
+
+        <hr>
+
+        <ul class="notes">
+            {% for note in notes %}
+                <li class="note">
+
+                    <p>{{ note.body }} </p>
+
+                    {% if note.byline %}
+                        <p>&mdash; {{note.byline }}</p>
+                    {% endif %}
+
+                </li>
+            {% endfor %}
+
+        </ul>
+        <hr>
+        {{ notes }}
     </body>
 </html>

@@ -30,4 +30,8 @@ ALTER TABLE notes ADD CONSTRAINT notes_inboxes
     INITIALLY IMMEDIATE
 ;
 
+-- Experiment with timestamps.
+ALTER TABLE notes ADD timestamp timestamp default timestamp;
+ALTER TABLE inboxes ADD timestamp timestamp default timestamp;
+
 -- End of file.

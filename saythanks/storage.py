@@ -12,6 +12,9 @@ class Note(object):
         self.byline = None
         self.inbox = None
 
+    def __repr__(self):
+        return '<Note size={}>'.format(len(self.body))
+
     @classmethod
     def from_inbox(cls, inbox, body, byline):
         """Creates a Note instance from a given inbox."""
@@ -67,15 +70,28 @@ class Inbox(object):
     def submit_note(self, body, byline):
         return Note.from_inbox(self.slug, body, byline).store()
 
+    @property
     def notes(self):
         """Returns a list of notes, ordered reverse-chronologically."""
-        q = 'SELECT * from notes where inbox_id = :slug'
-        r = db.query(q, slug=self.slug)
+        q = 'SELECT * from notes where inboxes_auth_id = :auth_id'
+        r = db.query(q, auth_id=self.auth_id).all()
 
-        notes = []
+        notes = [Note.from_inbox(self.slug, n['body'], n['byline']) for n in r]
+        return notes[::-1]
 
-        for n in r:
-            note = Note.from_inbox(slug, n['body'], n['byline'])
 
-        return notes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
