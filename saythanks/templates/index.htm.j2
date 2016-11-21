@@ -8,54 +8,68 @@
     <h2>Spreading Thankfulness in Open Source&trade;</h2>
 
     <p>
-        <em>saythanks.io</em> will provide a button/link for use by open
-        source projects, to encourage users to send a simple thank you note to
-        the creator (or creators) of that project.
+        <strong>SayThanks.io</strong> provides a handy URL for you to share
+        with your open source projects&mdash; it encourages users to send a simple thank you note to you, the creator of that project.
 
     <p>
-        This simple button/link can be addded to READMEs and project documentation.
+        This simple link can be addded to READMEs and project documentation.
     </p>
 
     <p>
-        The author can then enjoy a nice inbox (ideally) filled with very small,
-        thoughtful messages from the happy users of the software they enjoy to toil over.
+        Then, you can enjoy a nice inbox of very small but thoughtful messages
+        from the happy users of the software that you've toiled over. :)
     </p>
-
 
     <hr />
+
+    <div class="sixteen columns">
+    <div class="eight columns offset-by-one">
+        <h3>Register Your Inbox of Thankfulness</h3>
+
+        <p>
+            Create an account to receive emails when users of your open source project say thanks!
+        </p>
+
+        {# GitHub Auth button #}
+
+        <script src="https://cdn.auth0.com/js/lock/10.5/lock.min.js"></script>
+        <script>
+            var options = {
+              labeledSubmitButton: false,
+              auth: {
+                redirectUrl: '{{ callback_url }}',
+                params: {
+                  scope: 'openid email name picture'
+                }
+              }
+            }
+            var lock = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options);
+        </script>
+
+
+
+        <button class="button-primary" type="submit" onClick="lock.show();">Create Your Thankfulness Inbox</button>
+
+        <span>or...</span>
+
+        <button type="submit" onClick="lock.show();">Access Your Thankfulness Inbox</button>
+
+    </div>
+    </div>
+
+    <hr>
+
+    <p>Account creation and URL generation is currently powered by GitHub. There are no plans to add additional account types at this time.</p>
+    <hr>
 
     <p>
         This project is an open source one, and its code is being actively
         developed in the open <a href="https://github.com/kennethreitz/saythanks.io">on GitHub</a>.
     </p>
 
-    <hr />
+    Oh, and if you like this project, try <a href="https://saythanks.io/to/kennethreitz">saying thanks</a> to its creator!
 
-    <h3>Register Your Inbox of Thankfulness</h3>
+    <hr>
 
-    <p>
-        Create an account to receive emails when users of your open source project
-        say thank you (note, this is a work in progress).
-    </p>
-
-    {# GitHub Auth button #}
-
-    <script src="https://cdn.auth0.com/js/lock/10.5/lock.min.js"></script>
-    <script>
-        var options = {
-          labeledSubmitButton: false,
-          auth: {
-            redirectUrl: '{{ callback_url }}',
-            params: {
-              scope: 'openid email name picture'
-            }
-          }
-        }
-        var lock = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options);
-    </script>
-
-    <button type="submit" onClick="lock.show();">Create Your Thankfulness Inbox</button>
-
-    <hr />
 
 {% endblock %}
