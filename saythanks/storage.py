@@ -74,7 +74,7 @@ class Inbox(object):
         q = 'INSERT into inboxes (slug, auth_id) VALUES (:slug, :auth_id)'
         r = db.query(q, slug=slug, auth_id=auth_id)
 
-        return Inbox(self.slug, body, byline)
+        return Inbox(slug, body, byline)
 
     @classmethod
     def does_exist(cls, slug):
