@@ -37,10 +37,24 @@
         Create an account to receive emails when users of your open source project
         say thank you (note, this is a work in progress).
     </p>
-    <form action="/register">
-        <button type="submit">Create Your Thankfulness Inbox</button>
 
-    </form>
+    {# GitHub Auth button #}
+
+    <script src="https://cdn.auth0.com/js/lock/10.5/lock.min.js"></script>
+    <script>
+        var options = {
+          labeledSubmitButton: false,
+          auth: {
+            redirectUrl: '{{ callback_url }}',
+            params: {
+              scope: 'openid email name picture'
+            }
+          }
+        }
+        var lock = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options);
+    </script>
+
+    <button type="submit" onClick="lock.show();">Create Your Thankfulness Inbox</button>
 
     <hr />
 

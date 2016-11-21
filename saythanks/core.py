@@ -50,7 +50,10 @@ def requires_auth(f):
 
 @app.route('/')
 def index():
-    return render_template('index.htm.j2')
+    return render_template('index.htm.j2',
+        callback_url=auth_callback_url,
+        auth_id=auth_id,
+        auth_domain=auth_domain)
 
 
 @app.route('/register')
