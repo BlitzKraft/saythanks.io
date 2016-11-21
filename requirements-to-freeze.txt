@@ -6,3 +6,4 @@ psycopg2
 records
 docopt
 sendgrid
+auth0-python

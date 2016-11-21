@@ -12,7 +12,8 @@ import requests
 
 from functools import wraps
 from uuid import uuid4
-from flask import Flask, request, session, render_template, abort, redirect
+from flask import Flask, request, session, render_template, url_for
+from flask import abort, redirect
 
 from . import storage
 
@@ -72,7 +73,7 @@ def dashboard():
     inbox = storage.Inbox(profile['nickname'])
 
     # Send over the list of all given notes for the user.
-    return render_template('about.htm.j2', user=profile, notes=inbox.notes)
+    return render_template('about.htm.j2', user=profile, notes=inbox.notes, inbox=inbox)
 
 
 @app.route('/to/<inbox>', methods=['GET'])
@@ -90,6 +91,9 @@ def submit_note(inbox):
 
     # Store the incoming note to the database.
     note = inbox.submit_note(body=request.form['body'], byline=request.form['byline'])
+
+    # Email the user the new note.
+    note.notify()
 
     return "Thanks for being thankful!"
 
