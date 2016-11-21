@@ -93,13 +93,11 @@ def submit_note(inbox):
     inbox = storage.Inbox(inbox)
 
     # Strip any HTML away.
-    body=Markup(request.form['body']).striptags()
-    byline=Markup(request.form['byline']).striptags()
+    body = Markup(request.form['body']).striptags()
+    byline = Markup(request.form['byline']).striptags()
 
     # Assert that the body has length.
-    try:
-        assert len(request.form['body'])
-    except AssertionError:
+    if not len(body):
         # Pretend that it was successful.
         return redirect(url_for('thanks'))
 
