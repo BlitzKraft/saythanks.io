@@ -5,7 +5,7 @@
 {% block content %}
 
 
-<p>Send a <em></em>note to {{ user }}!</p>
+<h4>Send a <strong>Thank You</strong> note to {{ user }}!</h4>
 
 <form class="form-horizontal" action="./{{ user }}/submit" method="post">
 <fieldset>
@@ -15,9 +15,8 @@
 
 <!-- Textarea -->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="body">Thank you,</label>
   <div class="col-md-4">
-    <textarea class="form-control" id="body" name="body" placeholder="{{ user }}"></textarea>
+    <textarea class="form-control u-full-width" id="body" name="body" placeholder="Dear {{ user }}, thank you for..." rows=16></textarea>
   </div>
 </div>
 
@@ -25,7 +24,7 @@
 <div class="form-group">
   <label class="col-md-4 control-label" for="byline">Sincerely, </label>
   <div class="col-md-4">
-  <input id="byline" name="byline" type="text" placeholder="" class="form-control input-md">
+  <input id="byline" class="u-full-width" name="byline" type="text" placeholder="John Smith | me@example.org" class="form-control input-md">
 
   </div>
 </div>
@@ -34,7 +33,7 @@
 <div class="form-group">
   <label class="col-md-4 control-label" for="submit"></label>
   <div class="col-md-4">
-    <button id="submit" name="submit" class="btn btn-primary" type="submit">Say Thanks</button>
+    <button id="submit" name="submit" class="btn button-primary" type="submit">Send Note</button>
   </div>
 </div>
 

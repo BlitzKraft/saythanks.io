@@ -1,0 +1,51 @@
+{% extends "base.htm.j2" %}
+
+{% block title %}Say Thank You{% endblock %}
+
+{% block content %}
+
+<img class="avatar" src="{{user['picture']}}"/ width=100px;>
+
+<h2>Welcome, {{ inbox.email }}!</h2>
+
+<p>
+    You may now direct your users (in a README or documentation, for example)
+    to <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">this URL</a>, where they can submit a note of thankfullness:
+</p>
+
+<a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">
+    <button class="primary-button">
+        Say Thanks!
+    </button>
+</a>
+
+<hr>
+<h3>Notes of Thankfulness:</h3>
+
+<table class="u-full-width">
+  <thead>
+    <tr>
+      <th>From</th>
+      <th>Message</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for note in notes %}
+    <tr>
+      <td>{{ note.byline }}</td>
+      <td><pre width=120>{{ note.body }}</pre></td>
+    </tr>
+  {% endfor %}
+
+    <tr>
+      <td>Kenneth Reitz & Team</td>
+      <td><pre>Thanks for using SayThanks.io! :)</pre></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Note:</strong> in the unlikely event that a message appears here
+that is <em>not</em> positive, archival features will be added in the future.</p>
+
+
+{% endblock %}
