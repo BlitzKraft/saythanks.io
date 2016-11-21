@@ -93,7 +93,7 @@ def submit_note(inbox):
     note = inbox.submit_note(body=request.form['body'], byline=request.form['byline'])
 
     # Email the user the new note.
-    note.notify()
+    note.notify(inbox.email)
 
     return "Thanks for being thankful!"
 

@@ -43,11 +43,11 @@ class Note(object):
         q = 'INSERT INTO notes (body, byline, inboxes_auth_id) VALUES (:body, :byline, :inbox)'
         r = db.query(q, body=self.body, byline=self.byline, inbox=self.inbox.auth_id)
 
-    def notify(self):
+    def notify(self, email_address):
         # TODO: emails the user when they have received a new note of thanks.
         # get the email address from Auth0
 
-        pass
+        email.notify(self, email_address)
 
 
 
@@ -83,7 +83,9 @@ class Inbox(object):
         return bool(len(r))
 
     def submit_note(self, body, byline):
-        return Note.from_inbox(self.slug, body, byline).store()
+        note = Note.from_inbox(self.slug, body, byline)
+        note.store()
+        return note
 
     @property
     def email(self):
