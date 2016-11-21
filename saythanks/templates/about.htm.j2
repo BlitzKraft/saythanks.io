@@ -5,17 +5,11 @@
 {% block content %}
 
 <img class="avatar" src="{{user['picture']}}"/ width=100px;>
-<<<<<<< HEAD
-<h2>Welcome {{user['name']}}</h2>
 
-<p>
-    You may now direct your users (in a README or documentation, for example
-=======
 <h2>Welcome, {{ inbox.email }}!</h2>
 
 <p>
     You may now direct your users (in a README or documentation, for example)
->>>>>>> 0a55ee524ac208cecc2ee0970bd2caf8024879b7
     to <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">this URL</a>, where they can submit a note of thankfullness.
 </p>
 <p>
