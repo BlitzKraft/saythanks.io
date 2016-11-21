@@ -14,19 +14,34 @@
 
 {# GitHub Auth button #}
 
+<<<<<<< HEAD
 <script src="https://cdn.auth0.com/js/lock/10.5/lock.min.js"></script>
 <script>
     var options = {
       labeledSubmitButton: false,
+=======
+<div id="root" style="width: 320px; margin: 40px auto; padding: 10px; border-style: dashed; border-width: 1px; box-sizing: border-box;">
+    embedded area
+</div>
+<script src="https://cdn.auth0.com/js/lock/10.4/lock.min.js"></script>
+<script>
+  var lock = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', {
+    container: 'root',
+>>>>>>> 0a55ee524ac208cecc2ee0970bd2caf8024879b7
       auth: {
         redirectUrl: '{{ callback_url }}',
         params: {
           scope: 'openid email name picture'
         }
       }
+<<<<<<< HEAD
     }
     var lock = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options);
     lock.show();
+=======
+    });
+  lock.show();
+>>>>>>> 0a55ee524ac208cecc2ee0970bd2caf8024879b7
 </script>
 
 {% endblock %}

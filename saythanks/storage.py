@@ -1,9 +1,21 @@
-# -*- coding: utf-8 -*-
+import os
 
 import records
+from auth0.v2.management import Auth0
 
+from . import email
+
+# Auth0 API Client
+auth0_domain = os.environ['AUTH0_DOMAIN']
+auth0_token = os.environ['AUTH0_JWT_TOKEN']
+auth0 = Auth0(auth0_domain, auth0_token)
+
+# Database connection.
 db = records.Database()
 
+# Storage Models
+# Note: Some of these are a little fancy (send email and such).
+# --------------
 
 class Note(object):
     """A generic note of thankfulness."""
@@ -33,7 +45,10 @@ class Note(object):
 
     def notify(self):
         # TODO: emails the user when they have received a new note of thanks.
+        # get the email address from Auth0
+
         pass
+
 
 
 class Inbox(object):
@@ -69,6 +84,11 @@ class Inbox(object):
 
     def submit_note(self, body, byline):
         return Note.from_inbox(self.slug, body, byline).store()
+
+    @property
+    def email(self):
+        # TODO: Grab the email address from Auth0.
+        return auth0.users.get(self.auth_id)['email']
 
     @property
     def notes(self):
