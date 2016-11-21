@@ -19,7 +19,7 @@
 
 <p>
     You may now direct your users (in a README or documentation, for example)
-    to <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">this URL</a>, where they can submit a note of thankfullness:
+    to <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">this URL</a>, where they can submit a note of thankfulness:
 </p>
 
 <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">
@@ -27,6 +27,10 @@
         Say Thanks!
     </button>
 </a>
+
+<a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">
+    <img src="https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg" />
+</>
 
 <hr>
 <h3>Notes of Thankfulness:</h3>
