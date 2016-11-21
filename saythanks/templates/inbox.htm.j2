@@ -2,6 +2,15 @@
 
 {% block title %}Say Thank You{% endblock %}
 
+{% block extra_head %}
+
+    <style>
+        pre {
+            max-width: 600px!important;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
 
 <img class="avatar" src="{{user['picture']}}"/ width=100px;>
