@@ -14,17 +14,19 @@ from functools import wraps
 from uuid import uuid4
 from flask import Flask, request, session, render_template, url_for
 from flask import abort, redirect
+from raven.contrib.flask import Sentry
 
 from . import storage
 
 # Application Basics
 # ------------------
 
-
 app = Flask(__name__)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
 app.debug = True
 
+# Sentry for catching application errors in production.
+sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
 
 # Auth0 Integration
 # -----------------

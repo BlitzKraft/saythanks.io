@@ -7,3 +7,4 @@ records
 docopt
 sendgrid
 auth0-python
+raven[flask]

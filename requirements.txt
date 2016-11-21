@@ -1,5 +1,7 @@
 auth0-python==2.0.1
+blinker==1.4
 click==6.6
+contextlib2==0.5.4
 docopt==0.6.2
 Flask==0.11.1
 gunicorn==19.6.0
@@ -10,6 +12,7 @@ psycopg2==2.6.2
 pycrypto==2.6.1
 PyJWT==1.4.2
 python-http-client==2.2.1
+raven==5.32.0
 records==0.5.0
 requests==2.11.1
 sendgrid==3.6.3
