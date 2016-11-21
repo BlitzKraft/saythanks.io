@@ -22,15 +22,35 @@
     to <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">this URL</a>, where they can submit a note of thankfulness:
 </p>
 
-<a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">
-    <button class="button">
-        Say Thanks!
-    </button>
-</a>
+<div class="sixteen columns">
 
-<a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">
-    <img src="https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg" />
-</>
+  <div class="two columns" style="margin-top: 0.5em;">
+  <p><strong>Buttons & Links:</strong></p>
+  </div>
+
+  <div class="three columns">
+  <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">
+      <button class="button">
+          Say Thanks!
+      </button>
+  </a>
+  </div>
+
+  <div class="three columns" style="margin-top: 0.5em;">
+  <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">
+      <img src="https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg" />
+  </a>
+  </div>
+
+  <div style="margin-top: 0.5em;">
+  <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">
+      Say Thanks!
+  </a>
+  </div>
+
+</div>
+
+<hr>
 
 <hr>
 <h3>Notes of Thankfulness:</h3>

@@ -13,7 +13,7 @@ import requests
 from functools import wraps
 from uuid import uuid4
 from flask import Flask, request, session, render_template, url_for
-from flask import abort, redirect
+from flask import abort, redirect, Markup
 from raven.contrib.flask import Sentry
 
 from . import storage
@@ -92,8 +92,20 @@ def submit_note(inbox):
     # Fetch the current inbox.
     inbox = storage.Inbox(inbox)
 
+    # Strip any HTML away.
+    body=Markup(request.form['body']).striptags()
+    byline=Markup(request.form['byline']).striptags()
+
+    # Assert that the body has length.
+    try:
+        assert len(request.form['body'])
+    except AssertionError:
+        # Pretend that it was successful.
+        return redirect(url_for('thanks'))
+
+
     # Store the incoming note to the database.
-    note = inbox.submit_note(body=request.form['body'], byline=request.form['byline'])
+    note = inbox.submit_note(body=body, byline=byline)
 
     # Email the user the new note.
     note.notify(inbox.email)
