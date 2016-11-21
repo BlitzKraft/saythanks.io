@@ -1,0 +1,4 @@
+/* The Sun icon in the header should not have an underline */
+h1 a { 
+    text-decoration: none;
+} 
