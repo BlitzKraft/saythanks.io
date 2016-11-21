@@ -25,30 +25,6 @@ app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
 app.debug = True
 
 
-# Application Security
-# --------------------
-
-# CSRF Protection.
-# @app.before_request
-def csrf_protect():
-    """Blocks incoming POST requests if a proper CSRF token is not provided."""
-    if request.method == "POST":
-        token = session.pop('_csrf_token', None)
-        if not token or token != request.form.get('_csrf_token'):
-            abort(403)
-
-
-def generate_csrf_token():
-    """Generates a CSRF token."""
-    if '_csrf_token' not in session:
-        session['_csrf_token'] = str(uuid4())
-    return session['_csrf_token']
-
-
-# Register the CSRF token with jinja2.
-app.jinja_env.globals['csrf_token'] = generate_csrf_token
-
-
 # Auth0 Integration
 # -----------------
 
@@ -100,7 +76,14 @@ def display_submit_note(inbox):
 
 @app.route('/to/<inbox>/submit', methods=['POST'])
 def submit_note(inbox):
-    return "Thanks you!"
+
+    # Fetch the current inbox.
+    inbox = storage.Inbox(inbox)
+
+    # Store the incoming note to the database.
+    note = inbox.submit_note(body=request.form['body'], byline=request.form['byline'])
+
+    return "Thanks for being thankful!"
 
 
 @app.route('/callback')
