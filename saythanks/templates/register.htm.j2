@@ -5,30 +5,30 @@
 
 {% block content %}
 
-    <h2>Register for an Inbox of Thankfulness&trade;</h2>
+<h2>Register for an Inbox of Thankfulness&trade;</h2>
 
-    <p>
-        Provide an email address to have a Thankfulness Inbox, and receive
-        emails when a user of your open source project sends a note of thanks.
-    </p>
+<p>
+    Provide an email address to have a Thankfulness Inbox, and receive
+    emails when a user of your open source project sends a note of thanks.
+</p>
 
-    {# GitHub Auth button #}
+{# GitHub Auth button #}
 
-    <div id="root" style="width: 320px; margin: 40px auto; padding: 10px; border-style: dashed; border-width: 1px; box-sizing: border-box;">
-        embedded area
-    </div>
-    <script src="https://cdn.auth0.com/js/lock/10.4/lock.min.js"></script>
-    <script>
-        var lock = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', {
-        container: 'root',
-        auth: {
-            redirectUrl: '{{ callback_url }}',
-            params: {
-          scope: 'openid email name picture' // Learn about scopes: https://auth0.com/docs/scopes
+<div id="root" style="width: 320px; margin: 40px auto; padding: 10px; border-style: dashed; border-width: 1px; box-sizing: border-box;">
+    embedded area
+</div>
+<script src="https://cdn.auth0.com/js/lock/10.4/lock.min.js"></script>
+<script>
+  var lock = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', {
+    container: 'root',
+      auth: {
+        redirectUrl: '{{ callback_url }}',
+        params: {
+          scope: 'openid email name picture'
+        }
       }
-    }
-  });
+    });
   lock.show();
-    </script>
+</script>
 
 {% endblock %}
