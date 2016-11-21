@@ -71,6 +71,13 @@ def inbox():
     # Send over the list of all given notes for the user.
     return render_template('inbox.htm.j2', user=profile, notes=inbox.notes, inbox=inbox)
 
+@app.route('/thanks')
+def thanks():
+    return render_template('thanks.htm.j2',
+        callback_url=auth_callback_url,
+        auth_id=auth_id,
+        auth_domain=auth_domain)
+
 
 @app.route('/to/<inbox>', methods=['GET'])
 def display_submit_note(inbox):
@@ -91,7 +98,7 @@ def submit_note(inbox):
     # Email the user the new note.
     note.notify(inbox.email)
 
-    return "Thanks for being thankful!\n✨🍰✨"
+    return redirect(url_for('thanks'))
 
 
 @app.route('/callback')
