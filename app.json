@@ -1,7 +1,8 @@
 {
     "addons": [
         "auth0",
-        "heroku-postgresql"
+        "heroku-postgresql",
+        "sendgrid"
     ],
     "scripts": {
         "test": "TEST=1 python t.py"
