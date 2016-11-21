@@ -1,8 +1,11 @@
-<html>
-    <head>
-    </head>
-    <body>
-Send a note to {{ user }}!
+{% extends "base.htm.j2" %}
+
+{% block title %}Say Thank You{% endblock %}
+
+{% block content %}
+
+
+<p>Send a <em></em>note to {{ user }}!</p>
 
 <form class="form-horizontal" action="./{{ user }}/submit" method="post">
 <fieldset>
@@ -38,5 +41,4 @@ Send a note to {{ user }}!
 </fieldset>
 </form>
 
-    </body>
-</html>
+{% endblock %}

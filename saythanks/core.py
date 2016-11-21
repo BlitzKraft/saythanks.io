@@ -124,4 +124,4 @@ def callback_handling():
         # Using nickname by default, can be changed manually later if needed.
         storage.Inbox.store(nickname, userid)
 
-    return redirect('/inbox')
+    return redirect(url_for('dashboard'))
