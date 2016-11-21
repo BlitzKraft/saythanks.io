@@ -1,37 +1,37 @@
-<html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-    </head>
-    <body>
-        <img class="avatar" src="{{user['picture']}}"/ width=100px;>
-        <h2>Welcome {{user['name']}}</h2>
+{% extends "base.htm.j2" %}
 
-        <p>
-            You may now direct your users (in a README or documentation, for example
-            to <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">this URL</a>, where they can submit a note of thankfullness.
-        </p>
-        <p>
-            In the near future, you will be notified via email when this occurs.
-        </p>
-        <pre>Nickname: {{user['nickname']}}</pre>
+{% block title %}Say Thank You{% endblock %}
 
-        <hr>
+{% block content %}
 
-        <ul class="notes">
-            {% for note in notes %}
-                <li class="note">
+<img class="avatar" src="{{user['picture']}}"/ width=100px;>
+<h2>Welcome {{user['name']}}</h2>
 
-                    <p>{{ note.body }} </p>
+<p>
+    You may now direct your users (in a README or documentation, for example
+    to <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">this URL</a>, where they can submit a note of thankfullness.
+</p>
+<p>
+    In the near future, you will be notified via email when this occurs.
+</p>
+<pre>Nickname: {{user['nickname']}}</pre>
 
-                    {% if note.byline %}
-                        <p>&mdash; {{note.byline }}</p>
-                    {% endif %}
+<hr>
 
-                </li>
-            {% endfor %}
+<ul class="notes">
+    {% for note in notes %}
+        <li class="note">
 
-        </ul>
-        <hr>
-        {{ notes }}
-    </body>
-</html>
+            <p>{{ note.body }} </p>
+
+            {% if note.byline %}
+                <p>&mdash; {{note.byline }}</p>
+            {% endif %}
+
+        </li>
+    {% endfor %}
+
+</ul>
+
+
+{% endblock %}
