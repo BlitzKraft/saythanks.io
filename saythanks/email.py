@@ -14,7 +14,9 @@ TEMPLATE = """{}
 --{}
 
 =========
+
 This note of thanks was brought to you by SayThanks.io.
+
 A Kenneth Reitz (me@kennethreitz.org) project.
 """
 
@@ -25,7 +27,7 @@ def notify(note, email_address):
     subject = 'saythanks.io: someone sent a note!'
     message = TEMPLATE.format(note.body, note.byline)
 
-    from_address = Email('no-reply@saythanks.io')
+    from_address = Email('no-reply@saythanks.io', name="SayThanks.io")
     to_address = Email(email_address)
     content = Content('text/plain', message)
 
