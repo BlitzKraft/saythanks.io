@@ -89,7 +89,7 @@ def submit_note(inbox):
     # Email the user the new note.
     note.notify(inbox.email)
 
-    return "Thanks for being thankful!"
+    return "Thanks for being thankful!\n✨🍰✨"
 
 
 @app.route('/callback')
