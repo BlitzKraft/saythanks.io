@@ -8,8 +8,10 @@ MarkupSafe==0.23
 psycopg2==2.6.2
 pycrypto==2.6.1
 PyJWT==1.4.2
+python-http-client==2.2.1
 records==0.5.0
 requests==2.11.1
+sendgrid==3.6.3
 SQLAlchemy==1.1.4
 tablib==0.11.2
 Werkzeug==0.11.11
