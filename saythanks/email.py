@@ -24,7 +24,10 @@ A Kenneth Reitz (me@kennethreitz.org) project.
 
 def notify(note, email_address):
 
-    subject = 'saythanks.io: someone sent a note!'
+    # Say 'someone' if the byline is empty.
+    who = note.byline or 'someone'
+
+    subject = 'saythanks.io: {} sent a note!'.format(who)
     message = TEMPLATE.format(note.body, note.byline)
 
     from_address = Email('no-reply@saythanks.io', name="SayThanks.io")

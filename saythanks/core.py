@@ -97,7 +97,7 @@ def submit_note(inbox):
     byline = Markup(request.form['byline']).striptags()
 
     # Assert that the body has length.
-    if not len(body):
+    if not body:
         # Pretend that it was successful.
         return redirect(url_for('thanks'))
 
