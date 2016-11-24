@@ -1,8 +1,10 @@
 # ☼  The 'Say Thanks' Project
 
-**Note**: This project is in production, but your contributions are welcome!
 
 [![saythanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://saythanks.io/to/kennethreitz)
+
+
+**Note**: This project is in production, but your contributions are welcome!
 
 ## Spreading Thankfulness in Open Source™
 
