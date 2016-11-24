@@ -2,6 +2,8 @@
 
 **Note**: This project is in production, but your contributions are welcome!
 
+[![saythanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://saythanks.io/to/kennethreitz)
+
 ## Spreading Thankfulness in Open Source™
 
 [**saythanks.io**](https://saythanks.io/) will provide a button/link for use by open source projects, to
