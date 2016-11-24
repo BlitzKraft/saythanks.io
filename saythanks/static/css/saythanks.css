@@ -2,3 +2,17 @@
 h1 a { 
     text-decoration: none;
 } 
+
+.u-textcenter {
+  text-align: center;
+}
+
+.button {
+}
+
+@media (max-width: 775px) {
+  .button {
+    display: block;
+    margin: 1rem auto;
+  }
+}
