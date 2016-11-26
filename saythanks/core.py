@@ -83,6 +83,8 @@ def thanks():
 def display_submit_note(inbox):
     if not storage.Inbox.does_exist(inbox):
         abort(404)
+    elif not storage.Inbox.is_enabled(inbox):
+        abort(404)
     return render_template('submit_note.htm.j2', user=inbox)
 
 

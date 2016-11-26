@@ -7,10 +7,12 @@ CREATE EXTENSION pgcrypto;
 -- tables
 -- Table: inboxes
 CREATE TABLE inboxes (
-    slug text  NOT NULL,
-    auth_id text  NOT NULL,
-    CONSTRAINT inboxes_pk PRIMARY KEY (auth_id)
+	slug text NOT NULL,
+	auth_id text NOT NULL,
+	enabled bool NULL DEFAULT true,
+	CONSTRAINT inboxes_pk PRIMARY KEY (auth_id)
 );
+
 
 -- Table: notes
 CREATE TABLE notes (

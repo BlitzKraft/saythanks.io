@@ -82,6 +82,12 @@ class Inbox(object):
         r = db.query(q, slug=slug).all()
         return bool(len(r))
 
+    @classmethod
+    def is_enabled(cls, slug):
+        q = 'SELECT enabled FROM inboxes where slug = :slug'
+        r = db.query(q, slug=slug).all()
+        return bool(r[0]['enabled'])
+
     def submit_note(self, body, byline):
         note = Note.from_inbox(self.slug, body, byline)
         note.store()
