@@ -18,14 +18,6 @@
 <h2>Welcome, {{ inbox.email }}!</h2>
 
 <p>
-    {% if is_enabled == True %}
-      To disable your account please click <a href="{{ url_for('disable') }}">here</a>.
-    {% elif  is_enabled != True %}
-      To enable your account please click <a href="{{ url_for('enable') }}">here</a>.
-    {%endif%}
-</p>
-
-<p>
     You may now direct your users (in a README or documentation, for example)
     to <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">this URL</a>, where they can submit a note of thankfulness:
 </p>
@@ -84,6 +76,14 @@
     </tr>
   </tbody>
 </table>
+
+<p>
+    {% if is_enabled == True %}
+      To disable your account please click <a href="{{ url_for('disable') }}">here</a>.
+    {% elif  is_enabled != True %}
+      To enable your account please click <a href="{{ url_for('enable') }}">here</a>.
+    {%endif%}
+</p>
 
 <p><strong>Note:</strong> in the unlikely event that a message appears here
 that is <em>not</em> positive, archival features will be added in the future.</p>
