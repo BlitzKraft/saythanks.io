@@ -92,7 +92,7 @@ def disable():
 
 @app.route('/enable')
 @requires_auth
-def disable():
+def enable():
     # Auth0 stored account information.
     slug = session['profile']['nickname']
     storage.Inbox.enable_account(slug)
