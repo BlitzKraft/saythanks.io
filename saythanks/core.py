@@ -81,6 +81,24 @@ def thanks():
         auth_domain=auth_domain)
 
 
+@app.route('/disable')
+@requires_auth
+def disable():
+    # Auth0 stored account information.
+    slug = session['profile']['nickname']
+    storage.Inbox.disable_account(slug)
+    return redirect(url_for('inbox'))
+
+
+@app.route('/enable')
+@requires_auth
+def disable():
+    # Auth0 stored account information.
+    slug = session['profile']['nickname']
+    storage.Inbox.enable_account(slug)
+    return redirect(url_for('inbox'))
+
+
 @app.route('/to/<inbox>', methods=['GET'])
 def display_submit_note(inbox):
     if not storage.Inbox.does_exist(inbox):

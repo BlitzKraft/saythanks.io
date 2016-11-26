@@ -19,9 +19,9 @@
 
 <p>
     {% if is_enabled == True %}
-      If you wish you may disable your account.
+      To disable your account please click <a href="{{ url_for('disable') }}">here</a>.
     {% elif  is_enabled != True %}
-      Click here to re-enable your account!
+      To enable your account please click <a href="{{ url_for('enable') }}">here</a>.
     {%endif%}
 </p>
 

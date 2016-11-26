@@ -88,6 +88,16 @@ class Inbox(object):
         r = db.query(q, slug=slug).all()
         return bool(r[0]['enabled'])
 
+    @classmethod
+    def disable_account(cls, slug):
+        q = 'update inboxes set enabled = false where slug = :slug'
+        r = db.query(q, slug=slug)
+
+    @classmethod
+    def enable_account(cls, slug):
+        q = 'update inboxes set enabled = true where slug = :slug'
+        r = db.query(q, slug=slug)
+
     def submit_note(self, body, byline):
         note = Note.from_inbox(self.slug, body, byline)
         note.store()
