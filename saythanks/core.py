@@ -68,8 +68,10 @@ def inbox():
     # Grab the inbox from the database.
     inbox = storage.Inbox(profile['nickname'])
 
+    is_enabled = storage.Inbox.is_enabled(inbox)
+
     # Send over the list of all given notes for the user.
-    return render_template('inbox.htm.j2', user=profile, notes=inbox.notes, inbox=inbox)
+    return render_template('inbox.htm.j2', user=profile, notes=inbox.notes, inbox=inbox, is_enabled=is_enabled)
 
 @app.route('/thanks')
 def thanks():

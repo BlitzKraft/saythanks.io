@@ -18,6 +18,14 @@
 <h2>Welcome, {{ inbox.email }}!</h2>
 
 <p>
+    {% if is_enabled == True %}
+      If you wish you may disable your account.
+    {% elif  is_enabled != True %}
+      Click here to re-enable your account!
+    {%endif%}
+</p>
+
+<p>
     You may now direct your users (in a README or documentation, for example)
     to <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">this URL</a>, where they can submit a note of thankfulness:
 </p>
