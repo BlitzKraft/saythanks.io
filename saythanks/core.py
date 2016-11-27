@@ -70,8 +70,11 @@ def inbox():
 
     is_enabled = storage.Inbox.is_enabled(inbox.slug)
 
+    is_email_enabled = storage.Inbox.is_email_enabled(inbox.slug)
+
     # Send over the list of all given notes for the user.
-    return render_template('inbox.htm.j2', user=profile, notes=inbox.notes, inbox=inbox, is_enabled=is_enabled)
+    return render_template('inbox.htm.j2',
+    user=profile, notes=inbox.notes, inbox=inbox, is_enabled=is_enabled, is_email_enabled=is_email_enabled)
 
 @app.route('/thanks')
 def thanks():
@@ -79,6 +82,24 @@ def thanks():
         callback_url=auth_callback_url,
         auth_id=auth_id,
         auth_domain=auth_domain)
+
+
+@app.route('/disable-email')
+@requires_auth
+def disable_email():
+    # Auth0 stored account information.
+    slug = session['profile']['nickname']
+    storage.Inbox.disable_email(slug)
+    return redirect(url_for('inbox'))
+
+
+@app.route('/enable-email')
+@requires_auth
+def enable_email():
+    # Auth0 stored account information.
+    slug = session['profile']['nickname']
+    storage.Inbox.enable_email(slug)
+    return redirect(url_for('inbox'))
 
 
 @app.route('/disable')

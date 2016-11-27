@@ -83,6 +83,22 @@ class Inbox(object):
         return bool(len(r))
 
     @classmethod
+    def is_email_enabled(cls, slug):
+        q = 'SELECT email_enabled FROM inboxes where slug = :slug'
+        r = db.query(q, slug=slug).all()
+        return bool(r[0]['email_enabled'])
+
+    @classmethod
+    def disable_email(cls, slug):
+        q = 'update inboxes set email_enabled = false where slug = :slug'
+        r = db.query(q, slug=slug)
+
+    @classmethod
+    def enable_email(cls, slug):
+        q = 'update inboxes set email_enabled = true where slug = :slug'
+        r = db.query(q, slug=slug)
+
+    @classmethod
     def is_enabled(cls, slug):
         q = 'SELECT enabled FROM inboxes where slug = :slug'
         r = db.query(q, slug=slug).all()

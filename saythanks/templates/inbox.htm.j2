@@ -77,6 +77,15 @@
   </tbody>
 </table>
 
+
+<p>
+    {% if is_email_enabled == True %}
+      To disable e-mail please click <a href="{{ url_for('disable-email') }}">here</a>.
+    {% elif  is_email_enabled != True %}
+      To enable e-mail please click <a href="{{ url_for('enable-email') }}">here</a>.
+    {%endif%}
+</p>
+
 <p>
     {% if is_enabled == True %}
       To disable your account please click <a href="{{ url_for('disable') }}">here</a>.
