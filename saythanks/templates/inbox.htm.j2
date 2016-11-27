@@ -92,9 +92,9 @@
 
 <li>
     {% if is_enabled == True %}
-      To disable your account please click <a href="{{ url_for('disable') }}">here</a>.
+      To disable your account please click <a href="{{ url_for('disable_inbox') }}">here</a>.
     {% elif  is_enabled != True %}
-      To enable your account please click <a href="{{ url_for('enable') }}">here</a>.
+      To enable your account please click <a href="{{ url_for('enable_inbox') }}">here</a>.
     {%endif%}
 </li>
 
