@@ -77,6 +77,11 @@
   </tbody>
 </table>
 
+<h4>Managage your Inbox:</h4>
+
+<p>Below are some rudimentary account management tools, availalable, to you, today, for free!</p>
+<ul>
+  <li>
 
 <p>
     {% if is_email_enabled == True %}
@@ -86,6 +91,9 @@
     {%endif%}
 </p>
 
+</li>
+
+<li>
 <p>
     {% if is_enabled == True %}
       To disable your account please click <a href="{{ url_for('disable') }}">here</a>.
@@ -93,9 +101,9 @@
       To enable your account please click <a href="{{ url_for('enable') }}">here</a>.
     {%endif%}
 </p>
+</li>
 
-<p><strong>Note:</strong> in the unlikely event that a message appears here
-that is <em>not</em> positive, archival features will be added in the future.</p>
+<p><strong>Note:</strong> this website is a work in progress, and these settings will be moved to a seperate settings page in the near future. If you'd like to help, send a pull request! :)</p>
 
 
 {% endblock %}
