@@ -6,7 +6,7 @@ CREATE EXTENSION pgcrypto;
 
 -- tables
 -- Table: inboxes
-CREATE TABLE public.inboxes (
+CREATE TABLE inboxes (
 	slug text NOT NULL,
 	auth_id text NOT NULL,
 	enabled bool NULL DEFAULT true,
