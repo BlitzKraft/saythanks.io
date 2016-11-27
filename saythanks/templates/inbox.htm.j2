@@ -80,9 +80,9 @@
 
 <p>
     {% if is_email_enabled == True %}
-      To disable e-mail please click <a href="{{ url_for('disable-email') }}">here</a>.
+      To disable e-mail please click <a href="{{ url_for('disable_email') }}">here</a>.
     {% elif  is_email_enabled != True %}
-      To enable e-mail please click <a href="{{ url_for('enable-email') }}">here</a>.
+      To enable e-mail please click <a href="{{ url_for('enable_email') }}">here</a>.
     {%endif%}
 </p>
 

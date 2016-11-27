@@ -84,7 +84,7 @@ def thanks():
         auth_domain=auth_domain)
 
 
-@app.route('/disable-email')
+@app.route('/disable_email')
 @requires_auth
 def disable_email():
     # Auth0 stored account information.
@@ -93,7 +93,7 @@ def disable_email():
     return redirect(url_for('inbox'))
 
 
-@app.route('/enable-email')
+@app.route('/enable_email')
 @requires_auth
 def enable_email():
     # Auth0 stored account information.
