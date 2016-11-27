@@ -149,7 +149,8 @@ def submit_note(inbox):
     note = inbox.submit_note(body=body, byline=byline)
 
     # Email the user the new note.
-    note.notify(inbox.email)
+    if storage.Inbox.is_email_enabled(inbox.slug)
+        note.notify(inbox.email)
 
     return redirect(url_for('thanks'))
 
