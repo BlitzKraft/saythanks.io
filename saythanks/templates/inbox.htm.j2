@@ -82,25 +82,20 @@
 <p>Below are some rudimentary account management tools, available, to you, today, for free!</p>
 <ul>
   <li>
-
-<p>
     {% if is_email_enabled == True %}
       To disable e-mail please click <a href="{{ url_for('disable_email') }}">here</a>.
     {% elif  is_email_enabled != True %}
       To enable e-mail please click <a href="{{ url_for('enable_email') }}">here</a>.
     {%endif%}
-</p>
 
 </li>
 
 <li>
-<p>
     {% if is_enabled == True %}
       To disable your account please click <a href="{{ url_for('disable') }}">here</a>.
     {% elif  is_enabled != True %}
       To enable your account please click <a href="{{ url_for('enable') }}">here</a>.
     {%endif%}
-</p>
 </li>
 
 <p><strong>Note:</strong> this website is a work in progress, and these settings will be moved to a separate settings page in the near future. If you'd like to help, send a pull request! :)</p>
