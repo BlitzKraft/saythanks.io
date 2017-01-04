@@ -85,7 +85,7 @@ def thanks():
         auth_domain=auth_domain)
 
 
-@app.route('/disable_email')
+@app.route('/disable-email')
 @requires_auth
 def disable_email():
     # Auth0 stored account information.
@@ -94,7 +94,7 @@ def disable_email():
     return redirect(url_for('inbox'))
 
 
-@app.route('/enable_email')
+@app.route('/enable-email')
 @requires_auth
 def enable_email():
     # Auth0 stored account information.
@@ -103,18 +103,18 @@ def enable_email():
     return redirect(url_for('inbox'))
 
 
-@app.route('/disable')
+@app.route('/disable-inbox')
 @requires_auth
-def disable():
+def disable_inbox():
     # Auth0 stored account information.
     slug = session['profile']['nickname']
     storage.Inbox.disable_account(slug)
     return redirect(url_for('inbox'))
 
 
-@app.route('/enable')
+@app.route('/enable-inbox')
 @requires_auth
-def enable():
+def enable_inbox():
     # Auth0 stored account information.
     slug = session['profile']['nickname']
     storage.Inbox.enable_account(slug)
@@ -136,9 +136,16 @@ def submit_note(inbox):
     # Fetch the current inbox.
     inbox = storage.Inbox(inbox)
 
+    # Replace newlines with <br> tags.
+    body = request.form['body']
+    body = '---NEWLINE---'.join(body.split('\n'))
+
     # Strip any HTML away.
-    body = Markup(request.form['body']).striptags()
+    body = Markup(body).striptags()
     byline = Markup(request.form['byline']).striptags()
+
+    # Crazy hack to get br tags preserved.
+    body = '<br>'.join(body.split('---NEWLINE---'))
 
     # Assert that the body has length.
     if not body:
