@@ -16,3 +16,9 @@ h1 a {
     margin: 1rem auto;
   }
 }
+
+.note {
+    font-family: 'Caveat', cursive!important;
+    font-size: 2.15rem;
+    white-space: pre-wrap!important;
+}
