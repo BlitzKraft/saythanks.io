@@ -26,7 +26,8 @@ app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
 app.debug = True
 
 # Sentry for catching application errors in production.
-sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
+if 'SENTRY_DSN' in os.environ:
+    sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
 
 # Auth0 Integration
 # -----------------
