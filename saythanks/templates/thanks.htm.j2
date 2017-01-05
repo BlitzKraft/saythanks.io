@@ -12,11 +12,17 @@
 
 <p>You can create your own thankfulness inbox by visiting <a href="https://saythanks.io/"><strong>SayThanks.io</strong></a> or clicking below!</p>
 
+<p style="text-align:center;">
+<img style="height: 25rem; margin-left: auto; margin-right: auto; " src="{{ url_for('static', filename='images/inbox.png') }}" alt="Thankfulness Inbox of Love">
+</p>
+
+
         <script src="https://cdn.auth0.com/js/lock/10.5/lock.min.js"></script>
         <script>
             var options_signup = {
               theme: {
-                labeledSubmitButton: false
+                logo: '{{ url_for('static', filename='images/owly.svg') }}',
+                primaryColor: '#3ac025',
               },
               allowSignUp: true,
               allowLogin: false,
@@ -30,7 +36,8 @@
 
             var options_singin = {
               theme: {
-                labeledSubmitButton: false
+                logo: '{{ url_for('static', filename='images/owly.svg') }}',
+                primaryColor: '#3ac025',
               },
               allowSignUp: false,
               allowLogin: true,
@@ -54,7 +61,7 @@
 
 <hr>
 
-
+<p>Thanks for helping to make the world a little bit of a better place! :)</p>
 
 </div>
 </div>

@@ -5,7 +5,7 @@
 {% block content %}
 
 
-<h4>Send a <strong>Thank You</strong> note to {{ user }}!</h4>
+<h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong>!</h4>
 
 <form class="form-horizontal" action="./{{ user }}/submit" method="post">
 
@@ -13,7 +13,7 @@
 <fieldset>
 
 <!-- Form Name -->
-<legend>THANK YOU</legend>
+<legend>❝ THANK YOU ❞ </legend>
 
 <!-- Textarea -->
 <div class="form-group">
@@ -36,10 +36,10 @@
 <div class="form-group">
   <label class="col-md-4 control-label" for="submit"></label>
   <div class="col-md-4">
-    <button id="submit" name="submit" class="btn button-primary" type="submit">Send Note</button>
+    <button id="submit" name="submit" class="btn button-primary" type="submit">Send Note <img id="eve-send" src="{{ url_for('static', filename='images/owly.svg') }}" alt="Eve the Owl"> </button>
   </div>
 </div>
-
+<h2>🝐</h2>
 </fieldset>
 </form>
 

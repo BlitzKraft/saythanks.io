@@ -51,6 +51,16 @@ a {
     color: green;
 }
 
+#eve-send {
+    height: 6rem;
+    margin-bottom: -4em;
+    color: green;
+}
+
 .auth0-lock-name:after {
     content: ' (for SayThanks.io)';
+}
+
+.no-color {
+    color:none!important;
 }
