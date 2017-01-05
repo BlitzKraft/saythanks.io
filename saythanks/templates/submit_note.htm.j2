@@ -8,6 +8,8 @@
 <h4>Send a <strong>Thank You</strong> note to {{ user }}!</h4>
 
 <form class="form-horizontal" action="./{{ user }}/submit" method="post">
+
+
 <fieldset>
 
 <!-- Form Name -->
@@ -16,15 +18,16 @@
 <!-- Textarea -->
 <div class="form-group">
   <div class="col-md-4">
-    <textarea class="form-control u-full-width" id="body" name="body" placeholder="Dear {{ user }}, thank you for..." rows=16 required></textarea>
+    <textarea class="form-control u-full-width note noteinput" id="body" name="body" placeholder="Dear {{ user }},                                                                                              Thank you for..." required></textarea>
   </div>
 </div>
 
+<h6>You have written <strong><span id=counter></span></strong> thoughtful words, so far… (shoot for 42!)</h6>
 <!-- Text input-->
 <div class="form-group">
   <label class="col-md-4 control-label" for="byline">Sincerely, </label>
   <div class="col-md-4">
-  <input id="byline" class="u-full-width" name="byline" type="text" placeholder="John Smith | me@example.org" class="form-control input-md">
+  <input class='note' id="byline" class="u-full-width" name="byline" type="text" placeholder="John Smith" class="form-control input-md">
 
   </div>
 </div>
@@ -39,5 +42,16 @@
 
 </fieldset>
 </form>
+
+{# Have body auto-grow as users type. #}
+<script>
+  $("#body").autoGrow();
+  $('#body').simplyCountable({
+  counter: '#counter',
+  countType: 'words',
+  countDirection: 'up'
+});
+</script>
+
 
 {% endblock %}

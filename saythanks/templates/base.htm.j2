@@ -15,7 +15,7 @@
      <!-- FONT
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
     <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Caveat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Annie+Use+Your+Telescope" rel="stylesheet">
 
     <!-- CSS
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -25,7 +25,15 @@
 
      <!-- Favicon
      –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-     <link rel="icon" type="image/png" href="images/favicon.png">
+     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/owly.ico') }}">
+     <link rel="mask-icon" href="{{ url_for('static', filename='images/owly.svg') }}" color="green">
+
+     <!-- jQuery!
+     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+     <script src="{{ url_for('static', filename='js/jquery.autogrowtextarea.min.js') }}"></script>
+     <script src="{{ url_for('static', filename='js/jquery.simplyCountable.js') }}"></script>
+
 
     {% block extra_head %}
     {% endblock %}
@@ -34,7 +42,7 @@
 <body>
 
 <div class="container">
-<h1><a href="/">&#9728;</a> The 'Say Thanks' Project</h1>
+<h1><a href="/"><img id="eve" src="{{ url_for('static', filename='images/owly.svg') }}" alt="Eve the Owl"></a> The <strong>‘</strong><span class="green">Say Thanks</span><strong>’</strong> Project<span class="green"><strong>.</strong></span></h1>
 <hr>
 
 <div class="content">{% block content %}{% endblock %}</div>

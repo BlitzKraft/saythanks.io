@@ -58,21 +58,21 @@
 <table class='u-full-width'>
   <thead>
     <tr>
-      <th>From</th>
       <th>Message</th>
+      <th>From</th>
     </tr>
   </thead>
   <tbody>
   {% for note in notes %}
     <tr>
-      <td>{{ note.byline }}</td>
-      <td><pre class='note' width=120>{{ note.body }}</pre></td>
+      <td><pre class='note' width=180>{{ note.body }}</pre></td>
+      <td width='300px'><pre class='note'><strong>— {{ note.byline }}</strong></pre></td>
     </tr>
   {% endfor %}
 
     <tr>
-      <td>Kenneth Reitz & Team</td>
       <td><pre class='note'>Thanks for using SayThanks.io! :)</pre></td>
+      <td><pre class='note'>Kenneth Reitz & Team</pre></td>
     </tr>
   </tbody>
 </table>

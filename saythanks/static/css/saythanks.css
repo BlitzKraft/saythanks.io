@@ -1,7 +1,7 @@
 /* The Sun icon in the header should not have an underline */
-h1 a { 
+h1 a {
     text-decoration: none;
-} 
+}
 
 .u-textcenter {
   text-align: center;
@@ -18,7 +18,35 @@ h1 a {
 }
 
 .note {
-    font-family: 'Caveat', cursive!important;
-    font-size: 2.15rem;
+    font-family: 'Annie Use Your Telescope', cursive!important;
+    font-size: 2.35rem;
     white-space: pre-wrap!important;
+}
+
+.noteinput {
+    height: 6em;
+}
+
+
+.button-primary {
+    background-color: #3ac025!important;
+    border-color: #3ac025!important;
+}
+
+a {
+    color: #3ac025!important;
+}
+
+.green {
+    color: #3ac025!important;
+}
+
+.dark-green {
+    color: #208A13!important;
+}
+
+#eve {
+    height: 5rem;
+    margin-top: 0.2em;
+    color: green;
 }
