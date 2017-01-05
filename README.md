@@ -22,7 +22,7 @@ toil over.
 
 ### ☤ The Basics
 
-- Email a when a new message of thankfulness is submitted (csrf enabled).
+- Email when a new message of thankfulness is submitted (csrf enabled).
 - Inbox page for each user/project with simple aggregation of messages (private).
 
 ### ☤ The Architecture
