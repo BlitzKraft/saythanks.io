@@ -129,6 +129,15 @@ def display_submit_note(inbox):
         abort(404)
     return render_template('submit_note.htm.j2', user=inbox)
 
+@app.route('/note/<uuid>', methods=['GET'])
+def share_note(uuid):
+    # if not storage.Note.does_exist(uuid):
+        # abort(404)
+        #
+    note = storage.Note.fetch(uuid)
+
+    return render_template('share_note.htm.j2', note=note)
+
 
 @app.route('/to/<inbox>/submit', methods=['POST'])
 def submit_note(inbox):

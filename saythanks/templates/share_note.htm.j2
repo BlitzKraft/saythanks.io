@@ -1,0 +1,47 @@
+{% extends "base.htm.j2" %}
+
+{% block title %}Thank You{% endblock %}
+
+{% block content %}
+
+
+<form class="form-horizontal" action="./{{ user }}/submit" method="post">
+
+
+<fieldset>
+
+<!-- Form Name -->
+<legend>❝ THANK YOU ❞ </legend>
+
+<!-- Textarea -->
+<div class="form-group">
+  <div class="col-md-4">
+    <p class="note">{{ note.body }}</p>
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="byline">Sincerely, </label>
+  <div class="col-md-4">
+  — {{ note.byline }}
+
+  </div>
+</div>
+
+<h2>🝐</h2>
+</fieldset>
+</form>
+
+{# Have body auto-grow as users type. #}
+<script>
+  $("#body").autoGrow();
+  $('#body').simplyCountable({
+  counter: '#counter',
+  countType: 'words',
+  countDirection: 'up'
+});
+</script>
+
+
+{% endblock %}

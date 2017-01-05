@@ -69,6 +69,7 @@
     <tr>
       <th>Message</th>
       <th>From</th>
+      <th>Share URL</th>
     </tr>
   </thead>
   <tbody>
@@ -76,6 +77,7 @@
     <tr>
       <td><pre class='note' width=180>{{ note.body }}</pre></td>
       <td width='300px'><pre class='note'><strong>— {{ note.byline }}</strong></pre></td>
+      <td width='50px'><pre class='note'><strong><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></strong></pre></td>
     </tr>
   {% endfor %}
 

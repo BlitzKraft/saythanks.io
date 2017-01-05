@@ -28,12 +28,24 @@ class Note(object):
         return '<Note size={}>'.format(len(self.body))
 
     @classmethod
-    def from_inbox(cls, inbox, body, byline):
+    def fetch(cls, uuid):
+        self = cls()
+        q = "SELECT * FROM notes WHERE uuid=:uuid"
+        r = db.query(q, uuid=uuid)
+
+        self.body = r[0]['body']
+        self.byline = r[0]['byline']
+
+        return self
+
+    @classmethod
+    def from_inbox(cls, inbox, body, byline, uuid=None):
         """Creates a Note instance from a given inbox."""
         self = cls()
 
         self.body = body
         self.byline = byline
+        self.uuid = uuid
         self.inbox = Inbox(inbox)
 
         return self
@@ -130,7 +142,7 @@ class Inbox(object):
         q = 'SELECT * from notes where inboxes_auth_id = :auth_id'
         r = db.query(q, auth_id=self.auth_id).all()
 
-        notes = [Note.from_inbox(self.slug, n['body'], n['byline']) for n in r]
+        notes = [Note.from_inbox(self.slug, n['body'], n['byline'], n['uuid']) for n in r]
         return notes[::-1]
 
 
