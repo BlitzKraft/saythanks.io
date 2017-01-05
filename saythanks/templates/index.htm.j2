@@ -39,7 +39,9 @@
         <script>
             var options_signup = {
               theme: {
-                labeledSubmitButton: false
+                // labeledSubmitButton: false,
+                logo: '{{ url_for('static', filename='images/owly.svg') }}',
+                primaryColor: '#3ac025',
               },
               allowSignUp: true,
               allowLogin: false,
@@ -47,13 +49,15 @@
                 redirectUrl: '{{ callback_url }}',
                 params: {
                   scope: 'openid email name picture'
-                }
+                },
               }
             }
 
             var options_singin = {
               theme: {
-                labeledSubmitButton: false
+                // labeledSubmitButton: false,
+                logo: '{{ url_for('static', filename='images/owly.svg') }}',
+                primaryColor: '#3ac025'
               },
               allowSignUp: false,
               allowLogin: true,

@@ -50,3 +50,7 @@ a {
     margin-top: 0.2em;
     color: green;
 }
+
+.auth0-lock-name:after {
+    content: ' (for SayThanks.io)';
+}
