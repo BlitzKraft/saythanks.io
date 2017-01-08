@@ -8,7 +8,7 @@ h1 a {
 }
 
 button {
-    overflow: hidden;
+    overflow: hidden!important;
 }
 
 @media (max-width: 775px) {
