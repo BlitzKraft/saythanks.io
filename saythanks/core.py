@@ -51,6 +51,7 @@ def requires_auth(f):
 # Application Routes
 # ------------------
 
+
 @app.route('/')
 def index():
     return render_template('index.htm.j2',
@@ -147,6 +148,7 @@ def display_submit_note(inbox):
         abort(404)
     return render_template('submit_note.htm.j2', user=inbox)
 
+
 @app.route('/note/<uuid>', methods=['GET'])
 def share_note(uuid):
 
@@ -158,13 +160,20 @@ def share_note(uuid):
 
     return render_template('share_note.htm.j2', note=note)
 
+
 @app.route('/inbox/archive/note/<uuid>', methods=['GET'])
 @requires_auth
 def archive_note(uuid):
-    # TODO: assert that the user owns this note.
+
+    # Auth0 stored account information.
+    profile = session['profile']
+
     note = storage.Note.fetch(uuid)
+
+    # Archive the note.
     note.archive()
 
+    # Redirect to the archived inbox.
     return redirect(url_for('archived_inbox'))
 
 

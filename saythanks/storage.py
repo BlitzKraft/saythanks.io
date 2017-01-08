@@ -148,7 +148,7 @@ class Inbox(object):
         return note
 
     @property
-    def email(self):.
+    def email(self):
         return auth0.users.get(self.auth_id)['email']
 
     @property
