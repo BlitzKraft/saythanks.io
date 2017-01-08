@@ -37,4 +37,10 @@ ALTER TABLE notes ADD CONSTRAINT notes_inboxes
 ALTER TABLE notes ADD timestamp timestamp default timestamp;
 ALTER TABLE inboxes ADD timestamp timestamp default timestamp;
 
+-- ALTER TABLE notes ADD COLUMN "archived" boolean not null default false;
+ALTER TABLE notes ADD COLUMN archived BOOLEAN;
+UPDATE notes SET archived = 'f';
+ALTER TABLE notes ALTER COLUMN archived SET NOT NULL;
+ALTER TABLE notes ALTER COLUMN archived SET DEFAULT FALSE;
+
 -- End of file.
