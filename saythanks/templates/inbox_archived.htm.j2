@@ -1,0 +1,52 @@
+{% extends "base.htm.j2" %}
+
+{% block title %}Say Thank You{% endblock %}
+
+{% block extra_head %}
+
+    <style>
+        pre {
+            max-width: 600px!important;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<img class="avatar" style="border-radius: 50%;" src="{{user['picture']}}"/ width=100px;>
+
+<p><a href="{{ url_for('inbox')}}">Go to regular inbox</a>.</p>
+
+<hr>
+
+<p style="text-align: center;">
+  <h3>Archived Notes:</h3>
+</p>
+
+
+<table class='u-full-width'>
+  <thead>
+    <tr>
+      <th>Message</th>
+      <th>From</th>
+      <th>Share URL</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for note in notes %}
+    <tr>
+      <td><pre class='note' width=180>{{ note.body }}</pre></td>
+      <td width='300px'><pre class='note'><strong>— {{ note.byline }}</strong></pre></td>
+      <td width='50px'><pre class='note'><strong><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></strong></pre></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<p><a href="{{ url_for('inbox')}}">Go to regular inbox</a>.</p>
+
+
+<p><strong>Note:</strong> this website is a work in progress, and these settings will be moved to a separate settings page in the near future. If you'd like to help, send a pull request! :)</p>
+
+
+{% endblock %}

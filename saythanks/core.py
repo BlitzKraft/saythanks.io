@@ -77,6 +77,24 @@ def inbox():
     return render_template('inbox.htm.j2',
     user=profile, notes=inbox.notes, inbox=inbox, is_enabled=is_enabled, is_email_enabled=is_email_enabled)
 
+@app.route('/inbox/archived')
+@requires_auth
+def archived_inbox():
+
+    # Auth0 stored account information.
+    profile = session['profile']
+
+    # Grab the inbox from the database.
+    inbox = storage.Inbox(profile['nickname'])
+
+    is_enabled = storage.Inbox.is_enabled(inbox.slug)
+
+    is_email_enabled = storage.Inbox.is_email_enabled(inbox.slug)
+
+    # Send over the list of all given notes for the user.
+    return render_template('inbox_archived.htm.j2',
+    user=profile, notes=inbox.archived_notes, inbox=inbox, is_enabled=is_enabled, is_email_enabled=is_email_enabled)
+
 @app.route('/thanks')
 def thanks():
     return render_template('thanks.htm.j2',
@@ -131,12 +149,23 @@ def display_submit_note(inbox):
 
 @app.route('/note/<uuid>', methods=['GET'])
 def share_note(uuid):
-    # if not storage.Note.does_exist(uuid):
-        # abort(404)
-        #
+
+    # Abort if the note is not found.
+    if not storage.Note.does_exist(uuid):
+        abort(404)
+
     note = storage.Note.fetch(uuid)
 
     return render_template('share_note.htm.j2', note=note)
+
+@app.route('/inbox/archive/note/<uuid>', methods=['GET'])
+@requires_auth
+def archive_note(uuid):
+    # TODO: assert that the user owns this note.
+    note = storage.Note.fetch(uuid)
+    note.archive()
+
+    return redirect(url_for('archived_inbox'))
 
 
 @app.route('/to/<inbox>/submit', methods=['POST'])

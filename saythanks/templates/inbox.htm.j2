@@ -67,21 +67,24 @@
 <table class='u-full-width'>
   <thead>
     <tr>
+      <th>Share URL</th>
       <th>Message</th>
       <th>From</th>
-      <th>Share URL</th>
+      <th>Archive?</th>
     </tr>
   </thead>
   <tbody>
   {% for note in notes %}
     <tr>
+      <td width='50px'><pre class='note'><strong><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></strong></pre></td>
       <td><pre class='note' width=180>{{ note.body }}</pre></td>
       <td width='300px'><pre class='note'><strong>— {{ note.byline }}</strong></pre></td>
-      <td width='50px'><pre class='note'><strong><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></strong></pre></td>
+      <td width='50px'><pre class='note'><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid)}}">♻</a></strong></pre></td>
     </tr>
   {% endfor %}
 
     <tr>
+      <td><pre class='note'></pre></td>
       <td><pre class='note'>Thanks for using SayThanks.io! :)</pre></td>
       <td><pre class='note'>Kenneth Reitz & Team</pre></td>
     </tr>
@@ -92,6 +95,7 @@
 
 <p>Below are some rudimentary account management tools, available, to you, today, for free!</p>
 <ul>
+  <li><a href="{{ url_for('archived_inbox') }}">Archived notes</a>.</li>
   <li>
     {% if is_email_enabled == True %}
       To disable e-mail please click <a href="{{ url_for('disable_email') }}">here</a>.
