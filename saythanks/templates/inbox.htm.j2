@@ -96,6 +96,9 @@
 <p>Below are some rudimentary account management tools, available, to you, today, for free!</p>
 <ul>
   <li><a href="{{ url_for('archived_inbox') }}">Archived notes</a>.</li>
+  <li>Export your inbox!
+    <a href="{{ url_for('inbox_export', format='csv') }}">CSV</a>
+    .</li>
   <li>
     {% if is_email_enabled == True %}
       To disable e-mail please click <a href="{{ url_for('disable_email') }}">here</a>.

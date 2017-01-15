@@ -11,9 +11,8 @@ import json
 import requests
 
 from functools import wraps
-from uuid import uuid4
 from flask import Flask, request, session, render_template, url_for
-from flask import abort, redirect, Markup
+from flask import abort, redirect, Markup, make_response
 from raven.contrib.flask import Sentry
 
 from . import storage
@@ -77,6 +76,23 @@ def inbox():
     # Send over the list of all given notes for the user.
     return render_template('inbox.htm.j2',
     user=profile, notes=inbox.notes, inbox=inbox, is_enabled=is_enabled, is_email_enabled=is_email_enabled)
+
+@app.route('/inbox/export/<format>')
+@requires_auth
+def inbox_export(format):
+
+    # Auth0 stored account information.
+    profile = session['profile']
+
+    # Grab the inbox from the database.
+    inbox = storage.Inbox(profile['nickname'])
+
+    # Send over the list of all given notes for the user.
+    response = make_response(inbox.export(format))
+    response.headers['Content-Disposition'] = 'attachment; filename=saythanks-inbox.csv'
+    response.headers['Content-type'] = 'text/csv'
+    return response
+
 
 @app.route('/inbox/archived')
 @requires_auth
