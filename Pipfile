@@ -1,0 +1,13 @@
+[packages]
+flask = "*"
+gunicorn = "*"
+pyjwt = "*"
+requests = "*"
+psycopg2 = "*"
+records = "*"
+docopt = "*"
+sendgrid = "*"
+auth0-python = "*"
+
+[packages.raven]
+extras = [ "flask",]

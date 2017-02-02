@@ -1,0 +1,97 @@
+{
+    "default": {
+        "python-http-client": {
+            "version": "==2.2.1",
+            "hash": "sha256:2e86716cdc68c28bf25fd64786246cb2d91a6803dd3a4e1028204f1e63ee90bc"
+        },
+        "Werkzeug": {
+            "version": "==0.11.15",
+            "hash": "sha256:c6f6f89124df0514d886782c658c3e12f2caaa94da34cee3fd82eebf4ebf052b"
+        },
+        "contextlib2": {
+            "version": "==0.5.4",
+            "hash": "sha256:399f659f2a8b5d5d529f132e1136fc404fbbc28e34e4618c5c92bd595be9b162"
+        },
+        "blinker": {
+            "version": "==1.4",
+            "hash": "sha256:471aee25f3992bd325afa3772f1063dbdbbca947a041b8b89466dc00d606f8b6"
+        },
+        "gunicorn": {
+            "version": "==19.6.0",
+            "hash": "sha256:723234ea1fa8dff370ab69830ba8bc37469a7cba13fd66055faeef24085e6530"
+        },
+        "MarkupSafe": {
+            "version": "==0.23",
+            "hash": "sha256:a4ec1aff59b95a14b45eb2e23761a0179e98319da5a7eb76b56ea8cdc7b871c3"
+        },
+        "flask": {
+            "version": "==0.12",
+            "hash": "sha256:7f03bb2c255452444f7265eddb51601806e5447b6f8a2d50bbc77a654a14c118"
+        },
+        "psycopg2": {
+            "version": "==2.6.2",
+            "hash": "sha256:70490e12ed9c5c818ecd85d185d363335cc8a8cbf7212e3c185431c79ff8c05c"
+        },
+        "sendgrid": {
+            "version": "==3.6.3",
+            "hash": "sha256:804cad97607c7885e302dd42754ddbee046567d1509020048e1d44d3c7024679"
+        },
+        "pyjwt": {
+            "version": "==1.4.2",
+            "hash": "sha256:99fe612dbe5f41e07124d9002c118c14f3ee703574ffa9779fee78135b8b94b6"
+        },
+        "auth0-python": {
+            "version": "==2.0.1",
+            "hash": "sha256:fa8025f3e552a0a61219799e1dffa9e81a184c1fa7c0d0e2d46be0d47425208f"
+        },
+        "SQLAlchemy": {
+            "version": "==1.1.5",
+            "hash": "sha256:68fb40049690e567ebda7b270176f5abf0d53d9fbd515fec4e43326f601119b6"
+        },
+        "Jinja2": {
+            "version": "==2.9.5",
+            "hash": "sha256:a7b7438120dbe76a8e735ef7eba6048eaf4e0b7dbc530e100812f8ec462a4d50"
+        },
+        "records": {
+            "version": "==0.5.0",
+            "hash": "sha256:035f3db7fc64aa8ae012b7148fd3bd01afa5582a35c005d742fa535a48457f9a"
+        },
+        "tablib": {
+            "version": "==0.11.4",
+            "hash": "sha256:3eed36e7d161058a487eee4a208dc5adefeb12790bb6e646fa6fcf0e353208e2"
+        },
+        "requests": {
+            "version": "==2.13.0",
+            "hash": "sha256:1a720e8862a41aa22e339373b526f508ef0c8988baf48b84d3fc891a8e237efb"
+        },
+        "itsdangerous": {
+            "version": "==0.24",
+            "hash": "sha256:cbb3fcf8d3e33df861709ecaf89d9e6629cff0a217bc2848f1b41cd30d360519"
+        },
+        "docopt": {
+            "version": "==0.6.2",
+            "hash": "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"
+        },
+        "click": {
+            "version": "==6.7",
+            "hash": "sha256:29f99fc6125fbc931b758dc053b3114e55c77a6e4c6c3a2674a2dc986016381d"
+        },
+        "raven": {
+            "version": "==5.32.0",
+            "hash": "sha256:a06517e9b7858ac41963f9741cc8358005d37511475aaa4c8b692d29ae0a7d94"
+        }
+    },
+    "develop": {},
+    "_meta": {
+        "sources": [
+            {
+                "url": "https://pypi.python.org/simple",
+                "verify_ssl": true
+            }
+        ],
+        "requires": {},
+        "hash": {
+            "sha256": "2da414b746a4cb8a81780204d9b43bab1dae45972ee878593bab2f1a476b6a33"
+        }
+    }
+}
