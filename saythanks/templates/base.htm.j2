@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/saythanks.css') }}">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.modal.min.css') }}">
      <!-- Favicon
      –––––––––––––––––––––––––––––––––––––––––––––––––– -->
      <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/owly.ico') }}">
@@ -33,7 +33,8 @@
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
      <script src="{{ url_for('static', filename='js/jquery.autogrowtextarea.min.js') }}"></script>
      <script src="{{ url_for('static', filename='js/jquery.simplyCountable.js') }}"></script>
-
+     <script src="{{ url_for('static', filename='js/jquery.modal.min.js') }}"></script>
+     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
     {% block extra_head %}
     {% endblock %}
