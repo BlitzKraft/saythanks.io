@@ -13,8 +13,19 @@
 
 {% block content %}
 
-<img class="avatar" style="border-radius: 50%;" src="{{user['picture']}}"/ width=100px;>
+<input type="hidden" id="username" value={{user['nickname']}}>
 
+<div id="badge-modal" style="display:none;">
+    <h4>The <strong>‘</strong><a>Say Thanks</a><strong>’</strong> badge<span class="green"><strong>.</strong></span></h4>
+    <select class="u-full-width" id="badge-format">
+        <option value="imageurl">Image URL</option>
+        <option value="markdown">Markdown</option>
+        <option value="rst">RST</option>
+    </select>
+    <textarea onclick="this.select()" class="u-full-width" id="badgeCode">https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg</textarea>
+</div>
+
+<img class="avatar" style="border-radius: 50%;" src="{{user['picture']}}"/ width=100px;>
 <h2>Welcome, {{ inbox.email }}!</h2>
 
 <p>
@@ -39,7 +50,7 @@
   </div>
 
   <div class="three columns" style="margin-top: 0.5em;">
-  <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">
+  <a href="#badge-modal" rel="modal:open">
       <img src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg" />
   </a>
   </div>
@@ -50,11 +61,10 @@
   </a>
   </div>
 
-<hr>
 
 </div>
 
-
+<hr>
 
 <hr>
 

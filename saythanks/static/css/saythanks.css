@@ -11,6 +11,10 @@ button {
     overflow: hidden!important;
 }
 
+#badge-modal textarea{
+  font-size: 13px;
+}
+
 @media (max-width: 775px) {
   .button {
     display: block;
