@@ -13,6 +13,7 @@ import requests
 from functools import wraps
 from flask import Flask, request, session, render_template, url_for
 from flask import abort, redirect, Markup, make_response
+from names import get_full_name
 from raven.contrib.flask import Sentry
 
 from . import storage
@@ -162,7 +163,9 @@ def display_submit_note(inbox):
         abort(404)
     elif not storage.Inbox.is_enabled(inbox):
         abort(404)
-    return render_template('submit_note.htm.j2', user=inbox)
+
+    fake_name = get_full_name()
+    return render_template('submit_note.htm.j2', user=inbox, fake_name=fake_name)
 
 
 @app.route('/note/<uuid>', methods=['GET'])
