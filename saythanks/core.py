@@ -13,6 +13,7 @@ import requests
 from functools import wraps
 from flask import Flask, request, session, render_template, url_for
 from flask import abort, redirect, Markup, make_response
+from flask_common import Common
 from names import get_full_name
 from raven.contrib.flask import Sentry
 
@@ -24,6 +25,9 @@ from . import storage
 app = Flask(__name__)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
 app.debug = True
+
+# Flask-Common.
+common = Common(app)
 
 # Sentry for catching application errors in production.
 if 'SENTRY_DSN' in os.environ:
