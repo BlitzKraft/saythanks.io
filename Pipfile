@@ -7,8 +7,9 @@ psycopg2 = "*"
 records = "*"
 docopt = "*"
 sendgrid = "*"
-auth0-python = "*"
+auth0-python = "<3.0.0"
 names = "*"
+Flask-Common = "*"
 
 [packages.raven]
 extras = [ "flask",]
