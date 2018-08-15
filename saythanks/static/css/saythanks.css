@@ -1,4 +1,13 @@
 /* The Sun icon in the header should not have an underline */
+@font-face {
+    /* HuiFont is a Japanese handwriting free font.
+       http://hp.vector.co.jp/authors/VA039499/ */
+    font-family: 'HuiFont';
+    src: url('/static/fonts/HuiFont.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
 h1 a {
     text-decoration: none;
 }
@@ -23,7 +32,7 @@ button {
 }
 
 .note {
-    font-family: 'Annie Use Your Telescope', cursive!important;
+    font-family: 'Annie Use Your Telescope', 'HuiFont', cursive!important;
     font-size: 2.35rem;
     white-space: pre-wrap!important;
 }
