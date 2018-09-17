@@ -4,7 +4,7 @@
 [![saythanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://saythanks.io/to/kennethreitz)
 
 
-**Note**: This project is in production, but your contributions are welcome!
+**If you're interested in financially supporting Kenneth Reitz open source, consider [visiting this link](https://cash.me/$KennethReitz). Your support helps tremendously with sustainability of motivation, as Open Source is no longer part of my day job.**
 
 ## Spreading Thankfulness in Open Source™
 
