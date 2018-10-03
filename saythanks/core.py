@@ -206,16 +206,9 @@ def submit_note(inbox):
     # Fetch the current inbox.
     inbox = storage.Inbox(inbox)
 
-    # Replace newlines with <br> tags.
-    body = request.form['body']
-    body = '---NEWLINE---'.join(body.split('\n'))
-
     # Strip any HTML away.
     body = Markup(body).striptags()
     byline = Markup(request.form['byline']).striptags()
-
-    # Crazy hack to get br tags preserved.
-    body = '<br>'.join(body.split('---NEWLINE---'))
 
     # Assert that the body has length.
     if not body:
