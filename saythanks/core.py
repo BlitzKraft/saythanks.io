@@ -206,6 +206,8 @@ def submit_note(inbox):
     # Fetch the current inbox.
     inbox = storage.Inbox(inbox)
 
+    body = request.form['body']
+    
     # Strip any HTML away.
     body = Markup(body).striptags()
     byline = Markup(request.form['byline']).striptags()
