@@ -161,15 +161,20 @@ def enable_inbox():
     return redirect(url_for('inbox'))
 
 
-@app.route('/to/<inbox>', methods=['GET'])
-def display_submit_note(inbox):
+@app.route('/to/<inbox>', methods=['GET'], defaults={"topic": "your project"})
+@app.route('/to/<inbox>/<topic>', methods=['GET'])
+def display_submit_note(inbox, topic):
     if not storage.Inbox.does_exist(inbox):
         abort(404)
     elif not storage.Inbox.is_enabled(inbox):
         abort(404)
 
     fake_name = get_full_name()
-    return render_template('submit_note.htm.j2', user=inbox, fake_name=fake_name)
+    return render_template(
+        'submit_note.htm.j2',
+        user=inbox,
+        topic=topic,
+        fake_name=fake_name)
 
 
 @app.route('/note/<uuid>', methods=['GET'])
