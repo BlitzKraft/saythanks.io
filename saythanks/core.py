@@ -40,6 +40,7 @@ auth_id = os.environ['AUTH0_CLIENT_ID']
 auth_secret = os.environ['AUTH0_CLIENT_SECRET']
 auth_callback_url = os.environ['AUTH0_CALLBACK_URL']
 auth_domain = os.environ['AUTH0_DOMAIN']
+auth_jwt_v2 = os.environ['AUTH0_JWT_V2_TOKEN']
 
 
 def requires_auth(f):
@@ -72,8 +73,8 @@ def inbox():
     profile = session['profile']
 
     # Grab the inbox from the database.
-    inbox = storage.Inbox(profile['nickname'])
-
+    inbox = storage.Inbox(profile['email'])
+    
     is_enabled = storage.Inbox.is_enabled(inbox.slug)
 
     is_email_enabled = storage.Inbox.is_email_enabled(inbox.slug)
@@ -90,7 +91,7 @@ def inbox_export(format):
     profile = session['profile']
 
     # Grab the inbox from the database.
-    inbox = storage.Inbox(profile['nickname'])
+    inbox = storage.Inbox(profile['email'])
 
     # Send over the list of all given notes for the user.
     response = make_response(inbox.export(format))
@@ -107,7 +108,7 @@ def archived_inbox():
     profile = session['profile']
 
     # Grab the inbox from the database.
-    inbox = storage.Inbox(profile['nickname'])
+    inbox = storage.Inbox(profile['email'])
 
     is_enabled = storage.Inbox.is_enabled(inbox.slug)
 
@@ -129,7 +130,7 @@ def thanks():
 @requires_auth
 def disable_email():
     # Auth0 stored account information.
-    slug = session['profile']['nickname']
+    slug = session['profile']['email']
     storage.Inbox.disable_email(slug)
     return redirect(url_for('inbox'))
 
@@ -138,7 +139,7 @@ def disable_email():
 @requires_auth
 def enable_email():
     # Auth0 stored account information.
-    slug = session['profile']['nickname']
+    slug = session['profile']['email']
     storage.Inbox.enable_email(slug)
     return redirect(url_for('inbox'))
 
@@ -147,7 +148,7 @@ def enable_email():
 @requires_auth
 def disable_inbox():
     # Auth0 stored account information.
-    slug = session['profile']['nickname']
+    slug = session['profile']['email']
     storage.Inbox.disable_account(slug)
     return redirect(url_for('inbox'))
 
@@ -156,7 +157,7 @@ def disable_inbox():
 @requires_auth
 def enable_inbox():
     # Auth0 stored account information.
-    slug = session['profile']['nickname']
+    slug = session['profile']['email']
     storage.Inbox.enable_account(slug)
     return redirect(url_for('inbox'))
 
@@ -167,7 +168,7 @@ def display_submit_note(inbox):
         abort(404)
     elif not storage.Inbox.is_enabled(inbox):
         abort(404)
-
+    
     fake_name = get_full_name()
     return render_template('submit_note.htm.j2', user=inbox, fake_name=fake_name)
 
@@ -228,7 +229,7 @@ def submit_note(inbox):
 
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox.slug):
-        note.notify(inbox.email)
+        note.notify(inbox.slug)
 
     return redirect(url_for('thanks'))
 
@@ -237,7 +238,7 @@ def submit_note(inbox):
 def callback_handling():
     code = request.args.get('code')
 
-    json_header = {'content-type': 'application/json'}
+    json_header = {'content-type': 'application/json', 'Authorization': 'Bearer {0}'.format(auth_jwt_v2)}
 
     token_url = 'https://{0}/oauth/token'.format(auth_domain)
     token_payload = {
@@ -246,20 +247,24 @@ def callback_handling():
         'redirect_uri': auth_callback_url,
         'code': code,
         'grant_type': 'authorization_code'
-    }
+    }    
 
     # Fetch User info from Auth0.
     token_info = requests.post(token_url, data=json.dumps(token_payload), headers=json_header).json()
     user_url = 'https://{0}/userinfo?access_token={1}'.format(auth_domain, token_info['access_token'])
     user_info = requests.get(user_url).json()
 
+    user_info_url = 'https://{0}/api/v2/users/{1}'.format(auth_domain, user_info['sub'])
+    
+    user_detail_info = requests.get(user_info_url,headers=json_header).json()
+
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
-
-    nickname = user_info['nickname']
-    userid = user_info['user_id']
-
-    if not storage.Inbox.does_exist(nickname):
+    
+    nickname = user_detail_info['nickname']
+    userid = user_info['sub']    
+    session['profile']['nickname'] = nickname
+    if not storage.Inbox.does_exist(nickname):        
         # Using nickname by default, can be changed manually later if needed.
         storage.Inbox.store(nickname, userid)
 
