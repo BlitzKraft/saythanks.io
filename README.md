@@ -1,7 +1,7 @@
 # ☼  The 'Say Thanks' Project
 
 
-[![saythanks](https://img.shields.io/badge/say-thanks-ffAA00.svg)](https://saythanks.io/to/kennethreitz)
+[![saythanks](https://img.shields.io/badge/say-thanks-modal.svg)](https://saythanks.io/to/kennethreitz)
 
 
 **If you're interested in financially supporting Kenneth Reitz open source, consider [visiting this link](https://cash.me/$KennethReitz). Your support helps tremendously with sustainability of motivation, as Open Source is no longer part of my day job.**
