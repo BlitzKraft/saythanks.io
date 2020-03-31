@@ -1,3 +1,4 @@
 tasks:
-  - init: pip3 install -r requirements.txt && psql && CREATE ROLE postgres WITH LOGIN PASSWORD 'postgres' && CREATE DATABASE saythanks && quit
-    command: python3 t.py
+  - init: pip install -r requirements.txt 
+image:
+  file: .gitpod.Dockerfile
