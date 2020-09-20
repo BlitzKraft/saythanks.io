@@ -39,3 +39,5 @@ tablib==0.11.4
 tzlocal==1.4
 Werkzeug==0.12.1
 whitenoise==3.3.0
+dded pyment
+pytest
