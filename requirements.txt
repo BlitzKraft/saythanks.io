@@ -7,7 +7,7 @@ contextlib2==0.5.5
 crayons==0.1.2
 dateparser==0.6.0
 docopt==0.6.2
-Flask==0.12.1
+Flask==1.0
 Flask-Cache==0.13.1
 Flask-Common==0.1.0
 gunicorn==19.7.1
