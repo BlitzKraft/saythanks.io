@@ -34,7 +34,7 @@ ruamel.ordereddict==0.4.9
 ruamel.yaml==0.14.11
 sendgrid==4.0.0
 six==1.10.0
-SQLAlchemy==1.1.9
+SQLAlchemy==1.3.0
 tablib==0.11.4
 tzlocal==1.4
 Werkzeug==0.12.1
