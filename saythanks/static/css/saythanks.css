@@ -2,8 +2,8 @@
 @font-face {
     /* HuiFont is a Japanese handwriting free font.
        http://hp.vector.co.jp/authors/VA039499/ */
-    font-family: 'SerendipityFont';
-    src: url('/static/fonts/SerendipityScript.woff2') format('woff2');
+    font-family: 'SerendityFont';
+    src: url('/static/fonts/SerendityScript.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
@@ -34,7 +34,7 @@ button {
 }
 
 .note {
-    font-family: 'Annie Use Your Telescope', 'SerendipityFont', cursive!important;
+    font-family: 'Annie Use Your Telescope', 'SerendityFont', cursive!important;
     font-size: 2.35rem;
     white-space: pre-wrap!important;
 }
