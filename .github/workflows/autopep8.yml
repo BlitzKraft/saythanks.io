@@ -1,5 +1,5 @@
 # This action works with pull requests and pushes
-name: Continuous Integration
+name: Python Pep8 Continuous Integration
 
 on:
   pull_request:

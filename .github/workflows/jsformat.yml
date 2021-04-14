@@ -1,4 +1,4 @@
-name: Continuous Integration for JS Formatting
+name: JS format Continuous Integration
 
 # This action works with pull requests and pushes
 on:
