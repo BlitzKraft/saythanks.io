@@ -1,22 +1,20 @@
-# ☼  The 'Say Thanks' Project
-
+# ☼ The 'Say Thanks' Project
 
 [![saythanks](https://img.shields.io/badge/say-thanks-modal.svg)](https://saythanks.io/to/kennethreitz)
-
 
 **If you're interested in financially supporting Kenneth Reitz open source, consider [visiting this link](https://cash.me/$KennethReitz). Your support helps tremendously with sustainability of motivation, as Open Source is no longer part of my day job.**
 
 ## Spreading Thankfulness in Open Source™
 
 [**saythanks.io**](https://saythanks.io/) will provide a button/link for use by open source projects, to
-encourage users to send a simple *thank you* note to the creator (or creators)
-of that project. 
+encourage users to send a simple _thank you_ note to the creator (or creators)
+of that project.
 
-This simple button/link can be added to READMEs and project documentation. 
+This simple button/link can be added to READMEs and project documentation.
 
-The author can then enjoy a nice inbox (ideally) filled with very small, 
-thoughtful messages from the happy users of the software they enjoy to 
-toil over. 
+The author can then enjoy a nice inbox (ideally) filled with very small,
+thoughtful messages from the happy users of the software they enjoy to
+toil over.
 
 ## Implementation Concepts
 
@@ -47,6 +45,6 @@ toil over.
 
 ## Oh, Thanks!
 
-By the way... thank you! And if you'd like to [say thanks](https://saythanks.io/to/kennethreitz)... :) 
+By the way... thank you! And if you'd like to [say thanks](https://saythanks.io/to/kennethreitz)... :)
 
 ✨🍰✨
