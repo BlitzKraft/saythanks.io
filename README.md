@@ -48,3 +48,7 @@ toil over.
 By the way... thank you! And if you'd like to [say thanks](https://saythanks.io/to/kennethreitz)... :)
 
 ✨🍰✨
+
+## Initial Setup for Development 
+
+- Refer to [docs](/docs/README.md)
