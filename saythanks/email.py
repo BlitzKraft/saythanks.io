@@ -30,14 +30,18 @@ def notify(note, email_address):
     """
 
     # Say 'someone' if the byline is empty.
-    who = note.byline or 'someone'
+    try:
+        who = note.byline or 'someone'
 
-    subject = 'saythanks.io: {} sent a note!'.format(who)
-    message = TEMPLATE.format(note.body, note.byline)
+        subject = 'saythanks.io: {} sent a note!'.format(who)
+        message = TEMPLATE.format(note.body, note.byline)
 
-    from_address = Email('no-reply@saythanks.io', name="SayThanks.io")
-    to_address = Email(email_address)
-    content = Content('text/plain', message)
+        from_address = Email('no-reply@saythanks.io', name="SayThanks.io")
+        to_address = Email(email_address)
+        content = Content('text/plain', message)
 
-    mail = Mail(from_address, subject, to_address, content)
-    response = sg.client.mail.send.post(request_body=mail.get())
+        mail = Mail(from_address, subject, to_address, content)
+        response = sg.client.mail.send.post(request_body=mail.get())
+
+    except Exception as ex:
+        pass
