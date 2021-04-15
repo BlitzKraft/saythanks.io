@@ -21,8 +21,13 @@ A Kenneth Reitz (me@kennethreitz.org) project.
 """
 
 
-
 def notify(note, email_address):
+    """
+
+    :param note: 
+    :param email_address: 
+
+    """
 
     # Say 'someone' if the byline is empty.
     try:
