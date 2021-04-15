@@ -90,3 +90,9 @@ available at [http://contributor-covenant.org/version/1/4][version]
 
 [homepage]: http://contributor-covenant.org
 [version]: http://contributor-covenant.org/version/1/4/
+
+
+### Suggested Changes
+
+Please take a look at the following link for ideas: 
+https://github.com/formly-js/angular-formly/blob/master/CONTRIBUTING.md
