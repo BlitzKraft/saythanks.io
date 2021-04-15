@@ -7,6 +7,7 @@ contextlib2==0.5.5
 crayons==0.1.2
 dateparser==0.6.0
 docopt==0.6.2
+flake8==3.8.3
 Flask==0.12.1
 Flask-Cache==0.13.1
 Flask-Common==0.1.0
@@ -22,6 +23,8 @@ pendulum==1.2.0
 psycopg2==2.7.1
 PyJWT==1.5.0
 pyparsing==2.2.0
+pytest==4.6.11
+pytest-cov==2.10.0
 python-dateutil==2.6.0
 python-http-client==2.2.1
 pytz==2017.2
