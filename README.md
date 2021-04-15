@@ -49,6 +49,6 @@ By the way... thank you! And if you'd like to [say thanks](https://saythanks.io/
 
 ✨🍰✨
 
-## Initial Setup for Development 
+## Initial Setup for Development
 
 - Refer to [docs](/docs/README.md)
