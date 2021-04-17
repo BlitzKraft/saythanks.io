@@ -9,3 +9,9 @@ If you want to contribute, then you want to
 ### For now, see the Word Doc file below
 
 The word doc file is available in the /docs directory
+
+
+### Conversion to Markdown File 
+
+Using https://products.aspose.app/words/conversion/word-to-md 
+
