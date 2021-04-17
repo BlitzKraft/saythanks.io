@@ -10,8 +10,6 @@ If you want to contribute, then you want to
 
 The word doc file is available in the /docs directory
 
+### Conversion to Markdown File
 
-### Conversion to Markdown File 
-
-Using https://products.aspose.app/words/conversion/word-to-md 
-
+Using https://products.aspose.app/words/conversion/word-to-md
