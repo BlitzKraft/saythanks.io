@@ -18,8 +18,10 @@ db = records.Database()
 # Note: Some of these are a little fancy (send email and such).
 # --------------
 
+
 class Note(object):
     """A generic note of thankfulness."""
+
     def __init__(self):
         self.body = None
         self.byline = None
@@ -68,7 +70,8 @@ class Note(object):
     def store(self):
         """Stores the Note instance to the database."""
         q = 'INSERT INTO notes (body, byline, inboxes_auth_id) VALUES (:body, :byline, :inbox)'
-        db.query(q, body=self.body, byline=self.byline, inbox=self.inbox.auth_id)
+        db.query(q, body=self.body, byline=self.byline,
+                 inbox=self.inbox.auth_id)
 
     def archive(self):
         q = "UPDATE notes SET archived = 't' WHERE uuid = :uuid"
@@ -78,9 +81,9 @@ class Note(object):
         myemail.notify(self, email_address)
 
 
-
 class Inbox(object):
     """A registered inbox for a given user (provided by Auth0)."""
+
     def __init__(self, slug):
         self.slug = slug
 
@@ -89,7 +92,6 @@ class Inbox(object):
         q = "SELECT * FROM inboxes WHERE slug=:inbox"
         r = db.query(q, inbox=self.slug).all()
         return r[0]['auth_id']
-
 
     @classmethod
     def is_linked(cls, auth_id):
@@ -157,7 +159,8 @@ class Inbox(object):
         q = "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'"
         r = db.query(q, auth_id=self.auth_id).all()
 
-        notes = [Note.from_inbox(self.slug, n['body'], n['byline'], n['archived'], n['uuid']) for n in r]
+        notes = [Note.from_inbox(
+            self.slug, n['body'], n['byline'], n['archived'], n['uuid']) for n in r]
         return notes[::-1]
 
     def export(self, format):
@@ -166,29 +169,12 @@ class Inbox(object):
 
         return r.export(format)
 
-
     @property
     def archived_notes(self):
         """Returns a list of archived notes, ordered reverse-chronologically."""
         q = "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 't'"
         r = db.query(q, auth_id=self.auth_id).all()
 
-        notes = [Note.from_inbox(self.slug, n['body'], n['byline'], n['archived'], n['uuid']) for n in r]
+        notes = [Note.from_inbox(
+            self.slug, n['body'], n['byline'], n['archived'], n['uuid']) for n in r]
         return notes[::-1]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
