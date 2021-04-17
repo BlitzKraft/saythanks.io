@@ -1,4 +1,3 @@
-
 ## Saythanks.io Local Development Setup User Manual
 
 **Step 1:**
@@ -7,15 +6,14 @@ To Use Ubuntu in windows, go to run and type **appwiz.cpl**
 
 ![C:\Users\dinesh.p\Pictures\My Screen Shots\Screen Shot 04-16-21 at 12.39 PM.PNG](Aspose.Words.088e8827-271b-49be-a857-24af23d20c3f.001.png)
 
-
 **Step 2:**
 
 Open Turn windows features on or off
 
 ![C:\Users\dinesh.p\Pictures\My Screen Shots\Screen Shot 04-16-21 at 12.39 PM 001.PNG](Aspose.Words.088e8827-271b-49be-a857-24af23d20c3f.002.png)
 
-- Select Windows Subsystem for linux and click ```ok```
-- Once feature is installed restart your PC. 
+- Select Windows Subsystem for linux and click `ok`
+- Once feature is installed restart your PC.
 
 **Step 3:**
 Go to windows store and search for **Ubuntu 18** and install it
@@ -33,7 +31,7 @@ On Ubuntu terminal, execute the following commands:
 
 **Step 6:**
 
-Download the source code from git repository  OR  Get the repository by using ```git clone```
+Download the source code from git repository OR Get the repository by using `git clone`
 
     git clone <https://github.com/BlitzKraft/saythanks.io.git>
 
@@ -56,12 +54,11 @@ To run the project, you need to set the following environment variables:
     \- AUTH0\_CLIENT\_SECRET
     \- AUTH0\_CALLBACK\_URL
 
-Add the above environmental variables values related to project on ```.bashrc``` file. The file location must be at ```/home/[user]/.bashrc```
+Add the above environmental variables values related to project on `.bashrc` file. The file location must be at `/home/[user]/.bashrc`
 
+The following contents must be added/appended to whatever is already there:
 
-The following contents must be added/appended to whatever is already there: 
-
-    export DATABASE\_URL="postgresql://user:password@server_ip/database_name"  
+    export DATABASE\_URL="postgresql://user:password@server_ip/database_name"
     export SENDGRID\_API\_KEY=''
     export AUTH0\_CLIENT\_ID=''
     export AUTH0\_CLIENT\_SECRET=''
@@ -70,19 +67,17 @@ The following contents must be added/appended to whatever is already there:
     export AUTH0\_JWT\_TOKEN=''
     export AUTH0\_JWT\_V2\_TOKEN=''
 
-Save and run the command ```source /home/[user]/.bashrc``` in the terminal
+Save and run the command `source /home/[user]/.bashrc` in the terminal
 
-
-**Step 9:** 
-You need to sign up with auth0 and sendgrid website to get keys. 
-
+**Step 9:**
+You need to sign up with auth0 and sendgrid website to get keys.
 
 **Step 10:**
+
 - Set your local system IP for running the application.
 - Open the t.py file from corresponding source code folder and give your local system IP and port.
 
 ![](Aspose.Words.088e8827-271b-49be-a857-24af23d20c3f.003.png)
-
 
 **Step 11:**
 
@@ -96,20 +91,17 @@ Access the application using the link received from server log.
 
 ![](Aspose.Words.088e8827-271b-49be-a857-24af23d20c3f.005.png)
 
-
-
 **Step 13:**
 
 If you need to change the source code for the project.
 
-You can go to the source code path and you can  edit by using editor like Geany or PyCharm 
+You can go to the source code path and you can edit by using editor like Geany or PyCharm
 
 or
 
 You can directly edit using vi or nano command
 
     vi t.py or nano t.py
-
 
 ## Misc
 
@@ -156,4 +148,3 @@ Below are the list of packages to be installed with respective versions (FYR):
     tzlocal==1.4
     Werkzeug==0.12.1
     whitenoise==3.3.0
-

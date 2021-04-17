@@ -1,6 +1,6 @@
 # README.md
 
-If you want to contribute, then you want to be able to 
+If you want to contribute, then you want to be able to
 
 - setup a local environment
 - run some tests
@@ -8,13 +8,9 @@ If you want to contribute, then you want to be able to
 
 ## Setting up local dev environment
 
- - See Word document file (not up-to-date)
- - Review the [markdown file](docs/Saythanks.io_localsetup_steps.md)
+- See Word document file (not up-to-date)
+- Review the [markdown file](docs/Saythanks.io_localsetup_steps.md)
 
 ### Conversion to Markdown File
 
-_NOTE:_ Conversion to markdown file version was achieved using this [online](https://products.aspose.app/words/conversion/word-to-md 
-) service
-
-
-
+_NOTE:_ Conversion to markdown file version was achieved using this [online](https://products.aspose.app/words/conversion/word-to-md) service
