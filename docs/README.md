@@ -1,17 +1,19 @@
-# Setting up local dev environment
+# README.md
 
-If you want to contribute, then you want to
+If you want to contribute, then you want to be able to 
 
 - setup a local environment
 - run some tests
 - and then do a pull request so your changes will be merged into the main repo
 
-### For now, see the Word Doc file below
+## Setting up local dev environment
 
-The word doc file is available in the /docs directory
+ - See Word document file (not up-to-date)
+ - Review the [markdown file](docs/Saythanks.io_localsetup_steps.md)
 
 
-### Conversion to Markdown File 
+_NOTE:_ Conversion to markdown file version was achieved using this [online](https://products.aspose.app/words/conversion/word-to-md 
+) service
 
-Using https://products.aspose.app/words/conversion/word-to-md 
+
 
