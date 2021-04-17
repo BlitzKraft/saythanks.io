@@ -1,4 +1,4 @@
-﻿
+
 ## Saythanks.io Local Development Setup User Manual
 
 **Step 1:**
@@ -31,12 +31,9 @@ On Ubuntu terminal, execute the following commands:
     > sudo apt install libpq-dev python3-dev
     > sudo apt install python3-pip
 
-
 **Step 6:**
 
-Download the source code from git repository  
-OR   
-Get the repository by using ```git clone```
+Download the source code from git repository  OR  Get the repository by using ```git clone```
 
     git clone <https://github.com/BlitzKraft/saythanks.io.git>
 
@@ -73,7 +70,7 @@ The following contents must be added/appended to whatever is already there:
     export AUTH0\_JWT\_TOKEN=''
     export AUTH0\_JWT\_V2\_TOKEN=''
 
-save and run the command ```source /home/[user]/.bashrc``` in the terminal
+Save and run the command ```source /home/[user]/.bashrc``` in the terminal
 
 
 **Step 9:** 
@@ -91,14 +88,11 @@ You need to sign up with auth0 and sendgrid website to get keys.
 
 Once done. Run the t.py file. You will get the link in server log.
 
-
 ![](Aspose.Words.088e8827-271b-49be-a857-24af23d20c3f.004.png)
-
 
 **Step 12:**
 
 Access the application using the link received from server log.
-
 
 ![](Aspose.Words.088e8827-271b-49be-a857-24af23d20c3f.005.png)
 
@@ -110,11 +104,11 @@ If you need to change the source code for the project.
 
 You can go to the source code path and you can  edit by using editor like Geany or PyCharm 
 
-or 
+or
 
 You can directly edit using vi or nano command
 
-vi t.py or nano t.py
+    vi t.py or nano t.py
 
 
 ## Misc
