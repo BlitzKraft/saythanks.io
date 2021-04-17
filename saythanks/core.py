@@ -44,19 +44,8 @@ auth_jwt_v2 = os.environ['AUTH0_JWT_V2_TOKEN']
 
 
 def requires_auth(f):
-    """
-
-    :param f: 
-
-    """
     @wraps(f)
     def decorated(*args, **kwargs):
-        """
-
-        :param *args: 
-        :param **kwargs: 
-
-        """
         if 'profile' not in session:
             return redirect('/')
         return f(*args, **kwargs)
@@ -70,7 +59,6 @@ def requires_auth(f):
 
 @app.route('/')
 def index():
-    """ """
     return render_template('index.htm.j2',
                            callback_url=auth_callback_url,
                            auth_id=auth_id,
@@ -80,7 +68,6 @@ def index():
 @app.route('/inbox')
 @requires_auth
 def inbox():
-    """ """
 
     # Auth0 stored account information.
     profile = session['profile']
@@ -100,11 +87,6 @@ def inbox():
 @app.route('/inbox/export/<format>')
 @requires_auth
 def inbox_export(format):
-    """
-
-    :param format: 
-
-    """
 
     # Auth0 stored account information.
     profile = session['profile']
@@ -122,7 +104,6 @@ def inbox_export(format):
 @app.route('/inbox/archived')
 @requires_auth
 def archived_inbox():
-    """ """
 
     # Auth0 stored account information.
     profile = session['profile']
@@ -141,7 +122,6 @@ def archived_inbox():
 
 @app.route('/thanks')
 def thanks():
-    """ """
     return render_template('thanks.htm.j2',
                            callback_url=auth_callback_url,
                            auth_id=auth_id,
@@ -151,7 +131,6 @@ def thanks():
 @app.route('/disable-email')
 @requires_auth
 def disable_email():
-    """ """
     # Auth0 stored account information.
     slug = session['profile']['email']
     storage.Inbox.disable_email(slug)
@@ -161,7 +140,6 @@ def disable_email():
 @app.route('/enable-email')
 @requires_auth
 def enable_email():
-    """ """
     # Auth0 stored account information.
     slug = session['profile']['email']
     storage.Inbox.enable_email(slug)
@@ -171,7 +149,6 @@ def enable_email():
 @app.route('/disable-inbox')
 @requires_auth
 def disable_inbox():
-    """ """
     # Auth0 stored account information.
     slug = session['profile']['email']
     storage.Inbox.disable_account(slug)
@@ -181,7 +158,6 @@ def disable_inbox():
 @app.route('/enable-inbox')
 @requires_auth
 def enable_inbox():
-    """ """
     # Auth0 stored account information.
     slug = session['profile']['email']
     storage.Inbox.enable_account(slug)
@@ -190,11 +166,6 @@ def enable_inbox():
 
 @app.route('/to/<inbox>', methods=['GET'])
 def display_submit_note(inbox):
-    """
-
-    :param inbox: 
-
-    """
     if not storage.Inbox.does_exist(inbox):
         abort(404)
     elif not storage.Inbox.is_enabled(inbox):
@@ -206,11 +177,6 @@ def display_submit_note(inbox):
 
 @app.route('/note/<uuid>', methods=['GET'])
 def share_note(uuid):
-    """
-
-    :param uuid: 
-
-    """
 
     # Abort if the note is not found.
     if not storage.Note.does_exist(uuid):
@@ -224,11 +190,6 @@ def share_note(uuid):
 @app.route('/inbox/archive/note/<uuid>', methods=['GET'])
 @requires_auth
 def archive_note(uuid):
-    """
-
-    :param uuid: 
-
-    """
 
     # Auth0 stored account information.
     profile = session['profile']
@@ -244,11 +205,6 @@ def archive_note(uuid):
 
 @app.route('/to/<inbox>/submit', methods=['POST'])
 def submit_note(inbox):
-    """
-
-    :param inbox: 
-
-    """
 
     # Fetch the current inbox.
     inbox = storage.Inbox(inbox)
@@ -276,7 +232,6 @@ def submit_note(inbox):
 
 @app.route('/callback')
 def callback_handling():
-    """ """
     code = request.args.get('code')
 
     json_header = {'content-type': 'application/json',
@@ -306,7 +261,8 @@ def callback_handling():
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
-    nickname = user_detail_info['nickname']
+    nickname = user_info['email']
+    #nickname = user_detail_info['nickname']
     userid = user_info['sub']
     session['profile']['nickname'] = nickname
     if not storage.Inbox.does_exist(nickname):
