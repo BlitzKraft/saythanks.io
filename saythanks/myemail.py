@@ -17,7 +17,8 @@ TEMPLATE = """{}
 
 This note of thanks was brought to you by SayThanks.io.
 
-A Kenneth Reitz project, now maintained by KGiSL Edu (info@kgisl.com)
+Originally, a Kenneth Reitz project.
+Now maintained by folks at KGiSL Edu.
 """
 
 
