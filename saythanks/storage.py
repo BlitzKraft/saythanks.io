@@ -151,7 +151,9 @@ class Inbox(object):
 
     @property
     def myemail(self):
-        return auth0.users.get(self.auth_id)['email']
+        emailinfo = auth0.users.get(self.auth_id)['email']
+        print("myemail prop", emailinfo)
+        return emailinfo 
 
     @property
     def notes(self):

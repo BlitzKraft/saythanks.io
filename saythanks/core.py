@@ -257,7 +257,12 @@ def callback_handling():
         auth_domain, user_info['sub'])
 
     user_detail_info = requests.get(user_info_url, headers=json_header).json()
-
+    #print(f"user_info:{user_info}, user_detail_info:{user_detail_info}")
+    print("user_url", user_url)
+    print("user_info_url", user_info_url)
+    print(f"user_info: {user_info}")
+    print(f"user_detail_info: {user_detail_info}")
+    
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
