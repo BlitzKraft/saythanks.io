@@ -266,8 +266,8 @@ def callback_handling():
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
-    nickname = user_info['email']
-    #nickname = user_detail_info['nickname']
+    #nickname = user_info['email']
+    nickname = user_detail_info['nickname']
     userid = user_info['sub']
     session['profile']['nickname'] = nickname
     if not storage.Inbox.does_exist(nickname):
