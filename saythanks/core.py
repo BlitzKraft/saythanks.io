@@ -269,7 +269,10 @@ def callback_handling():
     #nickname = user_info['email']
     nickname = user_detail_info['nickname']
     userid = user_info['sub']
+    picture = user_detail_info['picture']
     session['profile']['nickname'] = nickname
+    session['profile']['picture'] = picture
+    
     if not storage.Inbox.does_exist(nickname):
         # Using nickname by default, can be changed manually later if needed.
         storage.Inbox.store(nickname, userid)
