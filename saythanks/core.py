@@ -275,7 +275,7 @@ def callback_handling():
     picture = user_detail_info['picture']
     session['profile']['nickname'] = nickname
     session['profile']['picture'] = picture
-    
+
     if not storage.Inbox.does_exist(nickname):
         # Using nickname by default, can be changed manually later if needed.
         storage.Inbox.store(nickname, userid)
