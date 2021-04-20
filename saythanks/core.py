@@ -205,7 +205,7 @@ def archive_note(uuid):
 
 @app.route('/to/<inbox>/submit', methods=['POST'])
 def submit_note(inbox):
-
+    print("inside app.route Submit_note")
     # Fetch the current inbox.
     inbox = storage.Inbox(inbox)
 
@@ -223,9 +223,12 @@ def submit_note(inbox):
     # Store the incoming note to the database.
     note = inbox.submit_note(body=body, byline=byline)
 
+    # print(inbox.slug, session['profile']['email'])
+    email_address = session['profile']['email']
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox.slug):
-        note.notify(inbox.slug)
+        note.notify(email_address)
+        # note.notify(inbox.slug)
 
     return redirect(url_for('thanks'))
 

@@ -78,6 +78,7 @@ class Note(object):
         db.query(q, uuid=self.uuid)
 
     def notify(self, email_address):
+        print("calling sendgrid with", email_address)
         myemail.notify(self, email_address)
 
 
@@ -116,7 +117,10 @@ class Inbox(object):
     def is_email_enabled(cls, slug):
         q = 'SELECT email_enabled FROM inboxes where slug = :slug'
         r = db.query(q, slug=slug).all()
-        return bool(r[0]['email_enabled'])
+        try:
+            return bool(r[0]['email_enabled'])
+        except:
+            return False
 
     @classmethod
     def disable_email(cls, slug):
@@ -132,7 +136,10 @@ class Inbox(object):
     def is_enabled(cls, slug):
         q = 'SELECT enabled FROM inboxes where slug = :slug'
         r = db.query(q, slug=slug).all()
-        return bool(r[0]['enabled'])
+        try:
+            return bool(r[0]['enabled'])
+        except:
+            return False
 
     @classmethod
     def disable_account(cls, slug):
@@ -152,8 +159,8 @@ class Inbox(object):
     @property
     def myemail(self):
         return auth0.users.get(self.auth_id)['email']
-        #emailinfo = auth0.users.get(self.auth_id)['email']
-        #print("myemail prop",emailinfo)
+        # emailinfo = auth0.users.get(self.auth_id)['email']
+        # print("myemail prop",emailinfo)
         # return emailinfo
 
     @property
@@ -161,6 +168,8 @@ class Inbox(object):
         """Returns a list of notes, ordered reverse-chronologically."""
         q = "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'"
         r = db.query(q, auth_id=self.auth_id).all()
+
+        print("all notes", len(r))
 
         notes = [Note.from_inbox(
             self.slug, n['body'], n['byline'], n['archived'], n['uuid']) for n in r]
