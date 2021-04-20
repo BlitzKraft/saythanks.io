@@ -119,9 +119,9 @@ class Inbox(object):
         r = db.query(q, slug=slug).all()
         try:
             return bool(r[0]['email_enabled'])
-        except: 
+        except:
             return False
-        
+
     @classmethod
     def disable_email(cls, slug):
         q = 'update inboxes set email_enabled = false where slug = :slug'
@@ -136,9 +136,9 @@ class Inbox(object):
     def is_enabled(cls, slug):
         q = 'SELECT enabled FROM inboxes where slug = :slug'
         r = db.query(q, slug=slug).all()
-        try: 
+        try:
             return bool(r[0]['enabled'])
-        except: 
+        except:
             return False
 
     @classmethod

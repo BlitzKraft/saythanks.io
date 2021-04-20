@@ -281,4 +281,3 @@ def callback_handling():
         storage.Inbox.store(nickname, userid)
 
     return redirect(url_for('inbox'))
-
