@@ -73,7 +73,7 @@ def inbox():
     profile = session['profile']
 
     # Grab the inbox from the database.
-    inbox = storage.Inbox(profile['email'])
+    inbox = storage.Inbox(profile['nickname'])
 
     is_enabled = storage.Inbox.is_enabled(inbox.slug)
 
@@ -208,7 +208,6 @@ def submit_note(inbox):
     print("inside app.route Submit_note")
     # Fetch the current inbox.
     inbox = storage.Inbox(inbox)
-
     body = request.form['body']
 
     # Strip any HTML away.
@@ -223,12 +222,14 @@ def submit_note(inbox):
     # Store the incoming note to the database.
     note = inbox.submit_note(body=body, byline=byline)
 
-    # print(inbox.slug, session['profile']['email'])
-    email_address = session['profile']['email']
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox.slug):
+        #note.notify(email_address)
+        if session:
+            email_address = session['profile']['email']
+        else:
+            email_address = storage.Inbox.get_email(inbox.slug)
         note.notify(email_address)
-        # note.notify(inbox.slug)
 
     return redirect(url_for('thanks'))
 
@@ -271,13 +272,13 @@ def callback_handling():
 
     #nickname = user_info['email']
     nickname = user_detail_info['nickname']
+    email = user_detail_info['email']
     userid = user_info['sub']
     picture = user_detail_info['picture']
     session['profile']['nickname'] = nickname
     session['profile']['picture'] = picture
-
     if not storage.Inbox.does_exist(nickname):
         # Using nickname by default, can be changed manually later if needed.
-        storage.Inbox.store(nickname, userid)
+        storage.Inbox.store(nickname, userid,email)
 
     return redirect(url_for('inbox'))

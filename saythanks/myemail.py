@@ -24,6 +24,7 @@ A KennethReitz project, now maintained by KGiSL Edu (info@kgisl.com).
 def notify(note, email_address):
 
     # Say 'someone' if the byline is empty.
+    print(email_address,'ppppppppppppppp')
     try:
         who = note.byline or 'someone'
 
