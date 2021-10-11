@@ -43,11 +43,6 @@ toil over.
 - [Say Thanks for Package Control](https://packagecontrol.io/say_thanks)
 - [Random 'Thanks' Issue on GH](https://github.com/foxmask/wallabag_api/issues/1)
 
-## Oh, Thanks!
-
-By the way... thank you! And if you'd like to [say thanks](https://saythanks.io/to/kennethreitz)... :)
-
-✨🍰✨
 
 ## Initial Setup for Development
 
