@@ -43,7 +43,6 @@ toil over.
 - [Say Thanks for Package Control](https://packagecontrol.io/say_thanks)
 - [Random 'Thanks' Issue on GH](https://github.com/foxmask/wallabag_api/issues/1)
 
-
 ## Initial Setup for Development
 
 - Refer to [docs](/docs/README.md)
