@@ -6,15 +6,11 @@
 
 ## Spreading Thankfulness in Open Source™
 
-[**saythanks.io**](https://saythanks.io/) will provide a button/link for use by open source projects, to
-encourage users to send a simple _thank you_ note to the creator (or creators)
-of that project.
+[**saythanks.io**](https://saythanks.io/) will provide a button/link for use by open source projects, to encourage users to send a simple _thank you_ note to the creator (or creators) of that project.
 
 This simple button/link can be added to READMEs and project documentation.
 
-The author can then enjoy a nice inbox (ideally) filled with very small,
-thoughtful messages from the happy users of the software they enjoy to
-toil over.
+The author can then enjoy a nice inbox (ideally) filled with very small, thoughtful messages from the happy users of the software they enjoy to toil over.
 
 ## Implementation Concepts
 
@@ -42,7 +38,6 @@ toil over.
 
 - [Say Thanks for Package Control](https://packagecontrol.io/say_thanks)
 - [Random 'Thanks' Issue on GH](https://github.com/foxmask/wallabag_api/issues/1)
-
 
 ## Initial Setup for Development
 
