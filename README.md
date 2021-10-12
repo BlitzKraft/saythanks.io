@@ -1,8 +1,6 @@
 # ☼ The 'Say Thanks' Project
 
-[![saythanks](https://img.shields.io/badge/say-thanks-modal.svg)](https://saythanks.io/to/kennethreitz)
-
-**If you're interested in financially supporting Kenneth Reitz open source, consider [visiting this link](https://cash.me/$KennethReitz). Your support helps tremendously with sustainability of motivation, as Open Source is no longer part of my day job.**
+[![saythanks](https://img.shields.io/badge/say-thanks-modal.svg)](https://saythanks.io/to/lifebalance)
 
 ## Spreading Thankfulness in Open Source™
 
@@ -16,13 +14,13 @@ The author can then enjoy a nice inbox (ideally) filled with very small, thought
 
 ### ☤ The Basics
 
-- Email when a new message of thankfulness is submitted (csrf enabled).
+- Email when a new message of thankfulness is submitted ([csrf](https://en.wikipedia.org/wiki/Cross-site_request_forgery) enabled).
 - Inbox page for each user/project with simple aggregation of messages (private).
 
 ### ☤ The Architecture
 
 - Flask for API and Frontend, single application
-- Auth0 for credential storage (in progress)
+- Auth0 for credential storage (done, Auth2 in progress)
 - Heroku for Hosting (done!)
 - CloudFlare for SSL termination (done!)
 - GitHub account creation, as well as passwordless email accounts
