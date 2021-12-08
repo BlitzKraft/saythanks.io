@@ -92,7 +92,7 @@ def inbox_export(format):
     profile = session['profile']
 
     # Grab the inbox from the database.
-    inbox = storage.Inbox(profile['email'])
+    inbox = storage.Inbox(profile['nickname'])
 
     # Send over the list of all given notes for the user.
     response = make_response(inbox.export(format))
@@ -109,7 +109,7 @@ def archived_inbox():
     profile = session['profile']
 
     # Grab the inbox from the database.
-    inbox = storage.Inbox(profile['email'])
+    inbox = storage.Inbox(profile['nickname'])
 
     is_enabled = storage.Inbox.is_enabled(inbox.slug)
 
