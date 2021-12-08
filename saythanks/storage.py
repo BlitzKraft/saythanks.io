@@ -157,7 +157,7 @@ class Inbox(object):
         return note
     @classmethod
     def get_email(cls, slug):
-        print(slug,'ppppp')
+        print(slug,'email')
         q = 'SELECT email FROM inboxes where slug = :slug'
         r = db.query(q, slug=slug).all()
         return r[0]['email']
