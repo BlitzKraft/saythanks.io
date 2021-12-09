@@ -224,7 +224,7 @@ def submit_note(inbox):
 
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox.slug):
-        #note.notify(email_address)
+        # note.notify(email_address)
         if session:
             email_address = session['profile']['email']
         else:
@@ -281,6 +281,6 @@ def callback_handling():
     session['profile']['name'] = name
     if not storage.Inbox.does_exist(nickname):
         # Using nickname by default, can be changed manually later if needed.
-        storage.Inbox.store(nickname, userid,email)
+        storage.Inbox.store(nickname, userid, email)
 
     return redirect(url_for('inbox'))

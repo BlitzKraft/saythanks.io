@@ -101,7 +101,7 @@ class Inbox(object):
         return bool(len(r))
 
     @classmethod
-    def store(cls, slug, auth_id,email):
+    def store(cls, slug, auth_id, email):
         q = 'INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)'
         r = db.query(q, slug=slug, auth_id=auth_id, email=email)
 
@@ -155,9 +155,10 @@ class Inbox(object):
         note = Note.from_inbox(self.slug, body, byline)
         note.store()
         return note
+
     @classmethod
     def get_email(cls, slug):
-        print(slug,'email')
+        print(slug, 'email')
         q = 'SELECT email FROM inboxes where slug = :slug'
         r = db.query(q, slug=slug).all()
         return r[0]['email']
