@@ -8,7 +8,7 @@ from . import myemail
 
 # Auth0 API Client
 auth0_domain = os.environ['AUTH0_DOMAIN']
-auth0_token = os.environ['AUTH0_JWT_TOKEN']
+auth0_token = os.environ['AUTH0_JWT_V2_TOKEN']
 auth0 = Auth0(auth0_domain, auth0_token)
 
 # Database connection.
@@ -101,9 +101,9 @@ class Inbox(object):
         return bool(len(r))
 
     @classmethod
-    def store(cls, slug, auth_id):
-        q = 'INSERT into inboxes (slug, auth_id) VALUES (:slug, :auth_id)'
-        r = db.query(q, slug=slug, auth_id=auth_id)
+    def store(cls, slug, auth_id,email):
+        q = 'INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)'
+        r = db.query(q, slug=slug, auth_id=auth_id, email=email)
 
         return cls(slug)
 
@@ -155,6 +155,12 @@ class Inbox(object):
         note = Note.from_inbox(self.slug, body, byline)
         note.store()
         return note
+    @classmethod
+    def get_email(cls, slug):
+        print(slug,'email')
+        q = 'SELECT email FROM inboxes where slug = :slug'
+        r = db.query(q, slug=slug).all()
+        return r[0]['email']
 
     @property
     def myemail(self):
