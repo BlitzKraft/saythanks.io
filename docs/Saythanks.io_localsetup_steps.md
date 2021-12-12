@@ -85,5 +85,6 @@
 
 - It will automatically open the project in Visual Source Code (VSC)
 
-### Congratulations for having setup your own local development environment for saythanks.io!  
-  - Godspeed!
+### Congratulations for having setup your own local development environment for saythanks.io!
+
+- Godspeed!
