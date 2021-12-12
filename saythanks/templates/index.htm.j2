@@ -52,7 +52,7 @@
               }
             }
 
-            var options_singin = {
+            var options_signin = {
               theme: {
                 logo: '{{ url_for('static', filename='images/owly.svg') }}',
                 primaryColor: '#3ac025'
@@ -67,7 +67,7 @@
               }
             }
             var lock1 = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options_signup);
-            var lock2 = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options_singin);
+            var lock2 = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options_signin);
         </script>
 
 

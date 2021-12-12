@@ -22,8 +22,9 @@ The author can then enjoy a nice inbox (ideally) filled with very small, thought
 - Flask for API and Frontend, single application
 - Auth0 for credential storage (done, Auth2 in progress)
 - Heroku for Hosting (done!)
+  - now hosted at [KGiSL](https://www.kgisl.com)
 - CloudFlare for SSL termination (done!)
-- GitHub account creation, as well as passwordless email accounts
+- GitHub account creation, as well as password-less email accounts
 
 ## Intended Collaborators
 
