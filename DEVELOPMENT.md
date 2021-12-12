@@ -1,6 +1,6 @@
 ## Development Guide
 
-See [setup file](/home/kgashok/saythanks.io/docs/saythanks_development.md)
+See [setup file](docs/saythanks_development.md)
 
 
 ### ☤ Variable Enviroments
