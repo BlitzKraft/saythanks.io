@@ -76,14 +76,14 @@
 
 21. To Configure development environment in Visual Source Code:
 
-- Go to powershell - > and then Type 
+- Go to powershell - > and then Type
 - > **wsl**
 - Go to saythanks folder (Refer below image) -> and then Type
 - > `code .`
 
   > ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.011.jpeg)
+
 - It will automatically open the project in Visual Source Code (VSC)
 
-Congratulations for having setup your own local development environment for saythanks.io! 
-Godspeed! 
-
+Congratulations for having setup your own local development environment for saythanks.io!
+Godspeed!
