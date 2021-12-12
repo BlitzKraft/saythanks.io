@@ -1,150 +1,93 @@
-## Saythanks.io Local Development Setup User Manual
+﻿**Saythanks.io Local Setup User Manual**
 
-**Step 1:**
+1. Go to run (Windows + R) and type **appwiz.cpl**
 
-To Use Ubuntu in windows, go to run and type **appwiz.cpl**
+![C:\Users\dinesh.p\Pictures\My Screen Shots\Screen Shot 04-16-21 at 12.39 PM.PNG](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.001.png)
 
-![C:\Users\dinesh.p\Pictures\My Screen Shots\Screen Shot 04-16-21 at 12.39 PM.PNG](Aspose.Words.088e8827-271b-49be-a857-24af23d20c3f.001.png)
+1. Click Turn windows features on or off in the left hand side menu
+1. Check “Windows subsystem for Linux” and click ok, After the successful installation restart your PC
 
-**Step 2:**
+![C:\Users\dinesh.p\Pictures\My Screen Shots\Screen Shot 04-16-21 at 12.39 PM 001.PNG](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.002.png)
 
-Open Turn windows features on or off
+1. Go to windows store and search for **Ubuntu 18** and install
 
-![C:\Users\dinesh.p\Pictures\My Screen Shots\Screen Shot 04-16-21 at 12.39 PM 001.PNG](Aspose.Words.088e8827-271b-49be-a857-24af23d20c3f.002.png)
+![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.003.jpeg)
 
-- Select Windows Subsystem for linux and click `ok`
-- Once feature is installed restart your PC.
+1. During first run on Ubuntu, configure the user name and password
+1. Execute below commands:
 
-**Step 3:**
-Go to windows store and search for **Ubuntu 18** and install it
+- **sudo apt update**
+- **sudo apt install libpq-dev python3-dev**
+- **sudo apt install python3-pip**
 
-**Step 4:**
-ON Ubuntu for Windows, during first run on UBUNTU give user name and password
+1. Get the repository by using below command:
 
-**Step 5:**
+` `**git clone [https://github.com/BlitzKraft/saythanks.io.git**](https://github.com/BlitzKraft/saythanks.io.git)\*\*
 
-On Ubuntu terminal, execute the following commands:
+1. Go inside the saythanks.io folder (**cd saythanks.io)** and install the required packages by using below command:
 
-    > sudo apt update
-    > sudo apt install libpq-dev python3-dev
-    > sudo apt install python3-pip
+` `**pip3 install -r requirements.txt**
 
-**Step 6:**
+1. Go to Auth0 login website - https://auth0.com/docs/login
 
-Download the source code from git repository OR Get the repository by using `git clone`
+![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.004.png)
 
-    git clone <https://github.com/BlitzKraft/saythanks.io.git>
+1. ` `Click Applications in the left hand side menu - > Applications - > Create Application - > Regular Web Applications -> Create
 
-**Step 7:**
+\*\*
 
-In command prompt, go inside the saythanks.io folder and install the required packages by using the following command
+` `**![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.005.png)**
 
-    pip3 install -r requirements.txt
+1. Open “Saythanks” application (Regular web applications) to get the below keys:
+   \*\*
 
-**Step 8:**
+` `**![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.006.png)**
 
-To run the project, you need to set the following environment variables:
+1. And add Call back URL as below (in the same page) and click “**Save**”:
 
-    \- SENDGRID\_API\_KEY
-    \- DATABASE\_URL
-    \- SENTRY\_DSN
-    \- AUTH0\_DOMAIN
-    \- AUTH0\_JWT\_TOKEN
-    \- AUTH0\_CLIENT\_ID
-    \- AUTH0\_CLIENT\_SECRET
-    \- AUTH0\_CALLBACK\_URL
+` `**![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.007.png)**
 
-Add the above environmental variables values related to project on `.bashrc` file. The file location must be at `/home/[user]/.bashrc`
+1. Click APIs in Applications (Refer below image )and Create API
 
-The following contents must be added/appended to whatever is already there:
+` `**![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.008.png)**
 
-    export DATABASE\_URL="postgresql://user:password@server_ip/database_name"
-    export SENDGRID\_API\_KEY=''
-    export AUTH0\_CLIENT\_ID=''
-    export AUTH0\_CLIENT\_SECRET=''
-    export AUTH0\_CALLBACK\_URL=''
-    export AUTH0\_DOMAIN=''
-    export AUTH0\_JWT\_TOKEN=''
-    export AUTH0\_JWT\_V2\_TOKEN=''
+1. Click Auth0 Management API - > API Explorer - > Copy Token
 
-Save and run the command `source /home/[user]/.bashrc` in the terminal
+1. \*\* Go to <https://app.sendgrid.com>
 
-**Step 9:**
-You need to sign up with auth0 and sendgrid website to get keys.
+1. ` `Create and get API Key as mentioned below:
 
-**Step 10:**
+` `**![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.009.jpeg)**
 
-- Set your local system IP for running the application.
-- Open the t.py file from corresponding source code folder and give your local system IP and port.
+1. Add environmental variables values related to project on .bashrc file (file located on /home/[user]/.bashrc) as below:
 
-![](Aspose.Words.088e8827-271b-49be-a857-24af23d20c3f.003.png)
+export DATABASE_URL="postgresql://user:pwd@server_ip/database_name"
 
-**Step 11:**
+export SENDGRID_API_KEY=''
 
-Once done. Run the t.py file. You will get the link in server log.
+export AUTH0_CLIENT_ID=''
 
-![](Aspose.Words.088e8827-271b-49be-a857-24af23d20c3f.004.png)
+export AUTH0_CLIENT_SECRET=
 
-**Step 12:**
+export AUTH0_CALLBACK_URL='http://localhost:5000/callback'
 
-Access the application using the link received from server log.
+export AUTH0_DOMAIN=''
 
-![](Aspose.Words.088e8827-271b-49be-a857-24af23d20c3f.005.png)
+export AUTH0_JWT_V2_TOKEN=''
 
-**Step 13:**
+1. Go to “<https://www.enterprisedb.com/downloads/postgres-postgresql-downloads>” , download and install the required version of “Postgres”
 
-If you need to change the source code for the project.
+1. Go inside “Postgres” installation path
 
-You can go to the source code path and you can edit by using editor like Geany or PyCharm
+1. Configure password and create database in “Postgres” (Refer below image):
 
-or
+` `**![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.010.jpeg)**
 
-You can directly edit using vi or nano command
+1. Download the schema.sql file from the link : “<https://github.com/BlitzKraft/saythanks.io/tree/master/saythanks/sqls>” and paste it in required local drive
 
-    vi t.py or nano t.py
+1. To Configure development environment in Visual Source Code:
 
-## Misc
+- **Go to powershell - > Type wsl**
+- **Go to saythanks folder (Refer below image) -> Type “code .” – It will automatically open the project in visual studio code**
 
-Below are the list of packages to be installed with respective versions (FYR):
-
-    appdirs==1.4.3
-    auth0-python==2.0.1
-    blinker==1.4
-    click==6.7
-    colorama==0.3.9
-    contextlib2==0.5.5
-    crayons==0.1.2
-    dateparser==0.6.0
-    docopt==0.6.2
-    Flask==0.12.1
-    Flask-Cache==0.13.1
-    Flask-Common==0.1.0
-    gunicorn==19.7.1
-    humanize==0.5.1
-    itsdangerous==0.24
-    Jinja2==2.9.6
-    MarkupSafe==1.0
-    maya==0.1.8
-    names==0.3.0
-    packaging==16.8
-    pendulum==1.2.0
-    psycopg2==2.7.1
-    PyJWT==1.5.0
-    pyparsing==2.2.0
-    python-dateutil==2.6.0
-    python-http-client==2.2.1
-    pytz==2017.2
-    pytzdata==2017.2
-    raven==6.0.0
-    records==0.5.0
-    regex==2017.4.29
-    requests==2.13.0
-    ruamel.ordereddict==0.4.9
-    ruamel.yaml==0.14.11
-    sendgrid==4.0.0
-    six==1.10.0
-    SQLAlchemy==1.1.9
-    tablib==0.11.4
-    tzlocal==1.4
-    Werkzeug==0.12.1
-    whitenoise==3.3.0
+` `**![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.011.jpeg)**
