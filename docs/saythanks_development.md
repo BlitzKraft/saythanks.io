@@ -1,4 +1,4 @@
-﻿**Development Environment Setup Guide**
+﻿**Development Environment Setup Guide for Windows OS**
 
 1. Go to run (Windows + R) and type **appwiz.cpl**
 
