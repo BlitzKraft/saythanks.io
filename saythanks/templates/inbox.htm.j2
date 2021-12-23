@@ -49,6 +49,7 @@
   </a>
   </div>
 
+  
   <div class="three columns" style="margin-top: 0.5em;">
   <a href="#badge-modal" rel="modal:open">
       <img src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg" />
@@ -61,6 +62,9 @@
   </a>
   </div>
 
+  <div style="text-align: right; margin-top: -3em; ">  
+     <img src="{{ qrcode(request.base_url[0:-6] + url_for('display_submit_note', inbox=user['nickname']))}}" width="100px">
+  </div>
 
 </div>
 
