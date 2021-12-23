@@ -16,13 +16,14 @@ from flask import abort, redirect, Markup, make_response
 from flask_common import Common
 from names import get_full_name
 from raven.contrib.flask import Sentry
-
+from flask_qrcode import QRcode
 from . import storage
 
 # Application Basics
 # ------------------
 
 app = Flask(__name__)
+QRcode(app)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
 app.debug = True
 
