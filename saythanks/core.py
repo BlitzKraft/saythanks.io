@@ -182,7 +182,7 @@ def display_submit_note(inbox):
 
 @app.route('/note/<uuid>', methods=['GET'])
 def share_note(uuid):
-
+    """Share and display the note via an unique URL."""
     # Abort if the note is not found.
     if not storage.Note.does_exist(uuid):
         abort(404)
