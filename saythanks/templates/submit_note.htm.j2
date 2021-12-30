@@ -51,6 +51,16 @@
   countType: 'words',
   countDirection: 'up'
 });
+
+input = document.getElementById("byline");
+
+input.addEventListener("keyup", function(event) {
+   if (event.keyCode === 13 && event.ctrlKey) {    
+    event.preventDefault();
+    document.getElementById("submit").click();
+  }
+});
+
 </script>
 
 
