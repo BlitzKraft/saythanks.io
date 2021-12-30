@@ -69,7 +69,8 @@ class Note(object):
 
     def store(self):
         """Stores the Note instance to the database."""
-        q = 'INSERT INTO notes (body, byline, inboxes_auth_id) VALUES (:body, :byline, :inbox)'
+        q = 'INSERT INTO notes (body, byline, inboxes_auth_id)' + \
+        'VALUES (:body, :byline, :inbox)'
         db.query(q, body=self.body, byline=self.byline,
                  inbox=self.inbox.auth_id)
 
