@@ -82,8 +82,8 @@ def inbox():
 
     # Send over the list of all given notes for the user.
     return render_template('inbox.htm.j2',
-                           user=profile, notes=inbox.notes, 
-                           inbox=inbox, is_enabled=is_enabled, 
+                           user=profile, notes=inbox.notes,
+                           inbox=inbox, is_enabled=is_enabled,
                            is_email_enabled=is_email_enabled)
 
 
@@ -120,8 +120,8 @@ def archived_inbox():
 
     # Send over the list of all given notes for the user.
     return render_template('inbox_archived.htm.j2',
-                           user=profile, notes=inbox.archived_notes, 
-                           inbox=inbox, is_enabled=is_enabled, 
+                           user=profile, notes=inbox.archived_notes,
+                           inbox=inbox, is_enabled=is_enabled,
                            is_email_enabled=is_email_enabled)
 
 
