@@ -275,7 +275,7 @@ def callback_handling():
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
-    #nickname = user_info['email']
+    # nickname = user_info['email']
     nickname = user_detail_info['nickname']
     email = user_detail_info['email']
     userid = user_info['sub']
