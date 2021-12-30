@@ -210,7 +210,7 @@ def archive_note(uuid):
 
 @app.route('/to/<inbox>/submit', methods=['POST'])
 def submit_note(inbox):
-    print("inside app.route Submit_note")
+    """Store note in database and send a copy to user's email."""
     # Fetch the current inbox.
     inbox = storage.Inbox(inbox)
     body = request.form['body']
