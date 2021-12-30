@@ -195,7 +195,7 @@ def share_note(uuid):
 @app.route('/inbox/archive/note/<uuid>', methods=['GET'])
 @requires_auth
 def archive_note(uuid):
-
+    """Set aside the note by moving it into an archive."""
     # Auth0 stored account information.
     profile = session['profile']
 
