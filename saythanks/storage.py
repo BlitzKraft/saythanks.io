@@ -79,7 +79,6 @@ class Note(object):
         db.query(q, uuid=self.uuid)
 
     def notify(self, email_address):
-        print("calling sendgrid with", email_address)
         myemail.notify(self, email_address)
 
 
