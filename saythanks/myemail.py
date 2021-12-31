@@ -26,9 +26,9 @@ A KennethReitz project, now maintained by KGiSL Edu (info@kgisl.com).
 
 
 def notify(note, email_address):
-
-    # Say 'someone' if the byline is empty.
+    """Use the note, an email template and sendgrid to deliver email to user."""
     try:
+        # Say 'someone' if the byline is empty.
         who = note.byline or 'someone'
 
         subject = 'saythanks.io: {} sent a note!'.format(who)
