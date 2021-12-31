@@ -99,7 +99,8 @@
           } else {
             changeCountableValue(content.substring(0, options.maxCount));
           }
-          (count = 0), (revCount = options.maxCount);
+          count = 0;
+          revCount = options.maxCount;
         }
 
         counter.text(numberFormat(countInt()));
