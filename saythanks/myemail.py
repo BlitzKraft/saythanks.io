@@ -5,7 +5,7 @@ from sendgrid.helpers.mail import Email, Content, Mail
 from . import exceptions
 from urllib.error import URLError
 # from python_http_client.exceptions import HTTPError
-# import http.client 
+# import http.client
 
 # Email Infrastructure
 # --------------------
@@ -41,14 +41,14 @@ def notify(note, email_address):
         mail = Mail(from_address, subject, to_address, content)
         response = sg.client.mail.send.post(request_body=mail.get())
 
-    except exceptions.HTTPError as e: 
+    except exceptions.HTTPError as e:
         print(e.to_dict)
-    except URLError as e: 
+    except URLError as e:
         print(e)
-    
+
     # Other options that were ineffective
-    # 
+    #
     # except http.client.HTTPException as e:
     #    print(e.to_dict)
-    # except Exception as e: 
+    # except Exception as e:
     #    print(e)
