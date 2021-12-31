@@ -183,11 +183,11 @@ class Inbox(object):
             self.slug, n['body'], n['byline'], n['archived'], n['uuid']) for n in r]
         return notes[::-1]
 
-    def export(self, format):
+    def export(self, file_format):
         q = "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'"
         r = db.query(q, auth_id=self.auth_id)
 
-        return r.export(format)
+        return r.export(file_format)
 
     @property
     def archived_notes(self):
