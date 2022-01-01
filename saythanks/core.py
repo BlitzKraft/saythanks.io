@@ -74,29 +74,31 @@ def inbox():
     profile = session['profile']
 
     # Grab the inbox from the database.
-    inbox = storage.Inbox(profile['nickname'])
+    inbox_db = storage.Inbox(profile['nickname'])
 
-    is_enabled = storage.Inbox.is_enabled(inbox.slug)
+    is_enabled = storage.Inbox.is_enabled(inbox_db.slug)
 
-    is_email_enabled = storage.Inbox.is_email_enabled(inbox.slug)
+    is_email_enabled = storage.Inbox.is_email_enabled(inbox_db.slug)
 
     # Send over the list of all given notes for the user.
     return render_template('inbox.htm.j2',
-                           user=profile, notes=inbox.notes, inbox=inbox, is_enabled=is_enabled, is_email_enabled=is_email_enabled)
+                           user=profile, notes=inbox_db.notes,
+                           inbox=inbox_db, is_enabled=is_enabled,
+                           is_email_enabled=is_email_enabled)
 
 
 @app.route('/inbox/export/<format>')
 @requires_auth
-def inbox_export(format):
+def inbox_export(file_format):
 
     # Auth0 stored account information.
     profile = session['profile']
 
     # Grab the inbox from the database.
-    inbox = storage.Inbox(profile['nickname'])
+    inbox_db = storage.Inbox(profile['nickname'])
 
     # Send over the list of all given notes for the user.
-    response = make_response(inbox.export(format))
+    response = make_response(inbox_db.export(file_format))
     response.headers['Content-Disposition'] = 'attachment; filename=saythanks-inbox.csv'
     response.headers['Content-type'] = 'text/csv'
     return response
@@ -110,15 +112,17 @@ def archived_inbox():
     profile = session['profile']
 
     # Grab the inbox from the database.
-    inbox = storage.Inbox(profile['nickname'])
+    inbox_db = storage.Inbox(profile['nickname'])
 
-    is_enabled = storage.Inbox.is_enabled(inbox.slug)
+    is_enabled = storage.Inbox.is_enabled(inbox_db.slug)
 
-    is_email_enabled = storage.Inbox.is_email_enabled(inbox.slug)
+    is_email_enabled = storage.Inbox.is_email_enabled(inbox_db.slug)
 
     # Send over the list of all given notes for the user.
     return render_template('inbox_archived.htm.j2',
-                           user=profile, notes=inbox.archived_notes, inbox=inbox, is_enabled=is_enabled, is_email_enabled=is_email_enabled)
+                           user=profile, notes=inbox_db.archived_notes,
+                           inbox=inbox_db, is_enabled=is_enabled,
+                           is_email_enabled=is_email_enabled)
 
 
 @app.route('/thanks')
@@ -165,7 +169,8 @@ def enable_inbox():
     return redirect(url_for('inbox'))
 
 
-@app.route('/to/<inbox>', methods=['GET'])
+@app.route('/to/<inbox>', methods=['GET'], defaults={"topic": "your project"})
+@app.route('/to/<inbox>/<topic>', methods=['GET'])
 def display_submit_note(inbox):
     if not storage.Inbox.does_exist(inbox):
         abort(404)
@@ -173,12 +178,16 @@ def display_submit_note(inbox):
         abort(404)
 
     fake_name = get_full_name()
-    return render_template('submit_note.htm.j2', user=inbox, fake_name=fake_name)
+    return render_template(
+        'submit_note.htm.j2',
+        user=inbox,
+        topic=topic,
+        fake_name=fake_name)
 
 
 @app.route('/note/<uuid>', methods=['GET'])
 def share_note(uuid):
-
+    """Share and display the note via an unique URL."""
     # Abort if the note is not found.
     if not storage.Note.does_exist(uuid):
         abort(404)
@@ -191,7 +200,7 @@ def share_note(uuid):
 @app.route('/inbox/archive/note/<uuid>', methods=['GET'])
 @requires_auth
 def archive_note(uuid):
-
+    """Set aside the note by moving it into an archive."""
     # Auth0 stored account information.
     profile = session['profile']
 
@@ -206,9 +215,9 @@ def archive_note(uuid):
 
 @app.route('/to/<inbox>/submit', methods=['POST'])
 def submit_note(inbox):
-    print("inside app.route Submit_note")
+    """Store note in database and send a copy to user's email."""
     # Fetch the current inbox.
-    inbox = storage.Inbox(inbox)
+    inbox_db = storage.Inbox(inbox)
     body = request.form['body']
 
     # Strip any HTML away.
@@ -221,15 +230,15 @@ def submit_note(inbox):
         return redirect(url_for('thanks'))
 
     # Store the incoming note to the database.
-    note = inbox.submit_note(body=body, byline=byline)
+    note = inbox_db.submit_note(body=body, byline=byline)
 
     # Email the user the new note.
-    if storage.Inbox.is_email_enabled(inbox.slug):
+    if storage.Inbox.is_email_enabled(inbox_db.slug):
         # note.notify(email_address)
         if session:
             email_address = session['profile']['email']
         else:
-            email_address = storage.Inbox.get_email(inbox.slug)
+            email_address = storage.Inbox.get_email(inbox_db.slug)
         note.notify(email_address)
 
     return redirect(url_for('thanks'))
@@ -271,7 +280,7 @@ def callback_handling():
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
-    #nickname = user_info['email']
+    # nickname = user_info['email']
     nickname = user_detail_info['nickname']
     email = user_detail_info['email']
     userid = user_info['sub']

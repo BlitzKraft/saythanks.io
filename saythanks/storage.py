@@ -69,7 +69,8 @@ class Note(object):
 
     def store(self):
         """Stores the Note instance to the database."""
-        q = 'INSERT INTO notes (body, byline, inboxes_auth_id) VALUES (:body, :byline, :inbox)'
+        q = 'INSERT INTO notes (body, byline, inboxes_auth_id)' + \
+            'VALUES (:body, :byline, :inbox)'
         db.query(q, body=self.body, byline=self.byline,
                  inbox=self.inbox.auth_id)
 
@@ -78,7 +79,6 @@ class Note(object):
         db.query(q, uuid=self.uuid)
 
     def notify(self, email_address):
-        print("calling sendgrid with", email_address)
         myemail.notify(self, email_address)
 
 
@@ -182,11 +182,11 @@ class Inbox(object):
             self.slug, n['body'], n['byline'], n['archived'], n['uuid']) for n in r]
         return notes[::-1]
 
-    def export(self, format):
+    def export(self, file_format):
         q = "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'"
         r = db.query(q, auth_id=self.auth_id)
 
-        return r.export(format)
+        return r.export(file_format)
 
     @property
     def archived_notes(self):
