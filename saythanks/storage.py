@@ -27,6 +27,7 @@ class Note(object):
         self.byline = None
         self.inbox = None
         self.archived = None
+        self.uuid = None
 
     def __repr__(self):
         return '<Note size={}>'.format(len(self.body))
