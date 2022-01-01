@@ -26,7 +26,11 @@ A KennethReitz project, now maintained by KGiSL Edu (info@kgisl.com).
 
 
 def notify(note, email_address):
-    """Use the note, an email template and sendgrid to deliver email to user."""
+    """Use the note contents and a template, build a 
+    formatted message. Use sendgrid to deliver the formatted 
+    message as an email to the user. 
+    """
+    
     try:
         # Say 'someone' if the byline is empty.
         who = note.byline or 'someone'
