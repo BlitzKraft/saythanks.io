@@ -184,6 +184,7 @@ def display_submit_note(inbox):
         topic=topic,
         fake_name=fake_name)
 
+
 @app.route('/note/<uuid>', methods=['GET'])
 def share_note(uuid):
     """Share and display the note via an unique URL."""
