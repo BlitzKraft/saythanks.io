@@ -171,7 +171,7 @@ def enable_inbox():
 
 @app.route('/to/<inbox>', methods=['GET'], defaults={"topic": "your project"})
 @app.route('/to/<inbox>/<topic>', methods=['GET'])
-def display_submit_note(inbox):
+def display_submit_note(inbox, topic):
     if not storage.Inbox.does_exist(inbox):
         abort(404)
     elif not storage.Inbox.is_enabled(inbox):
