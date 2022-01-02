@@ -30,7 +30,6 @@ def notify(note, email_address):
     formatted message. Use sendgrid to deliver the formatted
     message as an email to the user.
     """
-
     try:
         # Say 'someone' if the byline is empty.
         who = note.byline or 'someone'
