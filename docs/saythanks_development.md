@@ -28,11 +28,10 @@
 7. Go inside the saythanks.io folder (**cd saythanks.io)** and install the required packages by using below command:
    ` `**pip3 install -r requirements.txt**
 
-	Note: If any error is faced in requirements.txt installation, Run the below command:
+   Note: If any error is faced in requirements.txt installation, Run the below command:
 
-	python3 -m pip install --upgrade pip
-	python3 -m pip install --upgrade pillow 
-
+   python3 -m pip install --upgrade pip
+   python3 -m pip install --upgrade pillow
 
 8. Go to Auth0 login website - https://auth0.com/docs/login
 
