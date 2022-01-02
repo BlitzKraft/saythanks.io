@@ -5,12 +5,15 @@ name = "python"
 enabled = true
 
   [analyzers.meta]
-  environment = ["jquery"]
   runtime_version = "3.x.x"
 
 [[analyzers]]
 name = "javascript"
 enabled = true
+
+  [analyzers.meta]
+  environment = ["jquery"]
+
 
 [[analyzers]]
 name = "test-coverage"
