@@ -120,7 +120,7 @@ class Inbox:
         r = db.query(q, slug=slug).all()
         try:
             return bool(r[0]['email_enabled'])
-        except:
+        else:
             return False
 
     @classmethod
@@ -139,7 +139,7 @@ class Inbox:
         r = db.query(q, slug=slug).all()
         try:
             return bool(r[0]['enabled'])
-        except:
+        else:
             return False
 
     @classmethod
