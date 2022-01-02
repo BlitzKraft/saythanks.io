@@ -19,7 +19,7 @@ db = records.Database()
 # --------------
 
 
-class Note(object):
+class Note:
     """A generic note of thankfulness."""
 
     def __init__(self):
@@ -83,7 +83,7 @@ class Note(object):
         myemail.notify(self, email_address)
 
 
-class Inbox(object):
+class Inbox:
     """A registered inbox for a given user (provided by Auth0)."""
 
     def __init__(self, slug):
