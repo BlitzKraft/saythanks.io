@@ -59,6 +59,7 @@ class Note:
 
     @classmethod
     def does_exist(cls, uuid):
+        """Check the notes availability based on uuid """
         q = 'SELECT * from notes where uuid = :uuid'
         try:
             r = db.query(q, uuid=uuid).all()
