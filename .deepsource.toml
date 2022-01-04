@@ -11,6 +11,10 @@ enabled = true
 name = "javascript"
 enabled = true
 
+  [analyzers.meta]
+  environment = ["jquery"]
+
+
 [[analyzers]]
 name = "test-coverage"
 enabled = true

@@ -24,9 +24,7 @@ class HTTPError(Exception):
 
     @property
     def to_dict(self):
-        """
-        :return: dict of response error from the API
-        """
+        """:return: dict of response error from the API"""
         return json.loads(self.body.decode('utf-8'))
 
 
