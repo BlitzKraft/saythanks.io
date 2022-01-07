@@ -115,13 +115,15 @@ class Inbox:
         return bool(len(r))
 
     @classmethod
-    def is_email_enabled(cls, slug):
-        q = 'SELECT email_enabled FROM inboxes where slug = :slug'
-        r = db.query(q, slug=slug).all()
+    def is_email_enabled(cls, slug):       
         try:
+            q = 'SELECT email_enabled FROM inboxes where slug = :slug'
+            r = db.query(q, slug=slug).all()
             return bool(r[0]['email_enabled'])
-        except:
+        except Exception as e:         
+            print(e)
             return False
+                   
 
     @classmethod
     def disable_email(cls, slug):
@@ -135,11 +137,12 @@ class Inbox:
 
     @classmethod
     def is_enabled(cls, slug):
-        q = 'SELECT enabled FROM inboxes where slug = :slug'
-        r = db.query(q, slug=slug).all()
-        try:
+       try:
+              q = 'SELECT enabled FROM inboxes where slug = :slug'
+              r = db.query(q, slug=slug).all()
             return bool(r[0]['enabled'])
-        except:
+       except Exception as e:         
+            print(e)
             return False
 
     @classmethod
