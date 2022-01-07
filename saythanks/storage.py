@@ -140,7 +140,7 @@ class Inbox:
        try:
               q = 'SELECT enabled FROM inboxes where slug = :slug'
               r = db.query(q, slug=slug).all()
-            return bool(r[0]['enabled'])
+              return bool(r[0]['enabled'])
        except Exception as e:         
             print(e)
             return False
