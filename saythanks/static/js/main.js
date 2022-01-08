@@ -1,6 +1,6 @@
 $(document).on("change", "#badge-format", function () {
   var selectedFormat = $("#badge-format").val();
-  if (selectedFormat == "imageurl") {
+  if (selectedFormat === "imageurl") {
     $("#badgeCode").val(
       "https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg"
     );
