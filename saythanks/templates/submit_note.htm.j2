@@ -60,7 +60,15 @@ input.addEventListener("keyup", function(event) {
     document.getElementById("submit").click();
   }
 });
-
+textArea = document.getElementById("body");
+textArea.addEventListener("keyup", function(event) {
+   if (event.keyCode === 39) {      
+    event.preventDefault();
+    placeHolderText = textArea.placeholder;
+    textArea.innerText = placeHolderText;
+    textArea.setSelectionRange(placeHolderText.length, placeHolderText.length);
+  }
+});
 </script>
 
 
