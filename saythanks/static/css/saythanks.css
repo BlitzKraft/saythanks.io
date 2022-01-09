@@ -16,9 +16,6 @@
 }
 
 
-:root{
-    --customfont: 'Annie Use Your Telescope', 'SerendityFont', cursive;
-   }    
 
 h1 a {
     text-decoration: none;
@@ -46,12 +43,6 @@ button {
 .note {
     font-family: 'Annie Use Your Telescope', 'SerendityFont', cursive!important;
     /*font-family: 'Annie Use Your Telescope', 'HuiFont', cursive!important; */
-    font-size: 2.35rem;
-    white-space: pre-wrap!important;
-}
-   
-.notebodyfont {
-    font-family: var(--customfont);
     font-size: 2.35rem;
     white-space: pre-wrap!important;
 }
