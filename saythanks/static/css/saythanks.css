@@ -101,3 +101,11 @@ a {
 a.share {
     text-decoration: none
 }
+
+.logoutLblPos{
+    position:absolute;
+    right:150px;
+    top: 25px;
+    font-family:Georgia, 'Times New Roman', Times, serif
+ }
+ 
