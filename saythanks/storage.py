@@ -19,7 +19,7 @@ db = records.Database()
 # --------------
 
 
-class Note(object):
+class Note:
     """A generic note of thankfulness."""
 
     def __init__(self):
@@ -27,6 +27,7 @@ class Note(object):
         self.byline = None
         self.inbox = None
         self.archived = None
+        self.uuid = None
 
     def __repr__(self):
         return '<Note size={}>'.format(len(self.body))
@@ -69,7 +70,8 @@ class Note(object):
 
     def store(self):
         """Stores the Note instance to the database."""
-        q = 'INSERT INTO notes (body, byline, inboxes_auth_id) VALUES (:body, :byline, :inbox)'
+        q = 'INSERT INTO notes (body, byline, inboxes_auth_id)' + \
+            'VALUES (:body, :byline, :inbox)'
         db.query(q, body=self.body, byline=self.byline,
                  inbox=self.inbox.auth_id)
 
@@ -78,11 +80,10 @@ class Note(object):
         db.query(q, uuid=self.uuid)
 
     def notify(self, email_address):
-        print("calling sendgrid with", email_address)
         myemail.notify(self, email_address)
 
 
-class Inbox(object):
+class Inbox:
     """A registered inbox for a given user (provided by Auth0)."""
 
     def __init__(self, slug):
@@ -182,11 +183,11 @@ class Inbox(object):
             self.slug, n['body'], n['byline'], n['archived'], n['uuid']) for n in r]
         return notes[::-1]
 
-    def export(self, format):
+    def export(self, file_format):
         q = "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'"
         r = db.query(q, auth_id=self.auth_id)
 
-        return r.export(format)
+        return r.export(file_format)
 
     @property
     def archived_notes(self):

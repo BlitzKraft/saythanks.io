@@ -79,6 +79,16 @@
     var s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(t, s);
   })();
+
+  function fontforinbox(selectBox) {
+   var op = selectBox.options[selectBox.selectedIndex];
+	 var optgroup = op.parentNode;
+   var tableinbox = document.getElementById('dispnotes');
+
+   var r = document.querySelector(':root');
+   r.style.setProperty('--customfont', `${op.text}`);	
+}
+
 </script>
 </body>
 </html>

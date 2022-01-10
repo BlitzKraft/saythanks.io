@@ -5,7 +5,7 @@
 {% block content %}
 
 
-<h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong>!</h4>
+<h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong> about {{ topic }}!</h4>
 
 <form class="form-horizontal" action="./{{ user }}/submit" method="post">
 
@@ -60,7 +60,15 @@ input.addEventListener("keyup", function(event) {
     document.getElementById("submit").click();
   }
 });
-
+textArea = document.getElementById("body");
+textArea.addEventListener("keyup", function(event) {
+   if (event.keyCode === 39) {      
+    event.preventDefault();
+    placeHolderText = textArea.placeholder;
+    textArea.innerText = placeHolderText;
+    textArea.setSelectionRange(placeHolderText.length, placeHolderText.length);
+  }
+});
 </script>
 
 
