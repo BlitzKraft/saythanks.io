@@ -7,6 +7,23 @@
 
 <h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong> about {{ topic }}!</h4>
 
+<table>
+<tr>
+<td>
+<label for= "Font Style"> Font Style : </label>
+</td>
+<td>
+<select name="Font Style" id="fontstyle" onchange="fontforinbox(this);" >
+    <option value="0">Regular</option>
+    <option value="1">Times New Roman</option>
+    <option value="2">Verdana</option>
+    <option value="3">Tahoma</option>
+    <option value="4">Georgia</option>  
+    <option value="5">Trebuchet MS</option>
+ </select>
+ </td>
+ </tr>
+ </table>
 <form class="form-horizontal" action="./{{ user }}/submit" method="post">
 
 
@@ -18,7 +35,7 @@
 <!-- Textarea -->
 <div class="form-group">
   <div class="col-md-4">
-    <textarea class="form-control u-full-width note noteinput" id="body" name="body" autofocus placeholder="Dear {{ user }},                                                                                              Thank you for..." required></textarea>
+    <textarea class="form-control u-full-width notebodyfont noteinput" id="body" name="body" autofocus placeholder="Dear {{ user }},&#10Thank you for..." required></textarea>
   </div>
 </div>
 
@@ -27,7 +44,7 @@
 <div class="form-group">
   <label class="col-md-4 control-label" for="byline">Sincerely, </label>
   <div class="col-md-4">
-  <input class='note' id="byline" class="u-full-width" name="byline" type="text" placeholder="{{ fake_name }}" class="form-control input-md">
+  <input class='notebodyfont' id="byline" class="u-full-width" name="byline" type="text" placeholder="{{ fake_name }}" class="form-control input-md">
 
   </div>
 </div>
@@ -64,9 +81,9 @@ textArea = document.getElementById("body");
 textArea.addEventListener("keyup", function(event) {
    if (event.keyCode === 39) {      
     event.preventDefault();
-    placeHolderText = textArea.placeholder;
-    textArea.innerText = placeHolderText;
-    textArea.setSelectionRange(placeHolderText.length, placeHolderText.length);
+    placeHolderText = textArea.placeholder.split(',');
+    textArea.innerText = `${placeHolderText[0]},                                                                                                                                  ${placeHolderText[1]}`;
+    textArea.setSelectionRange(0, placeHolderText.length);
   }
 });
 </script>
