@@ -77,8 +77,25 @@
   <h3>Notes of Thankfulness:</h3>
 </p>
 
+<table>
+<tr>
+<td>
+<label for= "Font Style"> Font Style : </label>
+</td>
+<td>
+<select name="Font Style" id="fontstyle" onchange="fontforinbox(this);" >
+    <option value="0">Regular</option>
+    <option value="1">Times New Roman</option>
+    <option value="2">Verdana</option>
+    <option value="3">Tahoma</option>
+    <option value="4">Georgia</option>  
+    <option value="5">Trebuchet MS</option>
+ </select>
+ </td>
+ </tr>
+ </table>
 
-<table class='u-full-width'>
+<table class='u-full-width' >
   <thead>
     <tr>
       <th>Share URL</th>
@@ -91,8 +108,8 @@
   {% for note in notes %}
     <tr>
       <td width='50px'><pre class='note'><strong><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></strong></pre></td>
-      <td><pre class='note' width=180>{{ note.body }}</pre></td>
-      <td width='300px'><pre class='note'><strong>— {{ note.byline }}</strong></pre></td>
+      <td><pre class='notebodyfont' width=180>{{ note.body }}</pre></td>
+      <td width='300px'><pre class='notebodyfont'><strong>— {{ note.byline }}</strong></pre></td>
       <td width='50px'><pre class='note'><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid)}}">♻</a></strong></pre></td>
     </tr>
   {% endfor %}
