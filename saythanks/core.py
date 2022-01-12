@@ -169,7 +169,7 @@ def enable_inbox():
     return redirect(url_for('inbox'))
 
 
-@app.route('/to/<inbox>', methods=['GET'], defaults={"topic": "your project"})
+@app.route('/to/<inbox>', methods=['GET'], defaults={"topic": ""})
 @app.route('/to/<inbox>&<topic>', methods=['GET'])
 def display_submit_note(inbox, topic):
     """Display a web form in which user can edit and submit a note."""
@@ -179,10 +179,14 @@ def display_submit_note(inbox, topic):
         abort(404)
 
     fake_name = get_full_name()
+    topic_string = topic
+    if topic_string:
+        topic_string = " about " + topic
+
     return render_template(
         'submit_note.htm.j2',
         user=inbox,
-        topic=topic,
+        topic=topic_string,
         fake_name=fake_name)
 
 
