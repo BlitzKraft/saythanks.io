@@ -79,11 +79,12 @@ input.addEventListener("keyup", function(event) {
 });
 textArea = document.getElementById("body");
 textArea.addEventListener("keyup", function(event) {
-   if (event.keyCode === 39) {      
+   if (event.keyCode === 39 && event.ctrlKey) {      
     event.preventDefault();
-    placeHolderText = textArea.placeholder.split(',');
-    textArea.innerText = `${placeHolderText[0]},                                                                                                                                  ${placeHolderText[1]}`;
-    textArea.setSelectionRange(0, placeHolderText.length);
+    placeHolderArr = textArea.placeholder.split(',');
+    placeHolderText = `${placeHolderArr[0]},                                                                                                                                  ${placeHolderArr[1]}`;
+    textArea.innerText = placeHolderText
+    textArea.setSelectionRange(placeHolderText.length, placeHolderText.length);
   }
 });
 </script>
