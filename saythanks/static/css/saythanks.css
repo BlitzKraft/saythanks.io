@@ -102,4 +102,8 @@ a.share {
     text-decoration: none
 }
 
- 
+ .logoutLblPos{
+    position:absolute;
+    right:20px;
+    top: 25px;   
+   }
