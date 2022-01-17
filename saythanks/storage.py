@@ -5,6 +5,11 @@ import sqlalchemy
 from auth0.v2.management import Auth0
 
 from . import myemail
+import traceback  # Just to show the full traceback
+from psycopg2 import errors
+
+InFailedSqlTransaction = errors.lookup('25P02')
+
 
 # Auth0 API Client
 auth0_domain = os.environ['AUTH0_DOMAIN']
@@ -116,11 +121,12 @@ class Inbox:
 
     @classmethod
     def is_email_enabled(cls, slug):
-        q = 'SELECT email_enabled FROM inboxes where slug = :slug'
-        r = db.query(q, slug=slug).all()
+        q = 'SELECT email_enabled FROM inboxes where slug = :slug'        
         try:
+            r = db.query(q, slug=slug).all()
             return bool(r[0]['email_enabled'])
-        except:
+        except InFailedSqlTransaction:
+            print(traceback.print_exc())
             return False
 
     @classmethod
@@ -135,11 +141,12 @@ class Inbox:
 
     @classmethod
     def is_enabled(cls, slug):
-        q = 'SELECT enabled FROM inboxes where slug = :slug'
-        r = db.query(q, slug=slug).all()
+        q = 'SELECT enabled FROM inboxes where slug = :slug'       
         try:
+            r = db.query(q, slug=slug).all()
             return bool(r[0]['enabled'])
-        except:
+        except InFailedSqlTransaction:
+            print(traceback.print_exc())
             return False
 
     @classmethod
