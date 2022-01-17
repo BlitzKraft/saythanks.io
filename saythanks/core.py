@@ -250,9 +250,10 @@ def submit_note(inbox):
 
     return redirect(url_for('thanks'))
 
+
 @app.route('/logout', methods=["POST"])
 def user_logout():
-    session.clear()    
+    session.clear()
     return redirect(url_for('index'))
 
 

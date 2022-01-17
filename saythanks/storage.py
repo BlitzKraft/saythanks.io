@@ -121,7 +121,7 @@ class Inbox:
 
     @classmethod
     def is_email_enabled(cls, slug):
-        q = 'SELECT email_enabled FROM inboxes where slug = :slug'        
+        q = 'SELECT email_enabled FROM inboxes where slug = :slug'
         try:
             r = db.query(q, slug=slug).all()
             return bool(r[0]['email_enabled'])
@@ -141,7 +141,7 @@ class Inbox:
 
     @classmethod
     def is_enabled(cls, slug):
-        q = 'SELECT enabled FROM inboxes where slug = :slug'       
+        q = 'SELECT enabled FROM inboxes where slug = :slug'
         try:
             r = db.query(q, slug=slug).all()
             return bool(r[0]['enabled'])
