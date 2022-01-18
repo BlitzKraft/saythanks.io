@@ -147,7 +147,10 @@ class Inbox:
         q = 'SELECT enabled FROM inboxes where slug = :slug'
         try:
             r = db.query(q, slug=slug).all()
-            return bool(r[0]['enabled'])
+            if not (r[0]['enabled']):  
+                return False
+            else:    
+               return bool(r[0]['enabled'])
         except InFailedSqlTransaction:
             print(traceback.print_exc())
             return False
