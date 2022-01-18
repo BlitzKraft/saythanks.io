@@ -10,7 +10,7 @@ import traceback  # Just to show the full traceback
 from psycopg2 import errors
 
 InFailedSqlTransaction = errors.lookup('25P02')
-UniqueViolation = errors.lookup('23505') 
+UniqueViolation = errors.lookup('23505')
 
 # Auth0 API Client
 auth0_domain = os.environ['AUTH0_DOMAIN']
@@ -107,15 +107,14 @@ class Inbox:
         r = db.query(q, auth_id=auth_id).all()
         return bool(len(r))
 
-     
     @classmethod
     def store(cls, slug, auth_id, email):
-       try:
-          q = 'INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)'
-          r = db.query(q, slug=slug, auth_id=auth_id, email=email)
-       except UniqueViolation:
-            print('Duplicate record - ID already exist')             
-       return cls(slug)
+        try:
+            q = 'INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)'
+            r = db.query(q, slug=slug, auth_id=auth_id, email=email)
+        except UniqueViolation:
+            print('Duplicate record - ID already exist')
+        return cls(slug)
 
     @classmethod
     def does_exist(cls, slug):
