@@ -111,7 +111,13 @@
   <tbody>
   {% for note in notes %}
     <tr>
-      <td width='50px'><pre class='note'><strong><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></strong></pre></td>
+      <td width='50px'><pre class='note'><strong><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></strong></pre>
+      <a class="twitter-share-button" data-hashtags="SayThanks" href="https://twitter.com/intent/tweet?text={{note.body + "%0A%0A- " + note.byline + "%0A%0A" + request.base_url[0:-6] + url_for('share_note', uuid=note.uuid) + "%0A" }}" data-url=" ">Tweet</a> </br></br>
+      
+      <iframe src="https://www.facebook.com/plugins/share_button.php?href=https%3A%2F%2F{{ request.base_url[0:-6] + url_for('share_note', uuid=note.uuid) }}&layout=button&size=small&width=67&height=20&appId" width="67" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+      </iframe> 
+      </td>
+      
       <td><pre class='notebodyfont' width=180>{{ note.body }}</pre></td>
       <td width='300px'><pre class='notebodyfont'><strong>— {{ note.byline }}</strong></pre></td>
       <td width='50px'><pre class='note'><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid)}}">♻</a></strong></pre></td>
