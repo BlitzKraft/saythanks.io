@@ -1,3 +1,4 @@
+from genericpath import exists
 import os
 
 import records
@@ -5,6 +6,11 @@ import sqlalchemy
 from auth0.v2.management import Auth0
 
 from . import myemail
+import traceback  # Just to show the full traceback
+from psycopg2 import errors
+
+InFailedSqlTransaction = errors.lookup('25P02')
+UniqueViolation = errors.lookup('23505')
 
 # Auth0 API Client
 auth0_domain = os.environ['AUTH0_DOMAIN']
@@ -103,9 +109,11 @@ class Inbox:
 
     @classmethod
     def store(cls, slug, auth_id, email):
-        q = 'INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)'
-        r = db.query(q, slug=slug, auth_id=auth_id, email=email)
-
+        try:
+            q = 'INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)'
+            r = db.query(q, slug=slug, auth_id=auth_id, email=email)
+        except UniqueViolation:
+            print('Duplicate record - ID already exist')
         return cls(slug)
 
     @classmethod
@@ -117,10 +125,11 @@ class Inbox:
     @classmethod
     def is_email_enabled(cls, slug):
         q = 'SELECT email_enabled FROM inboxes where slug = :slug'
-        r = db.query(q, slug=slug).all()
         try:
+            r = db.query(q, slug=slug).all()
             return bool(r[0]['email_enabled'])
-        except:
+        except InFailedSqlTransaction:
+            print(traceback.print_exc())
             return False
 
     @classmethod
@@ -136,10 +145,14 @@ class Inbox:
     @classmethod
     def is_enabled(cls, slug):
         q = 'SELECT enabled FROM inboxes where slug = :slug'
-        r = db.query(q, slug=slug).all()
         try:
-            return bool(r[0]['enabled'])
-        except:
+            r = db.query(q, slug=slug).all()
+            if not (r[0]['enabled']):
+                return False
+            else:
+                return bool(r[0]['enabled'])
+        except InFailedSqlTransaction:
+            print(traceback.print_exc())
             return False
 
     @classmethod

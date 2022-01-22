@@ -13,6 +13,11 @@
 
 {% block content %}
 
+
+<form action="../logout" method="POST">
+<button type="submit" class="logoutLblPos" >Log Out</button>
+</form>
+
 <img class="avatar" style="border-radius: 50%;" src="{{user['picture']}}"/ width=100px;>
 
 <p><a href="{{ url_for('inbox')}}">Go to regular inbox</a>.</p>

@@ -6,6 +6,7 @@
 # |_____|__,|_  | |_| |_|_|__,|_|_|_,_|___|
 #           |___|
 
+from crypt import methods
 import os
 import json
 import requests
@@ -18,6 +19,7 @@ from names import get_full_name
 from raven.contrib.flask import Sentry
 from flask_qrcode import QRcode
 from . import storage
+
 
 # Application Basics
 # ------------------
@@ -247,6 +249,12 @@ def submit_note(inbox):
         note.notify(email_address)
 
     return redirect(url_for('thanks'))
+
+
+@app.route('/logout', methods=["POST"])
+def user_logout():
+    session.clear()
+    return redirect(url_for('index'))
 
 
 @app.route('/callback')

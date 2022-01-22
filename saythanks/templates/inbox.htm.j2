@@ -13,6 +13,10 @@
 
 {% block content %}
 
+<form action="./logout" method="POST">
+<button type="submit" class="logoutLblPos" >Log Out</button>
+</form>
+
 <input type="hidden" id="username" value={{user['nickname']}}>
 
 <div id="badge-modal" style="display:none;">
