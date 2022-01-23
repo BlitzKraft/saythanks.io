@@ -63,7 +63,6 @@ class Note:
         self.inbox = Inbox(inbox)
         self.timestamp = timestamp
 
-
         return self
 
     @classmethod
