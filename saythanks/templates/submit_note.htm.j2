@@ -11,6 +11,8 @@
 
 <h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong>{{ topic }}!</h4>
 
+
+<form class="form-horizontal" action="./{{ user }}/submit" method="post">
 <table>
 <tr>
 <td>
@@ -26,10 +28,17 @@
     <option value="5">Trebuchet MS</option>
  </select>
  </td>
+ <td>
+<label for= "content-type"> Content Type: </label>
+</td>
+ <td>
+ <input type="radio" name="content-type" id="option1" value="plaintext" checked> Plain Text</input><br>
+ </td>
+ <td>
+<input type="radio" name="content-type" id="option2" value="html"> HTML</input><br>
+</td>
  </tr>
  </table>
-<form class="form-horizontal" action="./{{ user }}/submit" method="post">
-
 
 <fieldset>
 
