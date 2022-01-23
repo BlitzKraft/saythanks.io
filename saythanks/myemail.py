@@ -38,7 +38,7 @@ def notify(note, email_address):
 
         subject = 'saythanks.io: {} sent a note!'.format(who)
         message = note.body
-        message = TEMPLATE.format(note.body,note.byline)
+        message = TEMPLATE.format(note.body, note.byline)
         from_address = Email('no-reply@saythanks.io', name="SayThanks.io")
         to_address = Email(email_address)
         content = Content('text/html', message)

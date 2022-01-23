@@ -228,17 +228,17 @@ def submit_note(inbox):
     body = request.form['body']
     content_type = request.form['content-type']
     byline = Markup(request.form['byline'])
-    
+
     # If the user chooses to send an HTML email,
     # the contents of the HTML document will be sent
-    # as an email but will not be stored due to the enormous size 
+    # as an email but will not be stored due to the enormous size
     # of professional email templates
 
     if content_type == 'html':
         body = Markup(body)
         note = storage.Note.from_inbox(inbox=None, body=body, byline=byline)
         if storage.Inbox.is_email_enabled(inbox_db.slug):
-        # note.notify(email_address)
+            # note.notify(email_address)
             if session:
                 email_address = session['profile']['email']
             else:
@@ -246,7 +246,7 @@ def submit_note(inbox):
             note.notify(email_address)
 
         return redirect(url_for('thanks'))
-    else:    
+    else:
         # Strip any HTML away.
         body = Markup(body).striptags()
         byline = Markup(request.form['byline']).striptags()
