@@ -34,6 +34,7 @@ class Note:
         self.inbox = None
         self.archived = None
         self.uuid = None
+        self.timestamp = None
 
     def __repr__(self):
         return '<Note size={}>'.format(len(self.body))
@@ -51,7 +52,7 @@ class Note:
         return self
 
     @classmethod
-    def from_inbox(cls, inbox, body, byline, archived=False, uuid=None):
+    def from_inbox(cls, inbox, body, byline, archived=False, uuid=None, timestamp=None):
         """Creates a Note instance from a given inbox."""
         self = cls()
 
@@ -60,6 +61,8 @@ class Note:
         self.uuid = uuid
         self.archived = archived
         self.inbox = Inbox(inbox)
+        self.timestamp = timestamp
+
 
         return self
 
@@ -193,7 +196,7 @@ class Inbox:
         print("all notes", len(r))
 
         notes = [Note.from_inbox(
-            self.slug, n['body'], n['byline'], n['archived'], n['uuid']) for n in r]
+            self.slug, n['body'], n['byline'], n['archived'], n['uuid'], n['timestamp']) for n in r]
         return notes[::-1]
 
     def export(self, file_format):
