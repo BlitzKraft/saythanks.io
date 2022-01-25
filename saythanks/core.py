@@ -19,12 +19,16 @@ from names import get_full_name
 from raven.contrib.flask import Sentry
 from flask_qrcode import QRcode
 from . import storage
-
+from urllib.parse import quote
 
 # Application Basics
 # ------------------
 
 app = Flask(__name__)
+
+# to encode a query
+app.jinja_env.filters['quote'] = lambda u: quote(u)
+
 QRcode(app)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
 app.debug = True
