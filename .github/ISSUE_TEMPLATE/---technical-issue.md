@@ -1,10 +1,9 @@
 ---
 name: "\U0001F6E0️Technical issue"
 about: Describe a technical improvement
-title: ''
+title: ""
 labels: enhancement
-assignees: ''
-
+assignees: ""
 ---
 
 **Technical improvement**

@@ -1,10 +1,9 @@
 ---
 name: "\U0001F41BBug report"
 about: Report a problem encountered while using the app
-title: ''
+title: ""
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 **Describe the bug**
@@ -12,6 +11,7 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behaviour:
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'

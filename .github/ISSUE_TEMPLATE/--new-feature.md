@@ -1,10 +1,9 @@
 ---
 name: "\U0001F3D7New Feature"
 about: Create a feature request for the app
-title: ''
+title: ""
 labels: enhancement
-assignees: ''
-
+assignees: ""
 ---
 
 **Is your feature request related to a problem? Please describe.**
