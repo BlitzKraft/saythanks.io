@@ -122,8 +122,8 @@
       </td>
       
       <td><pre class='notebodyfont' width=180>{{ note.body }}</pre></td>
-      <td width='300px'><pre class='notebodyfont'><strong>— {{ note.byline }}</strong></pre></td>
-      <td width="500px"><pre class='notebodyfont'><strong> {{  note.timestamp.strftime('%d-%h-%Y %H:%M:%S') }}</strong></pre></td>
+      <td width='300px'><pre class='notebodyfont'>— {{ note.byline }}</pre></td>
+      <td width="500px"><pre class='notebodyfont'> {{  note.timestamp.strftime('%d-%h-%Y %H:%M:%S') }}</pre></td>
       <td width='50px'><pre class='note'><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid)}}">♻</a></strong></pre></td>
     </tr>
   {% endfor %}
