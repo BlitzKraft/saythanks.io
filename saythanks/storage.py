@@ -12,6 +12,18 @@ from psycopg2 import errors
 InFailedSqlTransaction = errors.lookup('25P02')
 UniqueViolation = errors.lookup('23505')
 
+# importing module
+import logging
+
+# Create and configure logger
+logging.basicConfig(filename='Logfile.log', 
+                    filemode='a', 
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    datefmt='%d-%b-%y %H:%M:%S')
+
+# Creating an object
+logger = logging.getLogger()
+
 # Auth0 API Client
 auth0_domain = os.environ['AUTH0_DOMAIN']
 auth0_token = os.environ['AUTH0_JWT_V2_TOKEN']
@@ -48,7 +60,6 @@ class Note:
         self.body = r[0]['body']
         self.byline = r[0]['byline']
         self.uuid = uuid
-
         return self
 
     @classmethod
@@ -62,16 +73,16 @@ class Note:
         self.archived = archived
         self.inbox = Inbox(inbox)
         self.timestamp = timestamp
-
         return self
 
     @classmethod
     def does_exist(cls, uuid):
         q = 'SELECT * from notes where uuid = :uuid'
         try:
-            r = db.query(q, uuid=uuid).all()
+            r = db.query(q, uuid=uuid).all() 
         # Catch SQL Errors here.
         except sqlalchemy.exc.DataError:
+            logging.error("sqlalchemy.exc.DataError occured")
             return False
 
         return bool(len(r))
@@ -114,8 +125,10 @@ class Inbox:
         try:
             q = 'INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)'
             r = db.query(q, slug=slug, auth_id=auth_id, email=email)
+            
         except UniqueViolation:
             print('Duplicate record - ID already exist')
+            logging.error("ID already exist")
         return cls(slug)
 
     @classmethod
@@ -132,6 +145,7 @@ class Inbox:
             return bool(r[0]['email_enabled'])
         except InFailedSqlTransaction:
             print(traceback.print_exc())
+            logging.error(traceback.print_exc())
             return False
 
     @classmethod
@@ -155,6 +169,7 @@ class Inbox:
                 return bool(r[0]['enabled'])
         except InFailedSqlTransaction:
             print(traceback.print_exc())
+            logging.error(traceback.print_exc())
             return False
 
     @classmethod
@@ -201,7 +216,6 @@ class Inbox:
     def export(self, file_format):
         q = "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'"
         r = db.query(q, auth_id=self.auth_id)
-
         return r.export(file_format)
 
     @property
