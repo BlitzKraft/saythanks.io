@@ -4,6 +4,18 @@ import sendgrid
 from sendgrid.helpers.mail import Email, Content, Mail
 from urllib.error import URLError
 
+# importing module
+import logging
+
+# Create and configure logger
+logging.basicConfig(filename='Logfile.log', 
+                    filemode='a',
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    datefmt='%d-%b-%y %H:%M:%S')
+
+# Creating an object
+logger = logging.getLogger()
+
 # Email Infrastructure
 # --------------------
 
@@ -45,8 +57,8 @@ def notify(note, email_address):
 
         mail = Mail(from_address, subject, to_address, content)
         response = sg.client.mail.send.post(request_body=mail.get())
-
     except URLError as e:
+        logging.error("URL Error occured "+str(e))
         print(e)
     # except Exception as e:
     #    print(e)
