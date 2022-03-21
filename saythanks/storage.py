@@ -1,3 +1,4 @@
+import logging
 from genericpath import exists
 import os
 
@@ -13,11 +14,10 @@ InFailedSqlTransaction = errors.lookup('25P02')
 UniqueViolation = errors.lookup('23505')
 
 # importing module
-import logging
 
 # Create and configure logger
-logging.basicConfig(filename='Logfile.log', 
-                    filemode='a', 
+logging.basicConfig(filename='Logfile.log',
+                    filemode='a',
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S')
 
@@ -79,7 +79,7 @@ class Note:
     def does_exist(cls, uuid):
         q = 'SELECT * from notes where uuid = :uuid'
         try:
-            r = db.query(q, uuid=uuid).all() 
+            r = db.query(q, uuid=uuid).all()
         # Catch SQL Errors here.
         except sqlalchemy.exc.DataError:
             logging.error("sqlalchemy.exc.DataError occured")
@@ -125,7 +125,7 @@ class Inbox:
         try:
             q = 'INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)'
             r = db.query(q, slug=slug, auth_id=auth_id, email=email)
-            
+
         except UniqueViolation:
             print('Duplicate record - ID already exist')
             logging.error("ID already exist")

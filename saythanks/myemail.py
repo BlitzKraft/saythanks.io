@@ -8,7 +8,7 @@ from urllib.error import URLError
 import logging
 
 # Create and configure logger
-logging.basicConfig(filename='Logfile.log', 
+logging.basicConfig(filename='Logfile.log',
                     filemode='a',
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S')

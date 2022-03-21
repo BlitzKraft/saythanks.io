@@ -25,8 +25,8 @@ from urllib.parse import quote
 import logging
 
 # Create and configure logger
-logging.basicConfig(filename='Logfile.log', 
-                    filemode='a', 
+logging.basicConfig(filename='Logfile.log',
+                    filemode='a',
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S')
 
@@ -213,7 +213,7 @@ def share_note(uuid):
         logging.error("Note is not found")
         abort(404)
 
-    note = storage.Note.fetch(uuid) 
+    note = storage.Note.fetch(uuid)
     return render_template('share_note.htm.j2', note=note)
 
 
