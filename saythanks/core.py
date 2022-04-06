@@ -6,6 +6,7 @@
 # |_____|__,|_  | |_| |_|_|__,|_|_|_,_|___|
 #           |___|
 
+from crypt import methods
 import os
 import json
 import requests
@@ -18,11 +19,28 @@ from names import get_full_name
 from raven.contrib.flask import Sentry
 from flask_qrcode import QRcode
 from . import storage
+from urllib.parse import quote
+
+# importing module
+import logging
+
+# Create and configure logger
+logging.basicConfig(filename='Logfile.log',
+                    filemode='a',
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    datefmt='%d-%b-%y %H:%M:%S')
+
+# Creating an object
+logger = logging.getLogger()
 
 # Application Basics
 # ------------------
 
 app = Flask(__name__)
+
+# to encode a query
+app.jinja_env.filters['quote'] = lambda u: quote(u)
+
 QRcode(app)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
 app.debug = True
@@ -79,7 +97,6 @@ def inbox():
     is_enabled = storage.Inbox.is_enabled(inbox_db.slug)
 
     is_email_enabled = storage.Inbox.is_email_enabled(inbox_db.slug)
-
     # Send over the list of all given notes for the user.
     return render_template('inbox.htm.j2',
                            user=profile, notes=inbox_db.notes,
@@ -117,7 +134,6 @@ def archived_inbox():
     is_enabled = storage.Inbox.is_enabled(inbox_db.slug)
 
     is_email_enabled = storage.Inbox.is_email_enabled(inbox_db.slug)
-
     # Send over the list of all given notes for the user.
     return render_template('inbox_archived.htm.j2',
                            user=profile, notes=inbox_db.archived_notes,
@@ -182,7 +198,6 @@ def display_submit_note(inbox, topic):
     topic_string = topic
     if topic_string:
         topic_string = " about " + topic
-
     return render_template(
         'submit_note.htm.j2',
         user=inbox,
@@ -195,10 +210,10 @@ def share_note(uuid):
     """Share and display the note via an unique URL."""
     # Abort if the note is not found.
     if not storage.Note.does_exist(uuid):
+        logging.error("Note is not found")
         abort(404)
 
     note = storage.Note.fetch(uuid)
-
     return render_template('share_note.htm.j2', note=note)
 
 
@@ -213,7 +228,6 @@ def archive_note(uuid):
 
     # Archive the note.
     note.archive()
-
     # Redirect to the archived inbox.
     return redirect(url_for('archived_inbox'))
 
@@ -224,10 +238,30 @@ def submit_note(inbox):
     # Fetch the current inbox.
     inbox_db = storage.Inbox(inbox)
     body = request.form['body']
+    content_type = request.form['content-type']
+    byline = Markup(request.form['byline'])
 
-    # Strip any HTML away.
-    body = Markup(body).striptags()
-    byline = Markup(request.form['byline']).striptags()
+    # If the user chooses to send an HTML email,
+    # the contents of the HTML document will be sent
+    # as an email but will not be stored due to the enormous size
+    # of professional email templates
+
+    if content_type == 'html':
+        body = Markup(body)
+        note = storage.Note.from_inbox(inbox=None, body=body, byline=byline)
+        if storage.Inbox.is_email_enabled(inbox_db.slug):
+            # note.notify(email_address)
+            if session:
+                email_address = session['profile']['email']
+            else:
+                email_address = storage.Inbox.get_email(inbox_db.slug)
+            note.notify(email_address)
+
+        return redirect(url_for('thanks'))
+    else:
+        # Strip any HTML away.
+        body = Markup(body).striptags()
+        byline = Markup(request.form['byline']).striptags()
 
     # Assert that the body has length.
     if not body:
@@ -236,7 +270,6 @@ def submit_note(inbox):
 
     # Store the incoming note to the database.
     note = inbox_db.submit_note(body=body, byline=byline)
-
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox_db.slug):
         # note.notify(email_address)
@@ -247,6 +280,12 @@ def submit_note(inbox):
         note.notify(email_address)
 
     return redirect(url_for('thanks'))
+
+
+@app.route('/logout', methods=["POST"])
+def user_logout():
+    session.clear()
+    return redirect(url_for('index'))
 
 
 @app.route('/callback')
@@ -297,5 +336,4 @@ def callback_handling():
     if not storage.Inbox.does_exist(nickname):
         # Using nickname by default, can be changed manually later if needed.
         storage.Inbox.store(nickname, userid, email)
-
     return redirect(url_for('inbox'))
