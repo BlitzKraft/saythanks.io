@@ -258,10 +258,9 @@ def submit_note(inbox):
             note.notify(email_address)
 
         return redirect(url_for('thanks'))
-    else:
-        # Strip any HTML away.
-        body = Markup(body).striptags()
-        byline = Markup(request.form['byline']).striptags()
+    # Strip any HTML away.
+    body = Markup(body).striptags()
+    byline = Markup(request.form['byline']).striptags()
 
     # Assert that the body has length.
     if not body:
