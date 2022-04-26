@@ -6,7 +6,7 @@ pipeline {
             steps {
                 echo 'Package directory'
                 sh("""
-                    cd saythanks.io
+                    cd $WORKSPACE
                     tar cvf saythanks.io.tar *
                 """)
             }
