@@ -1,5 +1,4 @@
 import logging
-from genericpath import exists
 import os
 
 import records

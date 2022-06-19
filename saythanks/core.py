@@ -6,7 +6,6 @@
 # |_____|__,|_  | |_| |_|_|__,|_|_|_,_|___|
 #           |___|
 
-from crypt import methods
 import os
 import json
 import requests
