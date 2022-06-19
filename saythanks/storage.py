@@ -165,8 +165,7 @@ class Inbox:
             r = db.query(q, slug=slug).all()
             if not (r[0]['enabled']):
                 return False
-            else:
-                return bool(r[0]['enabled'])
+            return bool(r[0]['enabled'])
         except InFailedSqlTransaction:
             print(traceback.print_exc())
             logging.error(traceback.print_exc())
