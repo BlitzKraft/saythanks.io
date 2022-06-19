@@ -187,11 +187,11 @@ def enable_inbox():
 
 @app.route('/to/<inbox>', methods=['GET'], defaults={"topic": ""})
 @app.route('/to/<inbox>&<topic>', methods=['GET'])
-def display_submit_note(inbox, topic):
+def display_submit_note(ibox, topic):
     """Display a web form in which user can edit and submit a note."""
-    if not storage.Inbox.does_exist(inbox):
+    if not storage.Inbox.does_exist(ibox):
         abort(404)
-    elif not storage.Inbox.is_enabled(inbox):
+    elif not storage.Inbox.is_enabled(ibox):
         abort(404)
 
     fake_name = get_full_name()
@@ -200,7 +200,7 @@ def display_submit_note(inbox, topic):
         topic_string = " about " + topic
     return render_template(
         'submit_note.htm.j2',
-        user=inbox,
+        user=ibox,
         topic=topic_string,
         fake_name=fake_name)
 
@@ -233,10 +233,10 @@ def archive_note(uuid):
 
 
 @app.route('/to/<inbox>/submit', methods=['POST'])
-def submit_note(inbox):
+def submit_note(ibox):
     """Store note in database and send a copy to user's email."""
     # Fetch the current inbox.
-    inbox_db = storage.Inbox(inbox)
+    inbox_db = storage.Inbox(ibox)
     body = request.form['body']
     content_type = request.form['content-type']
     byline = Markup(request.form['byline'])
