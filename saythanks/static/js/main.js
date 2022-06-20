@@ -9,13 +9,13 @@ $(document).on("change", "#badge-format", function () {
     $("#badgeCode").val(
       "[![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io" +
         "/to/" +
-        username +
+        `${username}` +
         ")"
     );
   } else if (selectedFormat === "rst") {
     var line1 =
       ".. image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg \n";
-    var line2 = "   :target: https://saythanks.io/to/" + username;
+    var line2 = "   :target: https://saythanks.io/to/`${username}`";
     $("#badgeCode").val(line1 + line2);
   }
 });
