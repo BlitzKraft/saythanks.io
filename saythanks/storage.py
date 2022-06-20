@@ -209,7 +209,8 @@ class Inbox:
 
         notes = [
             Note.from_inbox(
-                self.slug, n["body"], n["byline"], n["archived"], n["uuid"], n["timestamp"]
+                self.slug, 
+                n["body"], n["byline"], n["archived"], n["uuid"], n["timestamp"]
             )
             for n in r
         ]
