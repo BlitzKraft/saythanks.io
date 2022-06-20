@@ -6,8 +6,8 @@ $(document).on("change", "#badge-format", function () {
       "https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg"
     );
   } else if (selectedFormat === "markdown") {
-    let svg = 
-        "[![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)]";
+    let svg =
+      "[![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)]";
     let url = `(https://saythanks.io/to/${username})`;
     $("#badgeCode").val(svg + url);
   } else if (selectedFormat === "rst") {
