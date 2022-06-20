@@ -207,8 +207,12 @@ class Inbox:
 
         print("all notes", len(r))
 
-        notes = [Note.from_inbox(
-            self.slug, n['body'], n['byline'], n['archived'], n['uuid'], n['timestamp']) for n in r]
+        notes = [
+          Note.from_inbox(
+            self.slug, n["body"], n["byline"], n["archived"], n["uuid"], n["timestamp"]
+          )
+          for n in r
+        ]
         return notes[::-1]
 
     def export(self, file_format):
