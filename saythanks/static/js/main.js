@@ -5,10 +5,11 @@ $(document).on("change", "#badge-format", function () {
       "https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg"
     );
   } else if (selectedFormat === "markdown") {
+    var username = $("#username").val();
     $("#badgeCode").val(
       "[![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io" +
         "/to/" +
-        $("#username").val() +
+        username +
         ")"
     );
   } else if (selectedFormat === "rst") {
