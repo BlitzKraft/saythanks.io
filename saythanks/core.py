@@ -38,7 +38,7 @@ logger = logging.getLogger()
 app = Flask(__name__)
 
 # to encode a query
-app.jinja_env.filters['quote'] = lambda u: quote(u)
+app.jinja_env.filters['quote'] = quote
 
 QRcode(app)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
