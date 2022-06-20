@@ -221,7 +221,7 @@ def share_note(uuid):
 def archive_note(uuid):
     """Set aside the note by moving it into an archive."""
     # Auth0 stored account information.
-    profile = session['profile']
+    # profile = session['profile']
 
     note = storage.Note.fetch(uuid)
 
