@@ -20,6 +20,17 @@ from raven.contrib.flask import Sentry
 from flask_qrcode import QRcode
 from . import storage
 from urllib.parse import quote
+from lxml.html.clean import Cleaner
+
+cleaner = Cleaner()
+cleaner.javascript = True
+cleaner.style = True
+cleaner.remove_tags = ['script', 'style', 'link']
+cleaner.allow_attributes = ['alt', 'href']
+cleaner.remove_attributes = ['id', 'class', 'style', 'align', 'border', 'cellpadding', 'cellspacing', 'width', 'height', 'hspace', 'vspace', 'frameborder', 'marginwidth', 'marginheight', 'noresize', 'scrolling', 'target', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseover', 'onmouseout', 'onmouseup', 'onkeypress', 'onkeydown', 'onkeyup', 'onblur', 'onchange', 'onfocus', 'onselect', 'onreset', 'onsubmit', 'onabort', 'oncanplay', 'oncanplaythrough', 'oncuechange', 'ondurationchange', 'onemptied', 'onended', 'onloadeddata', 'onloadedmetadata', 'onloadstart', 'onpause', 'onplay', 'onplaying', 'onprogress', 'onratechange', 'onseeked', 'onseeking', 'onstalled', 'onsuspend', 'ontimeupdate', 'onvolumechange', 'onwaiting']
+
+def remove_tags(html):
+    return cleaner.clean_html(html)
 
 # importing module
 import logging
@@ -187,11 +198,11 @@ def enable_inbox():
 
 @app.route('/to/<inbox>', methods=['GET'], defaults={"topic": ""})
 @app.route('/to/<inbox>&<topic>', methods=['GET'])
-def display_submit_note(ibox, topic):
+def display_submit_note(inbox, topic):
     """Display a web form in which user can edit and submit a note."""
-    if not storage.Inbox.does_exist(ibox):
+    if not storage.Inbox.does_exist(inbox):
         abort(404)
-    elif not storage.Inbox.is_enabled(ibox):
+    elif not storage.Inbox.is_enabled(inbox):
         abort(404)
 
     fake_name = get_full_name()
@@ -200,7 +211,7 @@ def display_submit_note(ibox, topic):
         topic_string = " about " + topic
     return render_template(
         'submit_note.htm.j2',
-        user=ibox,
+        user=inbox,
         topic=topic_string,
         fake_name=fake_name)
 
@@ -233,10 +244,10 @@ def archive_note(uuid):
 
 
 @app.route('/to/<inbox>/submit', methods=['POST'])
-def submit_note(ibox):
+def submit_note(inbox):
     """Store note in database and send a copy to user's email."""
     # Fetch the current inbox.
-    inbox_db = storage.Inbox(ibox)
+    inbox_db = storage.Inbox(inbox)
     body = request.form['body']
     content_type = request.form['content-type']
     byline = Markup(request.form['byline'])
@@ -256,7 +267,8 @@ def submit_note(ibox):
             else:
                 email_address = storage.Inbox.get_email(inbox_db.slug)
             note.notify(email_address)
-
+        body = remove_tags(body)
+        note = inbox_db.submit_note(body=body, byline=byline)
         return redirect(url_for('thanks'))
     # Strip any HTML away.
     body = Markup(body).striptags()
