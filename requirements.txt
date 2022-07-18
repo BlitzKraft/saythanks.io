@@ -16,7 +16,7 @@ gunicorn
 humanize
 itsdangerous
 Jinja2
-lxml==4.9.0
+lxml==4.9.1
 MarkupSafe
 maya
 names
