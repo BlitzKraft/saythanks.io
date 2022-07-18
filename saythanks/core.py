@@ -6,6 +6,7 @@
 # |_____|__,|_  | |_| |_|_|__,|_|_|_,_|___|
 #           |___|
 
+import logging
 from crypt import methods
 import os
 import json
@@ -27,13 +28,15 @@ cleaner.javascript = True
 cleaner.style = True
 cleaner.remove_tags = ['script', 'style', 'link']
 cleaner.allow_attributes = ['alt', 'href']
-cleaner.remove_attributes = ['id', 'class', 'style', 'align', 'border', 'cellpadding', 'cellspacing', 'width', 'height', 'hspace', 'vspace', 'frameborder', 'marginwidth', 'marginheight', 'noresize', 'scrolling', 'target', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseover', 'onmouseout', 'onmouseup', 'onkeypress', 'onkeydown', 'onkeyup', 'onblur', 'onchange', 'onfocus', 'onselect', 'onreset', 'onsubmit', 'onabort', 'oncanplay', 'oncanplaythrough', 'oncuechange', 'ondurationchange', 'onemptied', 'onended', 'onloadeddata', 'onloadedmetadata', 'onloadstart', 'onpause', 'onplay', 'onplaying', 'onprogress', 'onratechange', 'onseeked', 'onseeking', 'onstalled', 'onsuspend', 'ontimeupdate', 'onvolumechange', 'onwaiting']
+cleaner.remove_attributes = ['id', 'class', 'style', 'align', 'border', 'cellpadding', 'cellspacing', 'width', 'height', 'hspace', 'vspace', 'frameborder', 'marginwidth', 'marginheight', 'noresize', 'scrolling', 'target', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseover', 'onmouseout', 'onmouseup', 'onkeypress', 'onkeydown', 'onkeyup', 'onblur',
+                             'onchange', 'onfocus', 'onselect', 'onreset', 'onsubmit', 'onabort', 'oncanplay', 'oncanplaythrough', 'oncuechange', 'ondurationchange', 'onemptied', 'onended', 'onloadeddata', 'onloadedmetadata', 'onloadstart', 'onpause', 'onplay', 'onplaying', 'onprogress', 'onratechange', 'onseeked', 'onseeking', 'onstalled', 'onsuspend', 'ontimeupdate', 'onvolumechange', 'onwaiting']
+
 
 def remove_tags(html):
     return cleaner.clean_html(html)
 
+
 # importing module
-import logging
 
 # Create and configure logger
 logging.basicConfig(filename='Logfile.log',
