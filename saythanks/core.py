@@ -53,7 +53,7 @@ logger = logging.getLogger()
 app = Flask(__name__)
 
 # to encode a query
-app.jinja_env.filters['quote'] = lambda u: quote(u)
+app.jinja_env.filters['quote'] = quote
 
 QRcode(app)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
@@ -236,7 +236,7 @@ def share_note(uuid):
 def archive_note(uuid):
     """Set aside the note by moving it into an archive."""
     # Auth0 stored account information.
-    profile = session['profile']
+    # profile = session['profile']
 
     note = storage.Note.fetch(uuid)
 

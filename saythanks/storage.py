@@ -1,5 +1,4 @@
 import logging
-from genericpath import exists
 import os
 
 import records
@@ -124,7 +123,7 @@ class Inbox:
     def store(cls, slug, auth_id, email):
         try:
             q = 'INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)'
-            r = db.query(q, slug=slug, auth_id=auth_id, email=email)
+            db.query(q, slug=slug, auth_id=auth_id, email=email)
 
         except UniqueViolation:
             print('Duplicate record - ID already exist')
@@ -151,19 +150,19 @@ class Inbox:
     @classmethod
     def disable_email(cls, slug):
         q = 'update inboxes set email_enabled = false where slug = :slug'
-        r = db.query(q, slug=slug)
+        db.query(q, slug=slug)
 
     @classmethod
     def enable_email(cls, slug):
         q = 'update inboxes set email_enabled = true where slug = :slug'
-        r = db.query(q, slug=slug)
+        db.query(q, slug=slug)
 
     @classmethod
     def is_enabled(cls, slug):
         q = 'SELECT enabled FROM inboxes where slug = :slug'
         try:
             r = db.query(q, slug=slug).all()
-            if not (r[0]['enabled']):
+            if not r[0]['enabled']:
                 return False
             return bool(r[0]['enabled'])
         except InFailedSqlTransaction:
@@ -174,12 +173,12 @@ class Inbox:
     @classmethod
     def disable_account(cls, slug):
         q = 'update inboxes set enabled = false where slug = :slug'
-        r = db.query(q, slug=slug)
+        db.query(q, slug=slug)
 
     @classmethod
     def enable_account(cls, slug):
         q = 'update inboxes set enabled = true where slug = :slug'
-        r = db.query(q, slug=slug)
+        db.query(q, slug=slug)
 
     def submit_note(self, body, byline):
         note = Note.from_inbox(self.slug, body, byline)
@@ -208,8 +207,13 @@ class Inbox:
 
         print("all notes", len(r))
 
-        notes = [Note.from_inbox(
-            self.slug, n['body'], n['byline'], n['archived'], n['uuid'], n['timestamp']) for n in r]
+        notes = [
+            Note.from_inbox(
+                self.slug,
+                n["body"], n["byline"], n["archived"], n["uuid"], n["timestamp"]
+            )
+            for n in r
+        ]
         return notes[::-1]
 
     def export(self, file_format):
