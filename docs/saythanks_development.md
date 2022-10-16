@@ -18,7 +18,7 @@
 
 - Execute below commands:
   - **sudo apt update**
-  - **sudo apt install libpq-dev python3-dev**
+  - **sudo apt install libpq-dev python3-dev** (Project needs python version <= 3.6, which is default for Ubuntu 18)
   - **sudo apt install python3-pip**
 
 6. Get the repository by using below command:
