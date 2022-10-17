@@ -63,15 +63,7 @@
 
 > ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.009.jpeg)
 
-16. Add environmental variables values related to project on .bashrc file (file located on /home/[user]/.bashrc) as below:
-
-    export DATABASE_URL="postgresql://user:pwd@server_ip/database_name"
-    export SENDGRID_API_KEY=''
-    export AUTH0_CLIENT_ID=''
-    export AUTH0_CLIENT_SECRET=
-    export AUTH0_CALLBACK_URL='http://localhost:5000/callback'
-    export AUTH0_DOMAIN=''
-    export AUTH0_JWT_V2_TOKEN=''
+16. Make a copy of `sample.env` and save it as `.env`. Then update environmental variables values related to project in `.env` file.
 
 17. Go to “<https://www.enterprisedb.com/downloads/postgres-postgresql-downloads>” , download and install the required version of “Postgres”
 
