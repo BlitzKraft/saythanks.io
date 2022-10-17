@@ -63,26 +63,18 @@
 
 > ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.009.jpeg)
 
-16. Add environmental variables values related to project on .bashrc file (file located on /home/[user]/.bashrc) as below:
+1.  Make a copy of `sample.env` and save it as `.env`. Then update environmental variables values related to project in `.env` file.
 
-    export DATABASE_URL="postgresql://user:pwd@server_ip/database_name"
-    export SENDGRID_API_KEY=''
-    export AUTH0_CLIENT_ID=''
-    export AUTH0_CLIENT_SECRET=
-    export AUTH0_CALLBACK_URL='http://localhost:5000/callback'
-    export AUTH0_DOMAIN=''
-    export AUTH0_JWT_V2_TOKEN=''
+2.  Go to “<https://www.enterprisedb.com/downloads/postgres-postgresql-downloads>” , download and install the required version of “Postgres”
 
-17. Go to “<https://www.enterprisedb.com/downloads/postgres-postgresql-downloads>” , download and install the required version of “Postgres”
-
-18. Go inside “postgres” installation path
-19. Configure password and create database in “Postgres” (Refer below image):
+3.  Go inside “postgres” installation path
+4.  Configure password and create database in “Postgres” (Refer below image):
 
     > ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.010.jpeg)
 
-20. Download the schema.sql file from the link : “<https://github.com/BlitzKraft/saythanks.io/tree/master/saythanks/sqls>” and paste it in required local drive
+5.  Download the schema.sql file from the link : “<https://github.com/BlitzKraft/saythanks.io/tree/master/saythanks/sqls>” and paste it in required local drive
 
-21. To Configure development environment in Visual Source Code:
+6.  To Configure development environment in Visual Source Code:
 
 - Go to powershell - > and then Type
 - > **wsl**
