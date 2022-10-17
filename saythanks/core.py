@@ -21,6 +21,7 @@ from flask_qrcode import QRcode
 from . import storage
 from urllib.parse import quote
 from lxml.html.clean import Cleaner
+from dotenv import load_dotenv
 
 cleaner = Cleaner()
 cleaner.javascript = True
@@ -34,6 +35,8 @@ cleaner.remove_attributes = ['id', 'class', 'style', 'align', 'border', 'cellpad
 def remove_tags(html):
     return cleaner.clean_html(html)
 
+# Import environment variables from .env file
+load_dotenv()
 
 # importing module
 
