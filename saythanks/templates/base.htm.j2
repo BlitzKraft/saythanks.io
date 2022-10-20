@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     {# <link rel="stylesheet" href="{{ url_for('static', filename='style.css') #}
     <title>SayThanks.io &#9728; {% block title %}{% endblock %} </title>
-    <meta name="description" content="">
+    <meta name="description" content="SayThanks.io provides a handy URL for you to share with your open source projects— it encourages users to send a simple thank you note to you, the creator of that project. This simple link can be added to READMEs and project documentation. Then, you can enjoy a nice inbox of very small but thoughtful messages from the happy users of the software that you've toiled over. :)">
     <meta name="author" content="">
 
 
@@ -32,7 +32,7 @@
 
      <!-- jQuery!
      –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
      <script src="{{ url_for('static', filename='js/jquery.autogrowtextarea.min.js') }}"></script>
      <script src="{{ url_for('static', filename='js/jquery.simplyCountable.js') }}"></script>
      <script src="{{ url_for('static', filename='js/jquery.modal.min.js') }}"></script>
@@ -108,7 +108,10 @@ function setSelectedFont() {
   selectBox = document.getElementById('fontstyle');
    var r = document.querySelector(':root');
    var localFont = localStorage.getItem("selectedFont");
-   selectBox.selectedIndex = localStorage.getItem("selectedIndex");
+   
+   // selectbox is null for index.html, so skip selectedIndex for /index
+   if(selectBox)
+    selectBox.selectedIndex = localStorage.getItem("selectedIndex");
    if( localFont === 'Regular'){
      r.style.setProperty('--customfont', "'Annie Use Your Telescope', 'SerendityFont', cursive");
    }
