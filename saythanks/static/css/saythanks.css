@@ -103,9 +103,7 @@ a.share {
 }
 
  .logoutLblPos{
-    position:absolute;
-    right:20px;
-    top: 25px;   
+    position:relative;
    }
    .github-corner:hover .octo-arm {
     animation: octocat-wave 560ms ease-in-out
