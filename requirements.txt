@@ -34,7 +34,6 @@ python-http-client
 pytz
 pytzdata
 raven
-records==0.5.0
 regex
 requests
 ruamel.yaml
