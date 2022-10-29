@@ -45,3 +45,4 @@ tablib
 tzlocal
 Werkzeug
 whitenoise
+python-dotenv
