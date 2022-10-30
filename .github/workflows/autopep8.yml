@@ -2,8 +2,10 @@
 name: Python Pep8 Continuous Integration
 
 on:
-  pull_request:
   push:
+    branches:
+    - master
+  pull_request:
     branches:
     - master
 
