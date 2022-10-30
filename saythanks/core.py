@@ -119,7 +119,7 @@ def inbox():
 
 @app.route('/inbox/export/<format>')
 @requires_auth
-def inbox_export(file_format):
+def inbox_export(format):
 
     # Auth0 stored account information.
     profile = session['profile']
@@ -128,7 +128,7 @@ def inbox_export(file_format):
     inbox_db = storage.Inbox(profile['nickname'])
 
     # Send over the list of all given notes for the user.
-    response = make_response(inbox_db.export(file_format))
+    response = make_response(inbox_db.export(format))
     response.headers['Content-Disposition'] = 'attachment; filename=saythanks-inbox.csv'
     response.headers['Content-type'] = 'text/csv'
     return response
@@ -200,11 +200,11 @@ def enable_inbox():
 
 @app.route('/to/<inbox>', methods=['GET'], defaults={"topic": ""})
 @app.route('/to/<inbox>&<topic>', methods=['GET'])
-def display_submit_note(ibox, topic):
+def display_submit_note(inbox, topic):
     """Display a web form in which user can edit and submit a note."""
-    if not storage.Inbox.does_exist(ibox):
+    if not storage.Inbox.does_exist(inbox):
         abort(404)
-    elif not storage.Inbox.is_enabled(ibox):
+    elif not storage.Inbox.is_enabled(inbox):
         abort(404)
 
     fake_name = get_full_name()
@@ -246,10 +246,10 @@ def archive_note(uuid):
 
 
 @app.route('/to/<inbox>/submit', methods=['POST'])
-def submit_note(ibox):
+def submit_note(inbox):
     """Store note in database and send a copy to user's email."""
     # Fetch the current inbox.
-    inbox_db = storage.Inbox(ibox)
+    inbox_db = storage.Inbox(inbox)
     body = request.form['body']
     content_type = request.form['content-type']
     byline = Markup(request.form['byline'])
