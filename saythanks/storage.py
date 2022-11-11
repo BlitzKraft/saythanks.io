@@ -79,7 +79,7 @@ class Note:
     @classmethod
     def does_exist(cls, uuid):
         q = sqlalchemy.text('SELECT * from notes where uuid = :uuid')
-        r = conn.execute(q, uuid=uuid).all()
+        r = conn.execute(q, uuid=uuid).fetchall()
         return bool(len(r))
 
     def store(self):
