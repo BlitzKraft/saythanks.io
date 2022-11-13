@@ -3,8 +3,8 @@
 {% block title %}Say Thank You{% endblock %}
 
 {% block extra_head %} 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-  <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 {% endblock %}
 
 {% block content %}
@@ -17,7 +17,7 @@
 <h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong>{{ topic }}!</h4>
 
 
-<form class="form-horizontal" action="./{{ user }}/submit" method="post">
+<form id="thankyou-note-form" class="form-horizontal" action="./{{ user }}/submit" method="post">
 <table>
 <tr>
 <td>
@@ -53,9 +53,10 @@
 <!-- Textarea -->
 <div class="form-group">
   <div class="col-md-4">
-    <textarea class="form-control u-full-width notebodyfont noteinput" id="body" name="body" autofocus placeholder="Dear {{ user }},&#10Thank you for..." required></textarea>
+    <div id="editor"></div>
   </div>
 </div>
+
 
 <h6>You have written <strong><span id=counter>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
 <!-- Text input-->
@@ -63,7 +64,6 @@
   <label class="col-md-4 control-label" for="byline">Sincerely, </label>
   <div class="col-md-4">
   <input class='notebodyfont' id="byline" class="u-full-width" name="byline" type="text" placeholder="{{ fake_name }}" class="form-control input-md">
-
   </div>
 </div>
 
@@ -79,28 +79,6 @@
 </form>
 
 <script>
-
-  input = document.getElementById("byline");
-
-  input.addEventListener("keyup", function(event) {
-    if (event.keyCode === 13 && event.ctrlKey) {    
-      event.preventDefault();
-      document.getElementById("submit").click();
-    }
-  });
-
-  var textArea = document.getElementById("body");
-  var simplemde = new SimpleMDE({ 
-                        element: textArea, 
-                        forceSync: true,
-                        spellChecker: true,
-                        autofocus: true,
-                        autosave: {
-                            enabled: true,
-                            uniqueid: "{{ user }}"
-                          }
-                        });
-
   function wordCount(data) {
     var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
     var m = data.match(pattern);
@@ -115,22 +93,35 @@
     }
     return count;
   }
-
   var counter = document.getElementById("counter");
-  simplemde.codemirror.on("change", () => {
-    counter.innerText = wordCount(simplemde.value());
+
+  var textArea = document.getElementById("editor");
+  const editor = new toastui.Editor({
+        el: textArea,
+        previewStyle: 'tab',
+        height: '500px',
+        initialValue: "Dear {{ user }},\nThank you for..."
+      });
+
+  var form = document.getElementById("thankyou-note-form");
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    var formData = new FormData(form);
+    formData.append('body', editor.getMarkdown());
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+    if (request.readyState == XMLHttpRequest.DONE) {
+        window.location.replace(request.responseURL);
+    }
+}
+    request.open("POST", "./{{ user }}/submit");
+    request.send(formData);
   })
 
-  textArea.addEventListener("keyup", function(event) {
-   if (event.keyCode === 39 && event.ctrlKey) {      
-    event.preventDefault();
-    placeHolderArr = textArea.placeholder.split(',');
-    placeHolderText = `${placeHolderArr[0]},                                                                                                                                  ${placeHolderArr[1]}`;
-    textArea.innerText = placeHolderText
-    textArea.setSelectionRange(placeHolderText.length, placeHolderText.length);
-    }
-  });
-
+  editor.addHook('change', () => {
+    counter.innerText = wordCount(editor.getMarkdown());
+  })
+  
 </script>
 
 

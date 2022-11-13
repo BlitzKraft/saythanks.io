@@ -26,6 +26,7 @@
    git clone [https://github.com/BlitzKraft/saythanks.io.git](https://github.com/BlitzKraft/saythanks.io.git)
 
 7. Saythanks uses `pipenv` as dependency managment tool. You can read more about `pipenv` [here](https://realpython.com/pipenv-guide/). Install `pipenv` using `pip`. Install the required packages by using below command:
+
    ```
    pipenv install
    ```
