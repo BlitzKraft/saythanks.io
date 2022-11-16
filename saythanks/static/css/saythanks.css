@@ -1,27 +1,27 @@
 /* The Sun icon in the header should not have an underline */
 @font-face {
-    /* HuiFont is a Japanese handwriting free font.
+  /* HuiFont is a Japanese handwriting free font.
        http://hp.vector.co.jp/authors/VA039499/ */
-    font-family: 'SerendityFont';
-    src: url('/static/fonts/SerendityScript.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-    
-    /* HuiFont is a Japanese handwriting free font.
+  font-family: 'SerendityFont';
+  src: url('/static/fonts/SerendityScript.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+
+  /* HuiFont is a Japanese handwriting free font.
        http://hp.vector.co.jp/authors/VA039499/ */
-    /* font-family: 'HuiFont'; */
-    /* src: url('/static/fonts/HuiFont.woff2') format('woff2'); */
-    /* font-weight: normal; */
-    /* font-style: normal; */
+  /* font-family: 'HuiFont'; */
+  /* src: url('/static/fonts/HuiFont.woff2') format('woff2'); */
+  /* font-weight: normal; */
+  /* font-style: normal; */
 }
 
 
-:root{
-    --customfont: 'Annie Use Your Telescope', 'SerendityFont', cursive;
-   }    
+:root {
+  --customfont: 'Annie Use Your Telescope', 'SerendityFont', cursive;
+}
 
 h1 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .u-textcenter {
@@ -29,10 +29,10 @@ h1 a {
 }
 
 button {
-    overflow: hidden!important;
+  overflow: hidden !important;
 }
 
-#badge-modal textarea{
+#badge-modal textarea {
   font-size: 13px;
 }
 
@@ -44,96 +44,112 @@ button {
 }
 
 .note {
-    font-family: 'Annie Use Your Telescope', 'SerendityFont', cursive!important;
-    /*font-family: 'Annie Use Your Telescope', 'HuiFont', cursive!important; */
-    font-size: 2.35rem;
-    white-space: pre-wrap!important;
+  font-family: 'Annie Use Your Telescope', 'SerendityFont', cursive !important;
+  /*font-family: 'Annie Use Your Telescope', 'HuiFont', cursive!important; */
+  font-size: 2.35rem;
+  white-space: pre-wrap !important;
 }
-   
+
 .notebodyfont {
-    font-family: var(--customfont);
-    font-size: 2.35rem;
-    white-space: pre-wrap!important;
+  font-family: var(--customfont);
+  font-size: 2.35rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .noteinput {
-    height: 6em;
+  height: 6em;
 }
 
 
 .button-primary {
-    background-color: #3ac025!important;
-    border-color: #3ac025!important;
+  background-color: #3ac025 !important;
+  border-color: #3ac025 !important;
 }
 
 a {
-    color: #3ac025!important;
+  color: #3ac025;
 }
 
 .green {
-    color: #3ac025!important;
+  color: #3ac025 !important;
 }
 
 .dark-green {
-    color: #208A13!important;
+  color: #208A13 !important;
 }
 
 #eve {
-    height: 5rem;
-    margin-top: 0.2em;
-    color: green;
+  height: 5rem;
+  margin-top: 0.2em;
+  color: green;
 }
 
 #eve-send {
-    height: 6rem;
-    margin-bottom: -4em;
-    color: green;
+  height: 6rem;
+  margin-bottom: -4em;
+  color: green;
 }
 
 .auth0-lock-name:after {
-    content: ' (for SayThanks.io)';
+  content: ' (for SayThanks.io)';
 }
 
 .no-color {
-    color:none!important;
+  color: none !important;
 }
 
 a.share {
-    text-decoration: none
+  text-decoration: none
 }
 
- .logoutLblPos{
-    position:relative;
-   }
-   .github-corner:hover .octo-arm {
+.logoutLblPos {
+  position: relative;
+}
+
+.github-corner:hover .octo-arm {
+  animation: octocat-wave 560ms ease-in-out
+}
+
+#share {}
+
+#message {}
+
+#from {
+  width: 15%;
+}
+
+#timestamp {
+}
+
+@keyframes octocat-wave {
+
+  0%,
+  100% {
+    transform: rotate(0)
+  }
+
+  20%,
+  60% {
+    transform: rotate(-25deg)
+  }
+
+  40%,
+  80% {
+    transform: rotate(10deg)
+  }
+}
+
+@media (max-width:500px) {
+  .github-corner:hover .octo-arm {
+    animation: none
+  }
+
+  .github-corner .octo-arm {
     animation: octocat-wave 560ms ease-in-out
   }
+}
 
-  @keyframes octocat-wave {
-
-    0%,
-    100% {
-      transform: rotate(0)
-    }
-
-    20%,
-    60% {
-      transform: rotate(-25deg)
-    }
-
-    40%,
-    80% {
-      transform: rotate(10deg)
-    }
-  }
-
-  @media (max-width:500px) {
-    .github-corner:hover .octo-arm {
-      animation: none
-    }
-
-    .github-corner .octo-arm {
-      animation: octocat-wave 560ms ease-in-out
-    }
-  }
-.github-fork-ribbon:before { background-color: #333; }
+.github-fork-ribbon:before {
+  background-color: #333;
+}

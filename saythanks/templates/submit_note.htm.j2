@@ -37,7 +37,7 @@
 <label for= "content-type"> Content Type: </label>
 </td>
  <td>
- <input type="radio" name="content-type" id="option1" value="plaintext" checked> Plain Text</input><br>
+ <input type="radio" name="content-type" id="option1" value="markdown" checked> Plain Text / Markdown</input><br>
  </td>
  <td>
 <input type="radio" name="content-type" id="option2" value="html"> HTML</input><br>
@@ -110,9 +110,7 @@
     formData.append('body', editor.getMarkdown());
     const request = new XMLHttpRequest();
     request.onreadystatechange = function() {
-    if (request.readyState == XMLHttpRequest.DONE) {
-        window.location.replace(request.responseURL);
-    }
+        window.location.href = '/thanks';
 }
     request.open("POST", "./{{ user }}/submit");
     request.send(formData);
