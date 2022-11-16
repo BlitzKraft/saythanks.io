@@ -21,6 +21,7 @@ from flask_qrcode import QRcode
 from . import storage
 from urllib.parse import quote
 from lxml.html.clean import Cleaner
+from markdown import markdown
 
 cleaner = Cleaner()
 cleaner.javascript = True
@@ -106,7 +107,8 @@ def inbox():
 
     # Grab the inbox from the database.
     inbox_db = storage.Inbox(profile['nickname'])
-
+    for i in inbox_db.notes:
+        print(i.body)
     is_enabled = storage.Inbox.is_enabled(inbox_db.slug)
 
     is_email_enabled = storage.Inbox.is_email_enabled(inbox_db.slug)
@@ -273,9 +275,10 @@ def submit_note(inbox):
         note = inbox_db.submit_note(body=body, byline=byline)
         return redirect(url_for('thanks'))
     # Strip any HTML away.
-    body = Markup(body).striptags()
+    
+    body = markdown(body)
+    body = remove_tags(body)
     byline = Markup(request.form['byline']).striptags()
-
     # Assert that the body has length.
     if not body:
         # Pretend that it was successful.
