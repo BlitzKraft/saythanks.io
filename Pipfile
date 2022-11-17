@@ -51,6 +51,7 @@ tzlocal = "*"
 werkzeug = "*"
 whitenoise = "*"
 python-dotenv = "*"
+markdown = "*"
 
 [dev-packages]
 
