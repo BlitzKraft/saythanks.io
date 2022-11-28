@@ -98,10 +98,9 @@ def index():
                            auth_domain=auth_domain)
 
 
-@app.route('/inbox')
+@app.route('/inbox', methods=['POST', 'GET'])
 @requires_auth
 def inbox():
-
     # Auth0 stored account information.
     profile = session['profile']
 
@@ -110,11 +109,17 @@ def inbox():
     is_enabled = storage.Inbox.is_enabled(inbox_db.slug)
 
     is_email_enabled = storage.Inbox.is_email_enabled(inbox_db.slug)
-    # Send over the list of all given notes for the user.
+    if request.method == "GET":
+        # Send over the list of all given notes for the user.
+        return render_template('inbox.htm.j2',
+                            user=profile, notes=inbox_db.notes,
+                            inbox=inbox_db, is_enabled=is_enabled,
+                            is_email_enabled=is_email_enabled)
+    search_str = request.form['search_str']
     return render_template('inbox.htm.j2',
-                           user=profile, notes=inbox_db.notes,
-                           inbox=inbox_db, is_enabled=is_enabled,
-                           is_email_enabled=is_email_enabled)
+                        user=profile, notes=inbox_db.search_notes(search_str),
+                        is_email_enabled=is_email_enabled)
+        
 
 
 @app.route('/inbox/export/<format>')
@@ -346,3 +351,4 @@ def callback_handling():
         # Using nickname by default, can be changed manually later if needed.
         storage.Inbox.store(nickname, userid, email)
     return redirect(url_for('inbox'))
+    

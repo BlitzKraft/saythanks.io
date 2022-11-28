@@ -208,6 +208,20 @@ class Inbox:
             for n in r
         ]
         return notes[::-1]
+    
+    def search_notes(self, search_str):
+        """Returns a list of notes, queried by search string "param" """
+        q = sqlalchemy.text("""SELECT * from notes where ( body LIKE '%' || :param || '%' or byline LIKE '%' || :param || '%' ) and inboxes_auth_id = :auth_id""")
+        r = conn.execute(q, param=search_str, auth_id=self.auth_id).fetchall()
+
+        notes = [
+            Note.from_inbox(
+                self.slug,
+                n["body"], n["byline"], n["archived"], n["uuid"], n["timestamp"]
+            )
+            for n in r
+        ]
+        return notes[::-1]
 
     def export(self, file_format):
         q = sqlalchemy.text("SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'")
