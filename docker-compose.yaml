@@ -4,7 +4,7 @@ services:
   site:
     build: .
     ports:
-      - 8000:8000
+      - 5000:5000
     env_file:
       - ./conf/site.env
     volumes:
