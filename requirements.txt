@@ -1,5 +1,5 @@
 appdirs 
-auth0-python
+auth0-python<=2
 blinker
 click
 colorama
@@ -44,3 +44,4 @@ werkzeug
 whitenoise
 python-dotenv
 markdown
+flask_common
