@@ -60,8 +60,6 @@ CREATE TABLE public.ar_internal_metadata (
 );
 
 
-ALTER TABLE public.ar_internal_metadata OWNER TO postgres;
-
 --
 -- Name: inboxes; Type: TABLE; Schema: public; Owner: postgres
 --
@@ -74,9 +72,6 @@ CREATE TABLE public.inboxes (
     "timestamp" timestamp without time zone DEFAULT now(),
     email text
 );
-
-
-ALTER TABLE public.inboxes OWNER TO postgres;
 
 --
 -- Name: notes; Type: TABLE; Schema: public; Owner: postgres
@@ -91,9 +86,6 @@ CREATE TABLE public.notes (
     "timestamp" timestamp without time zone DEFAULT now()
 );
 
-
-ALTER TABLE public.notes OWNER TO postgres;
-
 --
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: postgres
 --
@@ -103,43 +95,6 @@ CREATE TABLE public.schema_migrations (
 );
 
 
-ALTER TABLE public.schema_migrations OWNER TO postgres;
-
---
--- Data for Name: ar_internal_metadata; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.ar_internal_metadata (key, value, created_at, updated_at) FROM stdin;
-\.
-
-
---
--- Data for Name: inboxes; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.inboxes (slug, auth_id, enabled, email_enabled, "timestamp", email) FROM stdin;
-\.
-
-
---
--- Data for Name: notes; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.notes (uuid, inboxes_auth_id, body, byline, archived, "timestamp") FROM stdin;
-\.
-
-
---
--- Data for Name: schema_migrations; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.schema_migrations (version) FROM stdin;
-\.
-
-
---
--- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
