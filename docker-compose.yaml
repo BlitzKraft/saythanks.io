@@ -22,6 +22,7 @@ services:
       - ./conf/db.env
     volumes:
       - local_pgdata:/var/lib/postgresql/data
+      - ./saythanks/sqls/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     networks:
       - saythanks
 
