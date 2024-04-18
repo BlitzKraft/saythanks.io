@@ -14,7 +14,7 @@ gunicorn
 humanize
 itsdangerous
 jinja2
-lxml
+lxml_html_clean
 markupsafe
 maya
 names
@@ -44,4 +44,4 @@ werkzeug
 whitenoise
 python-dotenv
 markdown
-flask_common
+greenlet>=1.1.2
