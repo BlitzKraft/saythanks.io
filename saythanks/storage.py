@@ -1,10 +1,9 @@
 import logging
 import os
-
+from kinde_sdk.kinde_api_client import GrantType, KindeApiClient
+from kinde_sdk import Configuration
 import tablib
 import sqlalchemy
-from auth0.v2.management import Auth0
-
 from . import myemail
 import traceback  # Just to show the full traceback
 from psycopg2 import errors
@@ -23,16 +22,22 @@ logging.basicConfig(filename='Logfile.log',
 # Creating an object
 logger = logging.getLogger()
 
-# Auth0 API Client
-auth0_domain = os.environ['AUTH0_DOMAIN']
-auth0_token = os.environ['AUTH0_JWT_V2_TOKEN']
-auth0 = Auth0(auth0_domain, auth0_token)
-
 # Database connection.
 engine = sqlalchemy.create_engine(os.environ['DATABASE_URL'])
 conn = engine.connect()
 
+configuration = Configuration(host=os.environ['KINDE_CONFIGURATION'])
 
+kinde_api_client_params = {
+    "configuration": configuration,
+    "domain": os.environ['KINDE_CONFIGURATION'] ,
+    "client_id": os.environ['KINDE_CLIENT_ID'],
+    "client_secret": os.environ['KINDE_CLIENT_SECRET'],
+    "grant_type": GrantType.AUTHORIZATION_CODE,
+    "callback_url": os.environ['KINDE_CALLBACK_URL']
+}
+
+kinde_client = KindeApiClient(**kinde_api_client_params)
 
 # Storage Models
 # Note: Some of these are a little fancy (send email and such).
@@ -197,7 +202,7 @@ class Inbox:
 
     @property
     def myemail(self):
-        return auth0.users.get(self.auth_id)['email']
+        return kinde_client.get_user_details()['email']
         # emailinfo = auth0.users.get(self.auth_id)['email']
         # print("myemail prop",emailinfo)
         # return emailinfo

@@ -22,6 +22,8 @@ from . import storage
 from urllib.parse import quote
 from lxml_html_clean import Cleaner
 from markdown import markdown
+from kinde_sdk.kinde_api_client import GrantType, KindeApiClient
+from kinde_sdk import Configuration
 
 cleaner = Cleaner()
 cleaner.javascript = True
@@ -63,15 +65,21 @@ app.debug = True
 if 'SENTRY_DSN' in os.environ:
     sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
 
-# Auth0 Integration
+# Kinde Integration
 # -----------------
 
-auth_id = os.environ['AUTH0_CLIENT_ID']
-auth_secret = os.environ['AUTH0_CLIENT_SECRET']
-auth_callback_url = os.environ['AUTH0_CALLBACK_URL']
-auth_domain = os.environ['AUTH0_DOMAIN']
-auth_jwt_v2 = os.environ['AUTH0_JWT_V2_TOKEN']
+configuration = Configuration(host=os.environ['KINDE_CONFIGURATION'])
 
+kinde_api_client_params = {
+    "configuration": configuration,
+    "domain": os.environ['KINDE_CONFIGURATION'] ,
+    "client_id": os.environ['KINDE_CLIENT_ID'],
+    "client_secret": os.environ['KINDE_CLIENT_SECRET'],
+    "grant_type": GrantType.AUTHORIZATION_CODE,
+    "callback_url": os.environ['KINDE_CALLBACK_URL']
+}
+
+kinde_client = KindeApiClient(**kinde_api_client_params)
 
 def requires_auth(f):
     @wraps(f)
@@ -89,16 +97,23 @@ def requires_auth(f):
 
 @app.route('/')
 def index():
-    return render_template('index.htm.j2',
-                           callback_url=auth_callback_url,
-                           auth_id=auth_id,
-                           auth_domain=auth_domain)
+    return render_template('index.htm.j2')
+
+
+@app.route("/login")
+def login():
+    return app.redirect(kinde_client.get_login_url())
+
+
+@app.route("/register")
+def register():
+    return app.redirect(kinde_client.get_register_url())
 
 
 @app.route('/inbox', methods=['POST', 'GET'])
 @requires_auth
 def inbox():
-    # Auth0 stored account information.
+    # Kinde stored account information.
     profile = session['profile']
 
     # Grab the inbox from the database.
@@ -123,7 +138,7 @@ def inbox():
 @requires_auth
 def inbox_export(format):
 
-    # Auth0 stored account information.
+    # Kinde stored account information.
     profile = session['profile']
 
     # Grab the inbox from the database.
@@ -140,7 +155,7 @@ def inbox_export(format):
 @requires_auth
 def archived_inbox():
 
-    # Auth0 stored account information.
+    # Kinde stored account information.
     profile = session['profile']
 
     # Grab the inbox from the database.
@@ -158,16 +173,13 @@ def archived_inbox():
 
 @app.route('/thanks')
 def thanks():
-    return render_template('thanks.htm.j2',
-                           callback_url=auth_callback_url,
-                           auth_id=auth_id,
-                           auth_domain=auth_domain)
+    return render_template('thanks.htm.j2')
 
 
 @app.route('/disable-email')
 @requires_auth
 def disable_email():
-    # Auth0 stored account information.
+    # Kinde stored account information.
     slug = session['profile']['email']
     storage.Inbox.disable_email(slug)
     return redirect(url_for('inbox'))
@@ -176,7 +188,7 @@ def disable_email():
 @app.route('/enable-email')
 @requires_auth
 def enable_email():
-    # Auth0 stored account information.
+    # Kinde stored account information.
     slug = session['profile']['email']
     storage.Inbox.enable_email(slug)
     return redirect(url_for('inbox'))
@@ -185,7 +197,7 @@ def enable_email():
 @app.route('/disable-inbox')
 @requires_auth
 def disable_inbox():
-    # Auth0 stored account information.
+    # Kinde stored account information.
     slug = session['profile']['email']
     storage.Inbox.disable_account(slug)
     return redirect(url_for('inbox'))
@@ -194,7 +206,7 @@ def disable_inbox():
 @app.route('/enable-inbox')
 @requires_auth
 def enable_inbox():
-    # Auth0 stored account information.
+    # Kinde stored account information.
     slug = session['profile']['email']
     storage.Inbox.enable_account(slug)
     return redirect(url_for('inbox'))
@@ -236,7 +248,7 @@ def share_note(uuid):
 @requires_auth
 def archive_note(uuid):
     """Set aside the note by moving it into an archive."""
-    # Auth0 stored account information.
+    # Kinde stored account information.
     # profile = session['profile']
 
     note = storage.Note.fetch(uuid)
@@ -306,46 +318,22 @@ def user_logout():
 
 @app.route('/callback')
 def callback_handling():
-    code = request.args.get('code')
-
-    json_header = {'content-type': 'application/json',
-                   'Authorization': 'Bearer {0}'.format(auth_jwt_v2)}
-
-    token_url = 'https://{0}/oauth/token'.format(auth_domain)
-    token_payload = {
-        'client_id': auth_id,
-        'client_secret': auth_secret,
-        'redirect_uri': auth_callback_url,
-        'code': code,
-        'grant_type': 'authorization_code'
-    }
-
-    # Fetch User info from Auth0.
-    token_info = requests.post(token_url, data=json.dumps(
-        token_payload), headers=json_header).json()
-    user_url = 'https://{0}/userinfo?access_token={1}'.format(
-        auth_domain, token_info['access_token'])
-    user_info = requests.get(user_url).json()
-
-    user_info_url = 'https://{0}/api/v2/users/{1}'.format(
-        auth_domain, user_info['sub'])
-
-    user_detail_info = requests.get(user_info_url, headers=json_header).json()
-
-    # Add the 'user_info' to Flask session.
-    session['profile'] = user_info
-
-    # nickname = user_info['email']
-    nickname = user_detail_info['nickname']
-    email = user_detail_info['email']
-    userid = user_info['sub']
-    picture = user_detail_info['picture']
-    name = user_detail_info['name']
-    session['profile']['nickname'] = nickname
-    session['profile']['picture'] = picture
-    session['profile']['name'] = name
-    if not storage.Inbox.does_exist(nickname):
-        # Using nickname by default, can be changed manually later if needed.
-        storage.Inbox.store(nickname, userid, email)
-    return redirect(url_for('inbox'))
+    kinde_client.fetch_token(authorization_response=request.url)
+    if kinde_client.is_authenticated():
+        user_detail_info = kinde_client.get_user_details()
+        session['profile'] = user_detail_info
+        nickname = user_detail_info['email'].split('@')[0]
+        email = user_detail_info['email']
+        userid = user_detail_info['id']
+        picture = user_detail_info['picture']
+        name = user_detail_info['given_name']+" "+user_detail_info['family_name']
+        session['profile']['nickname'] = nickname
+        session['profile']['picture'] = picture
+        session['profile']['name'] = name
+        if not storage.Inbox.does_exist(nickname):
+            # Using nickname by default, can be changed manually later if needed.
+            storage.Inbox.store(nickname, userid, email)
+        return redirect(url_for('inbox'))
+    else:
+        return "Error : Unable to login"
     

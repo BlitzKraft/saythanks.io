@@ -15,52 +15,31 @@
 <p style="text-align:center;">
 <img style="height: 25rem; margin-left: auto; margin-right: auto; " src="{{ url_for('static', filename='images/inbox.png') }}" alt="Thankfulness Inbox of Love">
 </p>
+<hr>
+ <button class="button button-primary" type="submit" id="register">Create Your Thankfulness Inbox</button>
 
+  <span>or...</span>
 
-        <script src="https://cdn.auth0.com/js/lock/11.33/lock.min.js"></script>
+ <button class="button" type="submit" id="login">Access Your Thankfulness Inbox</button>
+<hr>
+
         <script>
-            var options_signup = {
-              theme: {
-                logo: '{{ url_for('static', filename='images/owly.svg') }}',
-                primaryColor: '#3ac025',
-              },
-              allowSignUp: true,
-              allowLogin: false,
-              auth: {
-                redirectUrl: '{{ callback_url }}',
-                params: {
-                  scope: 'openid email name picture'
-                }
-              }
-            }
+          document.getElementById("register").addEventListener("click", function() {
+          // Specify the link you want to redirect to
+          var link = "{{url_for('register')}}";
+          
+          // Redirect the user to the specified link
+          window.location.href = link;
+          });
 
-            var options_signin = {
-              theme: {
-                logo: '{{ url_for('static', filename='images/owly.svg') }}',
-                primaryColor: '#3ac025',
-              },
-              allowSignUp: false,
-              allowLogin: true,
-              auth: {
-                redirectUrl: '{{ callback_url }}',
-                params: {
-                  scope: 'openid email name picture'
-                }
-              }
-            }
-            var lock1 = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options_signup);
-            var lock2 = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options_signin);
-</script>
-
-<hr>
-<button class="button-primary" type="submit" onClick="lock1.show();">Create Your Thankfulness Inbox</button>
-
-<span>or...</span>
-
-<button type="submit" onClick="lock2.show();">Access Your Thankfulness Inbox</button>
-
-<hr>
-
+          document.getElementById("login").addEventListener("click", function() {
+          // Specify the link you want to redirect to
+          var link = "{{url_for('login')}}";
+          
+          // Redirect the user to the specified link
+          window.location.href = link;
+          });
+        </script>
 <p>Thanks for helping to make the world a little bit of a better place! :)</p>
 
  <hr> 

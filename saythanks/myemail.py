@@ -1,7 +1,7 @@
 import os
 
 import sendgrid
-from sendgrid.helpers.mail import Email, Content, Mail
+from sendgrid.helpers.mail import Email, Content, Mail,To
 from urllib.error import URLError
 
 # importing module
@@ -52,11 +52,10 @@ def notify(note, email_address):
         message = note.body
         message = TEMPLATE.format(note.body, note.byline)
         from_address = Email('no-reply@saythanks.io', name="SayThanks.io")
-        to_address = Email(email_address)
+        to_address = To(email_address)
         content = Content('text/html', message)
-
-        mail = Mail(from_address, subject, to_address, content)
-        response = sg.client.mail.send.post(request_body=mail.get())
+        mail = Mail(from_address,to_address,subject,content)
+        sg.client.mail.send.post(request_body=mail.get())
     except URLError as e:
         logging.error("URL Error occured "+str(e))
         print(e)

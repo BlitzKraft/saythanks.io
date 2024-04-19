@@ -45,3 +45,4 @@ whitenoise
 python-dotenv
 markdown
 greenlet>=1.1.2
+kinde-python-sdk
