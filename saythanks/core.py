@@ -232,7 +232,10 @@ def share_note(uuid):
         abort(404)
 
     note = storage.Note.fetch(uuid)
-    return render_template('share_note.htm.j2', note=note)
+    note_body = note.body
+    for i in ['<div>','<p>','</div>','</p>']:
+        note_body = note_body.replace(i,'')
+    return render_template('share_note.htm.j2', note=note,note_body=note_body)
 
 
 @app.route('/inbox/archive/note/<uuid>', methods=['GET'])
