@@ -73,9 +73,11 @@
 </p>
 
 <form action="/inbox" method="POST">
-  <input type="text" style="font-size:14px" size=28 placeholder="Search by message body or byline" name="search_str">
+  <input type="text" style="font-size:14px" size=28 placeholder="{{search_str}}" name="search_str">
     <button style="font-size:10px" type="submit">Search</button>
+    <button type="submit" name="clear" value="true">Clear</button>
 </form>
+
 <table>
   <thead>
     <tr>
@@ -95,7 +97,7 @@
       <td class="ellipsis"><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid)}}">♻</a></strong></td>
     </tr>
   {% endfor %}
-  {% if page==total_pages %}
+  {% if (page==total_pages or total_pages==0) and search_str=="Search by message body or byline" %}
     <tr>
       <td></td>
       <td>Thanks for using SayThanks.io! :)</td>
@@ -106,7 +108,7 @@
     {%endif%}
   </tbody>
 </table>
-
+{% if total_pages!=0 %}
 {% if page > 1 %}
 <a href="{{ url_for('inbox', page=page-1) }}">Previous</a>
 {% endif %}
@@ -115,6 +117,7 @@
 
 {% if page < total_pages %}
 <a href="{{ url_for('inbox', page=page+1) }}">Next</a>
+{% endif %}
 {% endif %}
 
 <h4>Manage your Inbox:</h4>
