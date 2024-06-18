@@ -95,7 +95,7 @@
       <td class="ellipsis"><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid)}}">♻</a></strong></td>
     </tr>
   {% endfor %}
-
+  {% if page==total_pages %}
     <tr>
       <td></td>
       <td>Thanks for using SayThanks.io! :)</td>
@@ -103,8 +103,19 @@
       <td></td>
       <td></td>
     </tr>
+    {%endif%}
   </tbody>
 </table>
+
+{% if page > 1 %}
+<a href="{{ url_for('inbox', page=page-1) }}">Previous</a>
+{% endif %}
+
+<span>Page {{ page }} of {{ total_pages }}</span>
+
+{% if page < total_pages %}
+<a href="{{ url_for('inbox', page=page+1) }}">Next</a>
+{% endif %}
 
 <h4>Manage your Inbox:</h4>
 

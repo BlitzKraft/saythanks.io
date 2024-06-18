@@ -20,7 +20,7 @@ from raven.contrib.flask import Sentry
 from flask_qrcode import QRcode
 from . import storage
 from urllib.parse import quote
-from lxml.html.clean import Cleaner
+from lxml_html_clean import Cleaner
 from markdown import markdown
 
 cleaner = Cleaner()
@@ -103,22 +103,28 @@ def index():
 def inbox():
     # Auth0 stored account information.
     profile = session['profile']
-
     # Grab the inbox from the database.
     inbox_db = storage.Inbox(profile['nickname'])
     is_enabled = storage.Inbox.is_enabled(inbox_db.slug)
-
+    page=request.args.get('page', 1, type=int)
+    page_size=10
+    if page<0:
+        return render_template("404notfound.htm.j2")
+    data=inbox_db.notes(page,page_size)
+    if page>data['total_pages']:
+        return render_template("404notfound.htm.j2")
     is_email_enabled = storage.Inbox.is_email_enabled(inbox_db.slug)
     if request.method == "GET":
         # Send over the list of all given notes for the user.
         return render_template('inbox.htm.j2',
-                            user=profile, notes=inbox_db.notes,
+                            user=profile, notes=data['notes'],
                             inbox=inbox_db, is_enabled=is_enabled,
-                            is_email_enabled=is_email_enabled)
+                            is_email_enabled=is_email_enabled,page=data['page'],
+                            total_pages=data['total_pages'])
     search_str = request.form['search_str']
     return render_template('inbox.htm.j2',
                         user=profile, notes=inbox_db.search_notes(search_str),
-                        is_email_enabled=is_email_enabled)
+                        is_email_enabled=is_email_enabled,page=page)
         
 
 
