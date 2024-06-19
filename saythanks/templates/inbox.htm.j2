@@ -81,7 +81,7 @@
 <table>
   <thead>
     <tr>
-      <th id="share">&nbsp</th>
+      <th id="share" style="padding:5px;">Share URL</th>
       <th id="message">Message</th>
       <th id="from">From</th>
       <th id="timestamp">Timestamp</th>
@@ -90,7 +90,7 @@
   <tbody>
   {% for note in notes %}
     <tr>
-      <td class="ellipsis">&nbsp</td> 
+      <td class="ellipsis"><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></td> 
       <td class="ellipsis"><a href="{{ url_for('share_note', uuid=note.uuid)}}"><span>{{ note.body }}</span></a></td> 
       <td class="ellipsis"><span>— {{ note.byline }}</span></td>
       <td class="ellipsis">{{  note.timestamp.strftime('%d-%h-%Y %H:%M:%S') }}</td>
@@ -107,19 +107,26 @@
     </tr>
     {%endif%}
   </tbody>
-</table>
+</table><div class="pagination">
 {% if total_pages!=0 %}
+<a style="text-decoration:none;" href="{{ url_for('inbox', page=1) }}"><<</a>
 {% if page > 1 %}
-<a href="{{ url_for('inbox', page=page-1) }}">Previous</a>
+<a style="text-decoration:none;" href="{{ url_for('inbox', page=page-1) }}">Previous</a>
+{% else %}
+<span>Previous</span>
 {% endif %}
-
-<span>Page {{ page }} of {{ total_pages }}</span>
-
+<span> {{ page }} of {{ total_pages }}</span>
 {% if page < total_pages %}
-<a href="{{ url_for('inbox', page=page+1) }}">Next</a>
+<a style="text-decoration:none;" href="{{ url_for('inbox', page=page+1) }}">Next</a>
+{% else %}
+<p>Next</p>
 {% endif %}
+<a style="text-decoration:none;" href="{{ url_for('inbox', page=total_pages) }}">>></a>
+{% elif search_str!="Search by message body or byline" %}
+<span> No matches found!
 {% endif %}
-
+</div>
+<br><br><br><br>
 <h4>Manage your Inbox:</h4>
 
 <p>Below are some rudimentary account management tools, available, to you, today, for free!</p>

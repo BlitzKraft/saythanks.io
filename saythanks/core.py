@@ -110,7 +110,7 @@ def inbox():
     is_enabled = storage.Inbox.is_enabled(inbox_db.slug)
     # pagination
     page = request.args.get('page', 1, type=int)
-    page_size = 10
+    page_size = 25
     # checking for invalid page numbers
     if page < 0:
         return render_template("404notfound.htm.j2")
