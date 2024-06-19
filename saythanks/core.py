@@ -20,7 +20,7 @@ from raven.contrib.flask import Sentry
 from flask_qrcode import QRcode
 from . import storage
 from urllib.parse import quote
-from lxml.html.clean import Cleaner
+from lxml_html_clean import Cleaner
 from markdown import markdown
 
 cleaner = Cleaner()
@@ -85,13 +85,15 @@ def requires_auth(f):
 
     return decorated
 
-
 # Application Routes
 # ------------------
 
 
 @app.route('/')
 def index():
+    if 'search_str' in session:
+        session.pop('search_str', None)    
+    
     return render_template('index.htm.j2',
                            callback_url=auth_callback_url,
                            auth_id=auth_id,
@@ -103,23 +105,42 @@ def index():
 def inbox():
     # Auth0 stored account information.
     profile = session['profile']
-
     # Grab the inbox from the database.
     inbox_db = storage.Inbox(profile['nickname'])
     is_enabled = storage.Inbox.is_enabled(inbox_db.slug)
-
+    # pagination
+    page = request.args.get('page', 1, type=int)
+    page_size = 25
+    # checking for invalid page numbers
+    if page < 0:
+        return render_template("404notfound.htm.j2")
+    data = inbox_db.notes(page, page_size)
+    if page > data['total_pages'] and data['total_pages']!=0:
+                return render_template("404notfound.htm.j2")
     is_email_enabled = storage.Inbox.is_email_enabled(inbox_db.slug)
-    if request.method == "GET":
+
+    # handling search with pagination
+    if request.method == 'POST':
+        if 'clear' in request.form:
+            session.pop('search_str', None)
+            return redirect(url_for('inbox'))
+        else:
+            session['search_str'] = request.form['search_str']
+    # regular note set with pagination
+    if request.method == "GET" and 'search_str' not in session:
         # Send over the list of all given notes for the user.
         return render_template('inbox.htm.j2',
-                            user=profile, notes=inbox_db.notes,
-                            inbox=inbox_db, is_enabled=is_enabled,
-                            is_email_enabled=is_email_enabled)
-    search_str = request.form['search_str']
+                               user=profile, notes=data['notes'],
+                               inbox=inbox_db, is_enabled=is_enabled,
+                               is_email_enabled=is_email_enabled, page=data['page'],
+                               total_pages=data['total_pages'], search_str="Search by message body or byline")
+    # reassessing data when search is used
+    if 'search_str' in session:
+            data = inbox_db.search_notes(session['search_str'], page, page_size)
     return render_template('inbox.htm.j2',
-                        user=profile, notes=inbox_db.search_notes(search_str),
-                        is_email_enabled=is_email_enabled)
-        
+                           user=profile, notes=data['notes'],
+                           is_email_enabled=is_email_enabled, page=data['page'],
+                           total_pages=data['total_pages'], search_str=session['search_str'])
 
 
 @app.route('/inbox/export/<format>')
@@ -210,8 +231,7 @@ def display_submit_note(inbox, topic):
     if not storage.Inbox.does_exist(inbox):
         abort(404)
     elif not storage.Inbox.is_enabled(inbox):
-        abort(404)
-
+        abort(404)   
     fake_name = get_full_name()
     topic_string = topic
     if topic_string:
@@ -232,7 +252,10 @@ def share_note(uuid):
         abort(404)
 
     note = storage.Note.fetch(uuid)
-    return render_template('share_note.htm.j2', note=note)
+    note_body = note.body
+    for i in ['<div>', '<p>', '</div>', '</p>']:
+        note_body = note_body.replace(i, '')
+    return render_template('share_note.htm.j2', note=note, note_body=note_body)
 
 
 @app.route('/inbox/archive/note/<uuid>', methods=['GET'])
@@ -278,7 +301,7 @@ def submit_note(inbox):
         note = inbox_db.submit_note(body=body, byline=byline)
         return redirect(url_for('thanks'))
     # Strip any HTML away.
-    
+
     body = markdown(body)
     body = remove_tags(body)
     byline = Markup(request.form['byline']).striptags()
@@ -351,4 +374,3 @@ def callback_handling():
         # Using nickname by default, can be changed manually later if needed.
         storage.Inbox.store(nickname, userid, email)
     return redirect(url_for('inbox'))
-    

@@ -14,7 +14,7 @@ gunicorn
 humanize
 itsdangerous
 jinja2
-lxml
+lxml_html_clean
 markupsafe
 maya
 names

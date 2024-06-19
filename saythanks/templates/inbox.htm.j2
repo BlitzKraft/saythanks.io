@@ -73,13 +73,15 @@
 </p>
 
 <form action="/inbox" method="POST">
-  <input type="text" style="font-size:14px" size=28 placeholder="Search by message body or byline" name="search_str">
+  <input type="text" style="font-size:14px" size=28 placeholder="{{search_str}}" name="search_str">
     <button style="font-size:10px" type="submit">Search</button>
+    <button type="submit" name="clear" value="true">Clear</button>
 </form>
+
 <table>
   <thead>
     <tr>
-      <th id="share">Share URL</th>
+      <th id="share" style="padding:5px;">Share URL</th>
       <th id="message">Message</th>
       <th id="from">From</th>
       <th id="timestamp">Timestamp</th>
@@ -88,22 +90,14 @@
   <tbody>
   {% for note in notes %}
     <tr>
-      <td class="ellipsis">
-        <span>
-          <a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a>
-          <a class="twitter-share-button" target="_blank" href="https://twitter.com/intent/tweet?text={{ note.body|quote + "%0A%0A- " + note.byline + "%0A%0A" + request.base_url[0:-6] + url_for('share_note', uuid=note.uuid) + "%0A" }}" data-url=" "></a> </br>
-          <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ request.base_url[0:-6] + url_for('share_note', uuid=note.uuid) }}&layout=button&size=small&width=67&height=20&appId" width="67" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-          </iframe> 
-        </span>  
-      </td>
-      
+      <td class="ellipsis"><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></td> 
       <td class="ellipsis"><a href="{{ url_for('share_note', uuid=note.uuid)}}"><span>{{ note.body }}</span></a></td> 
       <td class="ellipsis"><span>— {{ note.byline }}</span></td>
       <td class="ellipsis">{{  note.timestamp.strftime('%d-%h-%Y %H:%M:%S') }}</td>
       <td class="ellipsis"><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid)}}">♻</a></strong></td>
     </tr>
   {% endfor %}
-
+  {% if (page==total_pages or total_pages==0) and search_str=="Search by message body or byline" %}
     <tr>
       <td></td>
       <td>Thanks for using SayThanks.io! :)</td>
@@ -111,9 +105,28 @@
       <td></td>
       <td></td>
     </tr>
+    {%endif%}
   </tbody>
-</table>
-
+</table><div class="pagination">
+{% if total_pages!=0 %}
+<a style="text-decoration:none;" href="{{ url_for('inbox', page=1) }}"><<</a>
+{% if page > 1 %}
+<a style="text-decoration:none;" href="{{ url_for('inbox', page=page-1) }}">Previous</a>
+{% else %}
+<span>Previous</span>
+{% endif %}
+<span> {{ page }} of {{ total_pages }}</span>
+{% if page < total_pages %}
+<a style="text-decoration:none;" href="{{ url_for('inbox', page=page+1) }}">Next</a>
+{% else %}
+<p>Next</p>
+{% endif %}
+<a style="text-decoration:none;" href="{{ url_for('inbox', page=total_pages) }}">>></a>
+{% elif search_str!="Search by message body or byline" %}
+<span> No matches found!
+{% endif %}
+</div>
+<br><br><br><br>
 <h4>Manage your Inbox:</h4>
 
 <p>Below are some rudimentary account management tools, available, to you, today, for free!</p>

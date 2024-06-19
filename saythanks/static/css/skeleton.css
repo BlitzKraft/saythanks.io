@@ -596,6 +596,16 @@ hr {
   border-top: 1px solid #E1E1E1;
 }
 
+.sharelinks{
+  display: flex;
+  gap:.2em;
+}
+
+.pagination{
+  display: flex;
+  justify-content: center;
+  gap:2em;
+}
 
 /* Clearing
 –––––––––––––––––––––––––––––––––––––––––––––––––– */

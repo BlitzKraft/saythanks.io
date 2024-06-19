@@ -108,7 +108,6 @@ class Inbox:
         q = sqlalchemy.text("SELECT * FROM inboxes WHERE slug=:inbox")
         r = conn.execute(q, inbox=self.slug).fetchall()
         return r[0]['auth_id']
-
     @classmethod
     def is_linked(cls, auth_id):
         q = sqlalchemy.text('SELECT * from inboxes where auth_id = :auth_id')
@@ -194,34 +193,69 @@ class Inbox:
         # print("myemail prop",emailinfo)
         # return emailinfo
 
-    @property
-    def notes(self):
-        """Returns a list of notes, ordered reverse-chronologically."""
-        q = sqlalchemy.text("SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'")
-        r = conn.execute(q, auth_id=self.auth_id).fetchall()
+    def notes(self,page,page_size):
+        """Returns a list of notes, ordered reverse-chronologically with pagination."""
+        offset = (page - 1) * page_size
+        count_query = sqlalchemy.text("SELECT COUNT(*) FROM notes WHERE inboxes_auth_id = :auth_id AND archived = 'f'")
+        total_notes = conn.execute(count_query, auth_id=self.auth_id).scalar()
+        query = sqlalchemy.text("""
+            SELECT * FROM notes 
+            WHERE inboxes_auth_id = :auth_id AND archived = 'f'
+            ORDER BY timestamp DESC
+            LIMIT :limit OFFSET :offset
+        """)
+        result = conn.execute(query, auth_id=self.auth_id, limit=page_size, offset=offset).fetchall()
 
         notes = [
             Note.from_inbox(
                 self.slug,
                 n["body"], n["byline"], n["archived"], n["uuid"], n["timestamp"]
             )
-            for n in r
+            for n in result
         ]
-        return notes[::-1]
+
+        return {
+            "notes": notes,
+            "total_notes": total_notes,
+            "page": page,
+            "total_pages": (total_notes + page_size - 1) // page_size  # Calculate total pages
+        }
     
-    def search_notes(self, search_str):
-        """Returns a list of notes, queried by search string "param" """
-        q = sqlalchemy.text("""SELECT * from notes where ( body LIKE '%' || :param || '%' or byline LIKE '%' || :param || '%' ) and inboxes_auth_id = :auth_id""")
-        r = conn.execute(q, param=search_str, auth_id=self.auth_id).fetchall()
+    def search_notes(self, search_str, page, page_size):
+        offset = (page - 1) * page_size
+        
+        # Count total matching notes
+        count_query = sqlalchemy.text("""
+            SELECT COUNT(*) FROM notes 
+            WHERE (body LIKE '%' || :param || '%' OR byline LIKE '%' || :param || '%')
+            AND inboxes_auth_id = :auth_id
+        """)
+        total_notes = conn.execute(count_query, param=search_str, auth_id=self.auth_id).scalar()
+
+        # Retrieve paginated notes
+        query = sqlalchemy.text("""
+            SELECT * FROM notes 
+            WHERE (body LIKE '%' || :param || '%' OR byline LIKE '%' || :param || '%')
+            AND inboxes_auth_id = :auth_id
+            ORDER BY timestamp DESC
+            LIMIT :limit OFFSET :offset
+        """)
+        result = conn.execute(query, param=search_str, auth_id=self.auth_id, limit=page_size, offset=offset).fetchall()
 
         notes = [
             Note.from_inbox(
                 self.slug,
                 n["body"], n["byline"], n["archived"], n["uuid"], n["timestamp"]
             )
-            for n in r
+            for n in result
         ]
-        return notes[::-1]
+
+        return {
+            "notes": notes,
+            "total_notes": total_notes,
+            "page": page,
+            "total_pages": (total_notes + page_size - 1) // page_size  # Calculate total pages
+        }
 
     def export(self, file_format):
         q = sqlalchemy.text("SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'")
