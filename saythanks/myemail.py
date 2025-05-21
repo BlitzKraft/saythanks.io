@@ -24,19 +24,18 @@ if not API_KEY:
 
 sg = sendgrid.SendGridAPIClient(api_key=API_KEY)
 
-# Email template including public URL placeholder
+# Friendly and warm email template
 TEMPLATE = """<div>
 {body}
 <br><br>
-<a href="{public_url}">Read your thank‑you note here</a>
+Want to see this note online? <a href="{public_url}">Just click here</a> — it’s waiting for you!
 <br><br>
--- {byline}
+— {byline}
 <br><br>
-=========
+---------
 <br><br>
-This note of thanks was brought to you by SayThanks.io.
-<br><br>
-A KennethReitz project, now maintained by KGiSL Edu (<a href="mailto:info@kgisl.com">info@kgisl.com</a>).
+This little note was sent with love via SayThanks.io 💌<br>
+A Kenneth Reitz project, now cared for by KGiSL Edu (<a href="mailto:info@kgisl.com">info@kgisl.com</a>).
 </div>
 """
 
@@ -54,12 +53,12 @@ def notify(note, email_address, base_url="https://saythanks.io"):
             byline=note.byline,
             public_url=public_url
         )
+
         text_body = (
             f"{note.body}\n\n"
-            f"Read your thank‑you note here: {public_url}\n\n"
-            f"-- {who}"
+            f"Want to see this note online? Just head over here: {public_url} — it’s waiting for you!\n\n"
+            f"— {who}"
         )
-
 
         mail = Mail(
             from_email=('no‑reply@saythanks.io', 'SayThanks.io'),
