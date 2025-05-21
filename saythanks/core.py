@@ -272,54 +272,59 @@ def archive_note(uuid):
     # Redirect to the archived inbox.
     return redirect(url_for('archived_inbox'))
 
+# ^^^^^^^
+
+from flask import Flask, request, session, redirect, url_for, Markup
+from saythanks.storage import Inbox
+from saythanks.core import remove_tags
+import markdown
 
 @app.route('/to/<inbox>/submit', methods=['POST'])
 def submit_note(inbox):
-    """Store note in database and send a copy to user's email."""
-    # Fetch the current inbox.
-    inbox_db = storage.Inbox(inbox)
-    body = request.form['body']
+    """Store note in DB and (if enabled) email a share‑URL + text to the user."""
+    inbox_db = Inbox(inbox)
+    raw_body = request.form['body']
     content_type = request.form['content-type']
     byline = Markup(request.form['byline'])
 
-    # If the user chooses to send an HTML email,
-    # the contents of the HTML document will be sent
-    # as an email but will not be stored due to the enormous size
-    # of professional email templates
+    # Build base_url (e.g. http://localhost:5000 or https://saythanks.io)
+    base_url = request.url_root.strip('/')
 
     if content_type == 'html':
-        body = Markup(body)
-        note = storage.Note.from_inbox(inbox=None, body=body, byline=byline)
-        if storage.Inbox.is_email_enabled(inbox_db.slug):
-            # note.notify(email_address)
+        # Sanitize HTML, then strip to plain text for storage
+        safe_body = remove_tags(Markup(raw_body))
+
+        # 1) Persist note (this returns a Note with uuid set)
+        note = inbox_db.submit_note(body=safe_body, byline=byline)
+
+        # 2) Send email now that note.uuid is non-None
+        if Inbox.is_email_enabled(inbox_db.slug):
             if session:
                 email_address = session['profile']['email']
             else:
-                email_address = storage.Inbox.get_email(inbox_db.slug)
-            note.notify(email_address)
-        body = remove_tags(body)
-        note = inbox_db.submit_note(body=body, byline=byline)
-        return redirect(url_for('thanks'))
-    # Strip any HTML away.
+                email_address = Inbox.get_email(inbox_db.slug)
+            note.notify(email_address, base_url=base_url)
 
-    body = markdown(body)
-    body = remove_tags(body)
-    byline = Markup(request.form['byline']).striptags()
-    # Assert that the body has length.
-    if not body:
-        # Pretend that it was successful.
         return redirect(url_for('thanks'))
 
-    # Store the incoming note to the database.
-    note = inbox_db.submit_note(body=body, byline=byline)
-    # Email the user the new note.
-    if storage.Inbox.is_email_enabled(inbox_db.slug):
-        # note.notify(email_address)
+    # --- Markdown branch ---
+    md_body = markdown.markdown(raw_body)
+    md_body = remove_tags(md_body)
+    byline_text = byline.striptags()
+
+    if not md_body.strip():
+        return redirect(url_for('thanks'))
+
+    # 1) Persist note
+    note = inbox_db.submit_note(body=md_body, byline=byline_text)
+
+    # 2) Email if enabled
+    if Inbox.is_email_enabled(inbox_db.slug):
         if session:
             email_address = session['profile']['email']
         else:
-            email_address = storage.Inbox.get_email(inbox_db.slug)
-        note.notify(email_address)
+            email_address = Inbox.get_email(inbox_db.slug)
+        note.notify(email_address, base_url=base_url)
 
     return redirect(url_for('thanks'))
 
