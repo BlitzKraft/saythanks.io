@@ -3,7 +3,7 @@ import os
 import sendgrid
 from sendgrid.helpers.mail import Email, Content, Mail
 from urllib.error import URLError
-from flask import url_for, current_app
+from flask import url_for, current_app, request
 
 # importing module
 import logging
@@ -39,7 +39,7 @@ or {}.
 This note of gratitude was brought to you by SayThanks.io.
 <br>
 <br>
-A KennethReitz project, now maintained by KGiSL Edu (info@kgisl.com).
+A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
 </div>
 """
 
@@ -60,10 +60,12 @@ def notify(note, email_address):
             with current_app.app_context():
                 note_url = url_for('share_note', uuid=note.uuid, _external=True)
 
-            server_name = os.environ.get('SERVER_NAME', 'http://localhost:5000')
-            note_url2 = "https://"+server_name + "/note/" + str(note.uuid) 
-            #logging.error("note_url: " + note_url)
-
+            # server_name = os.environ.get('SERVER_NAME', 'http://localhost:5000')
+            # note_url2 = "https://"+server_name + "/note/" + str(note.uuid) 
+            base_url = request.url_root  
+            note_url2 = base_url + "note/" + str(note.uuid) 
+            logging.error("note_url2: " + note_url2)
+        
         # Say 'someone' if the byline is empty.
         who = note.byline or 'someone'
 
