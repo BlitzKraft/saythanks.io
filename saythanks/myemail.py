@@ -39,7 +39,7 @@ or {}.
 This note of gratitude was brought to you by SayThanks.io.
 <br>
 <br>
-A KennethReitz project, now maintained by KGiSL Edu (info@kgisl.com).
+A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
 </div>
 """
 
