@@ -72,7 +72,8 @@ def notify(note, email_address):
         mail = Mail(from_address, subject, to_address, content)
         response = sg.client.mail.send.post(request_body=mail.get())
     except URLError as e:
-        logging.error("URL Error occured "+str(e))
+        logging.error("URL Error occurred "+ str(e))
         print(e)
-    # except Exception as e:
-    #    print(e)
+    except Exception as e:
+        logging.error("General Error occurred: " + str(e))
+        print(e)
