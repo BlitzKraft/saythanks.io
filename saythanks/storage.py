@@ -90,7 +90,6 @@ class Note:
         RETURNING uuid
         '''
         q = sqlalchemy.text(q)
-        # conn.execute(q, body=self.body, byline=self.byline, inbox=self.inbox.auth_id)
         result = conn.execute(q, body=self.body, byline=self.byline, inbox=self.inbox.auth_id)
         # Assign the generated UUID from the database to this Note instance
         self.uuid = result.fetchone()['uuid']
