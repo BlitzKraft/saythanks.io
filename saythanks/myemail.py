@@ -29,7 +29,8 @@ TEMPLATE = """<div>{}
 --{}
 <br>
 <br>
-The public URL for this note is <a href="{}">here</a>
+The public URL for this note is <a href="{}">here</a> <br>
+or {}. 
 <br>
 <br>
 =========
@@ -59,12 +60,15 @@ def notify(note, email_address):
             with current_app.app_context():
                 note_url = url_for('share_note', uuid=note.uuid, _external=True)
 
-        
+            server_name = os.environ.get('SERVER_NAME', 'http://localhost:5000')
+            note_url2 = "https://"+server_name + "/note/" + str(note.uuid) 
+            #logging.error("note_url: " + note_url)
+
         # Say 'someone' if the byline is empty.
         who = note.byline or 'someone'
 
         subject = 'saythanks.io: {} sent a note!'.format(who)
-        message = TEMPLATE.format(note.body, note.byline, note_url)
+        message = TEMPLATE.format(note.body, note.byline, note_url, note_url2)
         from_address = Email('no-reply@saythanks.io', name="SayThanks.io")
         to_address = Email(email_address)
         content = Content('text/html', message)
