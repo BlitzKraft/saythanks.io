@@ -29,12 +29,7 @@ TEMPLATE = """<div>{}
 --{}
 <br>
 <br>
-<<<<<<< HEAD
 The public URL for this note is <a clicktracking=off href="{}">here</a> <br>. 
-=======
-The public URL for this note is <a href="{}">here</a> <br>
-or {}. 
->>>>>>> d45f1bb1cc416e391f807bd0ffe8b245f0c9163c
 <br>
 <br>
 =========
@@ -83,14 +78,7 @@ def notify(note, email_address):
         response = sg.client.mail.send.post(request_body=mail.get())
     except URLError as e:
         logging.error("URL Error occurred "+ str(e))
-<<<<<<< HEAD
         print(e)
     except Exception as e:
         logging.error("General Error occurred: " + str(e))
         print(e)
-=======
-        print(e)
-    except Exception as e:
-        logging.error("General Error occurred: " + str(e))
-        print(e)
->>>>>>> d45f1bb1cc416e391f807bd0ffe8b245f0c9163c
