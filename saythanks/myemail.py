@@ -29,7 +29,7 @@ TEMPLATE = """<div>{}
 --{}
 <br>
 <br>
-The public URL for this note is <a clicktracking=off href="{}">here</a><br>. 
+The public URL for this note is <a clicktracking=off href="{}">here</a><br>
 <br>
 <br>
 =========
