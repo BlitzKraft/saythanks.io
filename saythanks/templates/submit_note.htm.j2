@@ -4,7 +4,19 @@
 
 {% block extra_head %} 
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <style>
+      #counter {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
+    <style>
+      #counter1 {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -50,6 +62,8 @@
 <!-- Form Name -->
 <legend>❝ THANK YOU ❞ </legend>
 
+<h6>You have written <strong><span id=counter>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
+
 <!-- Textarea -->
 <div class="form-group">
   <div class="col-md-4">
@@ -58,7 +72,7 @@
 </div>
 
 
-<h6>You have written <strong><span id=counter>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
+<h6>You have written <strong><span id=counter1>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
 <!-- Text input-->
 <div class="form-group">
   <label class="col-md-4 control-label" for="byline">Sincerely, </label>
@@ -94,6 +108,7 @@
     return count;
   }
   var counter = document.getElementById("counter");
+  var counter1 = document.getElementById("counter1");
 
   var textArea = document.getElementById("editor");
   const editor = new toastui.Editor({
@@ -118,6 +133,15 @@
 
   editor.addHook('change', () => {
     counter.innerText = wordCount(editor.getMarkdown());
+    counter1.innerText = wordCount(editor.getMarkdown());
+    if (wordCount(editor.getMarkdown()) > 42) {
+      counter.style.color = "green";
+      counter1.style.color = "green";
+    } else {
+      counter.style.color = "red";
+      counter1.style.color = "red";
+    }
+
   })
   
 </script>
