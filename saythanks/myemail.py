@@ -48,8 +48,21 @@ def notify(note, email_address):
     formatted message. Use sendgrid to deliver the formatted
     message as an email to the user.
 
-    Also include the public URL for the note, so that
-    the user can share it with others.
+    The email includes:
+    - The note's body and byline.
+    - A public URL for the note, allowing the user to share it with others.
+        - If the note has a UUID, the URL is generated using Flask's `url_for`
+        with the 'share_note' route.
+        - If the note lacks a UUID, the URL field in the email will be left blank
+        and an error is logged.
+
+    Args:
+        note: An object representing the note, expected to have 'body', 'byline',  
+            and 'uuid' attributes.  
+        email_address: The recipient's email address.  
+
+    The function logs errors if the note's UUID is missing or if sending the email  
+    fails.
     """
     try:
         if not note.uuid:
@@ -59,20 +72,10 @@ def notify(note, email_address):
             with current_app.app_context():
                 note_url = url_for('share_note', uuid=note.uuid, _external=True)
 
-            # method #1 - did not work
-            # server_name = os.environ.get('SERVER_NAME', 'http://localhost:5000')
-            # note_url2 = "https://"+server_name + "/note/" + str(note.uuid) 
-            
-            # method #2 - not necessary since clicktracking is disabled 
-            # base_url = request.url_root  
-            # note_url2 = base_url + "note/" + str(note.uuid) 
-            # logging.error("note_url2: " + note_url2)
-        
         # Say 'someone' if the byline is empty.
         who = note.byline or 'someone'
 
         subject = 'saythanks.io: {} sent a note!'.format(who)
-        # message = TEMPLATE.format(note.body, note.byline, note_url, note_url2)
         message = TEMPLATE.format(note.body, note.byline, note_url)
         from_address = Email('no-reply@saythanks.io', name="SayThanks.io")
         to_address = Email(email_address)
