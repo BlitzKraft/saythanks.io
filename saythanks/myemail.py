@@ -48,8 +48,17 @@ def notify(note, email_address):
     formatted message. Use sendgrid to deliver the formatted
     message as an email to the user.
 
-    Also include the public URL for the note, so that
-    the user can share it with others.
+    The email includes:
+      - The note's body and byline.
+      - A public URL for the note, allowing the user to share it with others.
+        - If the note has a UUID, the URL is generated using Flask's `url_for` with the 'share_note' route.
+        - If the note lacks a UUID, the URL field in the email will be left blank and an error is logged.
+
+    Args:
+        note: An object representing the note, expected to have 'body', 'byline', and 'uuid' attributes.
+        email_address: The recipient's email address.
+
+    The function logs errors if the note's UUID is missing or if sending the email fails.
     """
     try:
         if not note.uuid:
