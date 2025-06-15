@@ -4,7 +4,19 @@
 
 {% block extra_head %} 
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <style>
+      #counter {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
+    <style>
+      #counter1 {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -122,6 +134,13 @@
   editor.addHook('change', () => {
     counter.innerText = wordCount(editor.getMarkdown());
     counter1.innerText = wordCount(editor.getMarkdown());
+    if (wordCount(editor.getMarkdown()) > 42) {
+      counter.style.color = "green";
+      counter1.style.color = "green";
+    } else {
+      counter.style.color = "red";
+      counter1.style.color = "red";
+    }
 
   })
   
