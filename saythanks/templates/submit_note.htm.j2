@@ -10,13 +10,19 @@
         color: red;
         font-weight: bold;
       }
-    </style>
-    <style>
       #counter1 {
         color: red;
         font-weight: bold;
       }
+      /* Set font size and fixed font family for Toast UI Editor content */
+     .toastui-editor-defaultUI .toastui-editor-contents,
+     .toastui-editor-defaultUI .toastui-editor-md-preview-content,
+     .toastui-editor-defaultUI .ProseMirror {
+        font-size: 16px !important;
+        font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', 'Liberation Mono', monospace !important;
+      }
     </style>
+     
 {% endblock %}
 
 {% block content %}
