@@ -70,6 +70,22 @@
 
 <h6>You have written <strong><span id=counter>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
 
+<div id="suggestion-templates" style="margin-bottom: 1em;">
+  <strong>Need inspiration?</strong>
+  <button type="button" class="suggestion-btn" 
+    data-message="Thank you for always being so helpful!">Thankful</button>
+  <button type="button" class="suggestion-btn" 
+    data-message="Your support means a lot to me.">Gratitude</button>
+  <button type="button" class="suggestion-btn" 
+    data-message="I appreciate your hard work and dedication.">Admiration</button>
+  <button type="button" class="suggestion-btn" 
+    data-message="Some things were not clear and left me confused.">Confusing</button>
+  <button type="button" class="suggestion-btn" 
+    data-message="It would help if you did the following:">Actionable</button>
+  
+</div>
+
+
 <!-- Textarea -->
 <div class="form-group">
   <div class="col-md-4">
@@ -97,6 +113,7 @@
 <h2>🝐</h2>
 </fieldset>
 </form>
+
 
 <script>
   function wordCount(data) {
@@ -132,7 +149,7 @@
     const request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         window.location.href = '/thanks';
-}
+    }
     request.open("POST", "./{{ user }}/submit");
     request.send(formData);
   })
@@ -147,9 +164,18 @@
       counter.style.color = "red";
       counter1.style.color = "red";
     }
-
   })
-  
+
+  document.querySelectorAll('.suggestion-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const msg = btn.getAttribute('data-message');
+      // For Toast UI Editor:
+      //editor.setMarkdown(msg);
+      editor.setMarkdown(editor.getMarkdown() + '\n' + msg);
+    });
+  });
+
+
 </script>
 
 
