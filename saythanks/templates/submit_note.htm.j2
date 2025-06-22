@@ -156,16 +156,17 @@
       counter.style.color = "red";
       counter1.style.color = "red";
     }
-
   })
 
   document.querySelectorAll('.suggestion-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       const msg = btn.getAttribute('data-message');
       // For Toast UI Editor:
-      editor.setMarkdown(msg);
+      //editor.setMarkdown(msg);
+      editor.setMarkdown(editor.getMarkdown() + '\n' + msg);
     });
   });
+
 
 </script>
 
