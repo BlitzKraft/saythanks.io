@@ -10,6 +10,9 @@ import logging
 import os
 import json
 import requests
+# Import your get_version function
+from .version import get_version
+
 
 from functools import wraps
 from flask import Flask, request, session, render_template, url_for
@@ -51,6 +54,7 @@ logger = logging.getLogger()
 # ------------------
 
 app = Flask(__name__)
+app.config['APP_VERSION'] = get_version()
 
 # to encode a query
 app.jinja_env.filters['quote'] = quote
