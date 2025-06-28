@@ -73,7 +73,7 @@
 </p>
 
 <form action="/inbox" method="POST">
-  <input type="text" style="font-size:14px" size=28 placeholder="{{search_str}}" name="search_str">
+  <input type="text" style="font-size:14px" size=30 placeholder="{{search_str}}" name="search_str">
     <button style="font-size:10px" type="submit">Search</button>
     <button type="submit" name="clear" value="true">Clear</button>
 </form>
@@ -107,28 +107,30 @@
     </tr>
     {%endif%}
   </tbody>
-</table><div class="pagination">
-{% if total_pages!=0 %}
-<a style="text-decoration:none;" href="{{ url_for('inbox', page=1) }}"><<</a>
-{% if page > 1 %}
-<a style="text-decoration:none;" href="{{ url_for('inbox', page=page-1) }}">Previous</a>
-{% else %}
-<span>Previous</span>
-{% endif %}
-<span> {{ page }} of {{ total_pages }}</span>
-{% if page < total_pages %}
-<a style="text-decoration:none;" href="{{ url_for('inbox', page=page+1) }}">Next</a>
-{% else %}
-<p>Next</p>
-{% endif %}
-<a style="text-decoration:none;" href="{{ url_for('inbox', page=total_pages) }}">>></a>
-{% elif search_str!="Search by message body or byline" %}
-<span> No matches found!
-{% endif %}
+</table>
+<div class="pagination" style="text-align:center; margin-top:1.5em;">
+  {% if total_pages != 0 %}
+    {% if page < total_pages %}
+      <button 
+        id="load-more" 
+        data-page="{{ page }}" 
+        data-total="{{ total_pages }}"
+        style="padding:0.15em 1.5em; background-color:#4CAF50; color:white; border:none; border-radius:8px; font-family:'Segoe UI', sans-serif; font-weight:bold; text-transform:uppercase;">
+        Load More
+      </button>
+    {% else %}
+      <button 
+        disabled
+        style="padding:0.15em 1.5em; background-color:#4CAF50; color:white; border:none; border-radius:8px; font-family:'Segoe UI', sans-serif; font-weight:bold; text-transform:uppercase; cursor:default;">
+        All messages loaded
+      </button>
+    {% endif %}
+  {% elif search_str != "Search by message body or byline" %}
+    <span>No matches found!</span>
+  {% endif %}
 </div>
 <br><br><br><br>
 <h4>Manage your Inbox:</h4>
-
 <p>Below are some rudimentary account management tools, available, to you, today, for free!</p>
 <ul>
   <li><a href="{{ url_for('archived_inbox') }}">Archived notes</a>.</li>
@@ -143,7 +145,6 @@
     {%endif%}
 
 </li>
-
 <li>
     {% if is_enabled == True %}
       To disable your account please click <a href="{{ url_for('disable_inbox') }}">here</a>.
@@ -153,6 +154,28 @@
 </li>
 
 <p><strong>Note:</strong> this website is a work in progress, and these settings will be moved to a separate settings page in the near future. If you'd like to help, send a pull request! :)</p>
+{# LOAD MORE FUNCTIONALITY #}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const btn = document.getElementById("load-more");
+  if (!btn) return;
 
-
+  btn.onclick = async function () {
+    let p = +this.dataset.page + 1, t = +this.dataset.total;
+    let res = await fetch("?page=" + p, { headers: { "X-Requested-With": "XMLHttpRequest" } });
+    let html = await res.text();
+    let rows = new DOMParser().parseFromString(html, "text/html").querySelectorAll("tbody tr");
+    rows.forEach(r => document.querySelector("table tbody").appendChild(r));
+    if (p >= t) {
+      this.outerHTML = `<button 
+        disabled 
+        style="padding:0.15em 1.5em; background-color:#4CAF50; color:white; border:none; border-radius:8px; font-family:'Segoe UI', sans-serif; font-weight:bold; text-transform:uppercase; cursor: default;">
+        All messages loaded:)
+      </button>`;
+    } else {
+      this.dataset.page = p;
+    }
+  };
+});
+</script>
 {% endblock %}
