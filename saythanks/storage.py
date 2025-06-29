@@ -229,24 +229,22 @@ class Inbox:
     
     def search_notes(self, search_str, page, page_size):
         offset = (page - 1) * page_size
+        search_str_lower = search_str.lower()
         
-        # Count total matching notes
-        count_query = sqlalchemy.text("""
-            SELECT COUNT(*) FROM notes 
-            WHERE (body LIKE '%' || :param || '%' OR byline LIKE '%' || :param || '%')
-            AND inboxes_auth_id = :auth_id
-        """)
-        total_notes = conn.execute(count_query, param=search_str, auth_id=self.auth_id).scalar()
-
-        # Retrieve paginated notes
         query = sqlalchemy.text("""
-            SELECT * FROM notes 
-            WHERE (body LIKE '%' || :param || '%' OR byline LIKE '%' || :param || '%')
+            SELECT *, 
+                COUNT(*) OVER() AS total_notes
+            FROM notes
+            WHERE (LOWER(body) LIKE '%' || :param || '%' OR LOWER(byline) LIKE '%' || :param || '%')
             AND inboxes_auth_id = :auth_id
+            AND archived = 'f'
             ORDER BY timestamp DESC
             LIMIT :limit OFFSET :offset
         """)
-        result = conn.execute(query, param=search_str, auth_id=self.auth_id, limit=page_size, offset=offset).fetchall()
+        # Execute the query with the search string and pagination parameters
+        result = conn.execute(
+            query, param=search_str_lower, auth_id=self.auth_id, limit=page_size, offset=offset
+        ).fetchall()
 
         notes = [
             Note.from_inbox(
@@ -255,6 +253,9 @@ class Inbox:
             )
             for n in result
         ]
+
+        # Get total_notes from the first row, or 0 if no results
+        total_notes = result[0]['total_notes'] if result else 0
 
         return {
             "notes": notes,
