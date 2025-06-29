@@ -236,6 +236,7 @@ class Inbox:
             SELECT COUNT(*) FROM notes 
             WHERE (LOWER(body) LIKE '%' || :param || '%' OR LOWER(byline) LIKE '%' || :param || '%')
             AND inboxes_auth_id = :auth_id
+            AND archived = 'f'
         """)
         total_notes = conn.execute(count_query, param=search_str_lower, auth_id=self.auth_id).scalar()
 
@@ -244,6 +245,7 @@ class Inbox:
             SELECT * FROM notes 
             WHERE (LOWER(body) LIKE '%' || :param || '%' OR LOWER(byline) LIKE '%' || :param || '%')
             AND inboxes_auth_id = :auth_id
+            AND archived = 'f'
             ORDER BY timestamp DESC
             LIMIT :limit OFFSET :offset
         """)
