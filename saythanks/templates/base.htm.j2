@@ -7,10 +7,26 @@
     <meta name="description" content="SayThanks.io provides a handy URL for you to share with your open source projects— it encourages users to send a simple thank you note to you, the creator of that project. This simple link can be added to READMEs and project documentation. Then, you can enjoy a nice inbox of very small but thoughtful messages from the happy users of the software that you've toiled over. :)">
     <meta name="author" content="">
 
+    <!-- PWA Manifest & Icons
+    –––––––––––––––––––––––––––––––––––––––––––––––––– 
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}>
+    <meta name="theme-color" content="#4CAF50">
+    -->
 
     <!-- Mobile Specific Metas
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Say Thanks">
+
+    <!-- Android Home Screen Icon -->
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ url_for('static', filename='icons/icon-512.png') }}">
+
+    <!-- iOS Home Screen Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 
      <!-- FONT
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -27,8 +43,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
      <!-- Favicon
      –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/owly.ico') }}">
+     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/owly.ico') }}" color="green">
+     <link rel="alternate icon" type="image/x-icon" href="{{ url_for('static', filename='icons/favicon.ico') }}">
      <link rel="mask-icon" href="{{ url_for('static', filename='images/owly.svg') }}" color="green">
+
+
 
      <!-- jQuery!
      –––––––––––––––––––––––––––––––––––––––––––––––––– -->
