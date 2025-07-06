@@ -25,7 +25,7 @@
 
 <p>
     You may now direct your users (in a README or documentation, for example)
-    to <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">this URL</a>, where they can submit a note of thankfulness:
+    to <a href="{{ url_for('display_submit_note', inbox_id=user['nickname'])}}">this URL</a>, where they can submit a note of thankfulness:
 </p>
 <hr>
 
@@ -37,7 +37,7 @@
   </div>
 
   <div class="three columns">
-  <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">
+  <a href="{{ url_for('display_submit_note', inbox_id=user['nickname'])}}">
       <button class="button">
           Say Thanks!
       </button>
@@ -52,13 +52,13 @@
   </div>
 
   <div style="margin-top: 0.5em;">
-  <a href="{{ url_for('display_submit_note', inbox=user['nickname'])}}">
+  <a href="{{ url_for('display_submit_note', inbox_id=user['nickname'])}}">
       Say Thanks!
   </a>
   </div>
 
   <div style="text-align: right; margin-top: -3em; ">  
-     <img src="{{ qrcode(request.base_url[0:-6] + url_for('display_submit_note', inbox=user['nickname']))}}" width="100px">
+     <img src="{{ qrcode(request.base_url[0:-6] + url_for('display_submit_note', inbox_id=user['nickname']))}}" width="100px">
   </div>
 
 </div>
