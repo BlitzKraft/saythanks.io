@@ -1,4 +1,6 @@
-#  _____         _____ _           _
+# -*- coding: utf-8 -*-
+# 
+# #  _____         _____ _           _
 # |   __|___ _ _|_   _| |_ ___ ___| |_ ___
 # |__   | .'| | | | | |   | .'|   | '_|_ -|
 # |_____|__,|_  | |_| |_|_|__,|_|_|_,_|___|
@@ -233,9 +235,7 @@ def enable_inbox():
 def display_submit_note(inbox_id, topic):
     """Display a web form in which user can edit and submit a note."""
     if not storage.Inbox.does_exist(inbox_id):
-    if not storage.Inbox.does_exist(inbox_id):
         abort(404)
-    elif not storage.Inbox.is_enabled(inbox_id):
     elif not storage.Inbox.is_enabled(inbox_id):
         abort(404)   
     fake_name = get_full_name()
