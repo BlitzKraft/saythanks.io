@@ -51,7 +51,7 @@ class Note:
         self.timestamp = None
 
     def __repr__(self):
-        return '<Note size={}>'.format(len(self.body))
+        return f'<Note size={len(self.body)}>'
 
     @classmethod
     def fetch(cls, uuid):
