@@ -237,13 +237,14 @@ def display_submit_note(inbox, topic):
     elif not storage.Inbox.is_enabled(inbox):
         abort(404)   
     fake_name = get_full_name()
-    topic_string = topic
-    if topic_string:
-        topic_string = " about " + topic
+    raw_topic = topic
+    display_topic = ""
+    if raw_topic:
+        display_topic = " about " + raw_topic
     return render_template(
         'submit_note.htm.j2',
         user=inbox,
-        topic=topic_string,
+        topic=display_topic,
         fake_name=fake_name)
 
 
@@ -293,16 +294,15 @@ def submit_note(inbox):
 
     if content_type == 'html':
         body = Markup(body)
-        note = storage.Note.from_inbox(inbox=None, body=body, byline=byline)
+        note_obj = storage.Note.from_inbox(inbox=None, body=body, byline=byline)
         if storage.Inbox.is_email_enabled(inbox_db.slug):
-            # note.notify(email_address)
             if session:
                 email_address = session['profile']['email']
             else:
                 email_address = storage.Inbox.get_email(inbox_db.slug)
-            note.notify(email_address)
+            note_obj.notify(email_address)
         body = remove_tags(body)
-        note = inbox_db.submit_note(body=body, byline=byline)
+        submitted_note = inbox_db.submit_note(body=body, byline=byline)
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
@@ -315,15 +315,14 @@ def submit_note(inbox):
         return redirect(url_for('thanks'))
 
     # Store the incoming note to the database.
-    note = inbox_db.submit_note(body=body, byline=byline)
+    submitted_note = inbox_db.submit_note(body=body, byline=byline)
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox_db.slug):
-        # note.notify(email_address)
         if session:
             email_address = session['profile']['email']
         else:
             email_address = storage.Inbox.get_email(inbox_db.slug)
-        note.notify(email_address)
+        submitted_note.notify(email_address)
 
     return redirect(url_for('thanks'))
 
