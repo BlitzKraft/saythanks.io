@@ -131,8 +131,7 @@ def inbox():
         if 'clear' in request.form:
             session.pop('search_str', None)
             return redirect(url_for('inbox'))
-        else:
-            session['search_str'] = request.form['search_str']
+        session['search_str'] = request.form['search_str']
     # regular note set with pagination
     if request.method == "GET" and 'search_str' not in session:
         # Send over the list of all given notes for the user.
