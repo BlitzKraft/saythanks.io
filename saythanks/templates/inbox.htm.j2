@@ -108,54 +108,88 @@
     {%endif%}
   </tbody>
 </table>
-<div class="pagination" style="text-align:center; margin-top:1.5em;">
-  {% if total_pages != 0 %}
-    {% if page < total_pages %}
-      <button 
-        id="load-more" 
-        data-page="{{ page }}" 
-        data-total="{{ total_pages }}"
-        style="padding:0.15em 1.5em; background-color:#4CAF50; color:white; border:none; border-radius:8px; font-family:'Segoe UI', sans-serif; font-weight:bold; text-transform:uppercase;">
-        Load More
-      </button>
-    {% else %}
-      <button 
-        disabled
-        style="padding:0.15em 1.5em; background-color:#4CAF50; color:white; border:none; border-radius:8px; font-family:'Segoe UI', sans-serif; font-weight:bold; text-transform:uppercase; cursor:default;">
-        All messages loaded
-      </button>
-    {% endif %}
-  {% elif search_str != "Search by message body or byline" %}
-    <span>No matches found!</span>
-  {% endif %}
+
+<!-- Navigation Options -->
+<div style="text-align: center; margin: 20px 0;">
+  <div style="display: inline-block; margin: 0 15px;">
+    <input type="radio" id="loadMoreOption" name="viewMode" value="loadMore">
+    <label for="loadMoreOption">Load More</label>
+  </div>
+  <div style="display: inline-block; margin: 0 15px;">
+    <input type="radio" id="paginationOption" name="viewMode" value="pagination">
+    <label for="paginationOption">Pagination</label>
+  </div>
 </div>
-<br><br><br><br>
-<h4>Manage your Inbox:</h4>
-<p>Below are some rudimentary account management tools, available, to you, today, for free!</p>
-<ul>
-  <li><a href="{{ url_for('archived_inbox') }}">Archived notes</a>.</li>
-  <li>Export your inbox!
-    <a href="{{ url_for('inbox_export', format='csv') }}">CSV</a>
-    .</li>
-  <li>
-    {% if is_email_enabled == True %}
-      To disable e-mail please click <a href="{{ url_for('disable_email') }}">here</a>.
-    {% elif  is_email_enabled != True %}
-      To enable e-mail please click <a href="{{ url_for('enable_email') }}">here</a>.
-    {%endif%}
 
-</li>
-<li>
-    {% if is_enabled == True %}
-      To disable your account please click <a href="{{ url_for('disable_inbox') }}">here</a>.
-    {% elif  is_enabled != True %}
-      To enable your account please click <a href="{{ url_for('enable_inbox') }}">here</a>.
-    {%endif%}
-</li>
+<!-- Load More Section -->
+<div id="loadMoreSection" style="text-align: center; margin: 15px 0;">
+  <button id="load-more" class="button" style="padding:0.15em 1.5em; background-color:#4CAF50; color:white; border:none; border-radius:8px; font-family:'Segoe UI', sans-serif; font-weight:bold; text-transform:uppercase;"
+          data-page="{{ page }}" data-total="{{ total_pages }}">
+    LOAD MORE
+  </button>
+</div>
 
-<p><strong>Note:</strong> this website is a work in progress, and these settings will be moved to a separate settings page in the near future. If you'd like to help, send a pull request! :)</p>
-{# LOAD MORE FUNCTIONALITY #}
+<!-- Pagination Section -->
+<div id="paginationSection" style="text-align: center; margin: 15px 0; display: none;">
+  <div class="pagination">
+    {% if total_pages!=0 %}
+      <a style="text-decoration:none;" href="{{ url_for('inbox', page=1) }}"><<</a>
+      {% if page > 1 %}
+      <a style="text-decoration:none;" href="{{ url_for('inbox', page=page-1) }}">Previous</a>
+      {% else %}
+      <span>Previous</span>
+      {% endif %}
+      <span> {{ page }} of {{ total_pages }}</span>
+      {% if page < total_pages %}
+      <a style="text-decoration:none;" href="{{ url_for('inbox', page=page+1) }}">Next</a>
+      {% else %}
+      <span>Next</span>
+      {% endif %}
+      <a style="text-decoration:none;" href="{{ url_for('inbox', page=total_pages) }}">>></a>
+    {% elif search_str!="Search by message body or byline" %}
+      <span> No matches found!</span>
+    {% endif %}
+  </div>
+</div>
+
 <script>
+// Persistent toggle state across page loads
+document.addEventListener('DOMContentLoaded', function () {
+  const loadMoreOption = document.getElementById('loadMoreOption');
+  const paginationOption = document.getElementById('paginationOption');
+  const loadMoreSection = document.getElementById('loadMoreSection');
+  const paginationSection = document.getElementById('paginationSection');
+
+  // Get saved view mode from localStorage
+  const savedViewMode = localStorage.getItem('viewMode') || 'loadMore';
+
+  // Apply saved view mode
+  if (savedViewMode === 'pagination') {
+    paginationOption.checked = true;
+    loadMoreSection.style.display = 'none';
+    paginationSection.style.display = 'block';
+  } else {
+    loadMoreOption.checked = true;
+    loadMoreSection.style.display = 'block';
+    paginationSection.style.display = 'none';
+  }
+
+  // Save and apply mode when changed
+  loadMoreOption.addEventListener('change', function () {
+    localStorage.setItem('viewMode', 'loadMore');
+    loadMoreSection.style.display = 'block';
+    paginationSection.style.display = 'none';
+  });
+
+  paginationOption.addEventListener('change', function () {
+    localStorage.setItem('viewMode', 'pagination');
+    loadMoreSection.style.display = 'none';
+    paginationSection.style.display = 'block';
+  });
+});
+
+// Existing Load More functionality
+
 document.addEventListener("DOMContentLoaded", function () {
   const btn = document.getElementById("load-more");
   if (!btn) return;
@@ -170,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
       this.outerHTML = `<button 
         disabled 
         style="padding:0.15em 1.5em; background-color:#4CAF50; color:white; border:none; border-radius:8px; font-family:'Segoe UI', sans-serif; font-weight:bold; text-transform:uppercase; cursor: default;">
-        All messages loaded:)
+        All messages loaded
       </button>`;
     } else {
       this.dataset.page = p;
@@ -178,4 +212,33 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 });
 </script>
+
+<br><br><br><br>
+<h4>Manage your Inbox:</h4>
+
+<p>Below are some rudimentary account management tools, available, to you, today, for free!</p>
+<ul>
+  <li><a href="{{ url_for('archived_inbox') }}">Archived notes</a>.</li>
+  <li>Export your inbox!
+    <a href="{{ url_for('inbox_export', format='csv') }}">CSV</a>
+    .</li>
+  <li>
+    {% if is_email_enabled == True %}
+      To disable e-mail please click <a href="{{ url_for('disable_email') }}">here</a>.
+    {% elif  is_email_enabled != True %}
+      To enable e-mail please click <a href="{{ url_for('enable_email') }}">here</a>.
+    {%endif%}
+  </li>
+
+  <li>
+    {% if is_enabled == True %}
+      To disable your account please click <a href="{{ url_for('disable_inbox') }}">here</a>.
+    {% elif  is_enabled != True %}
+      To enable your account please click <a href="{{ url_for('enable_inbox') }}">here</a>.
+    {%endif%}
+  </li>
+</ul>
+
+<p><strong>Note:</strong> this website is a work in progress, and these settings will be moved to a separate settings page in the near future. If you'd like to help, send a pull request! :)</p>
+
 {% endblock %}
