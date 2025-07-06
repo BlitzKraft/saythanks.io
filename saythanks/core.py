@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 #  _____         _____ _           _
 # |   __|___ _ _|_   _| |_ ___ ___| |_ ___
@@ -365,7 +364,6 @@ def callback_handling():
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
-    # nickname = user_info['email']
     nickname = user_detail_info['nickname']
     email = user_detail_info['email']
     userid = user_info['sub']
