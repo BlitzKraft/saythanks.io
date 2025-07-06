@@ -12,7 +12,7 @@ import json
 import requests
 # Import your get_version function
 from .version import get_version
-
+from .utils import strip_html
 
 from functools import wraps
 from flask import Flask, request, session, render_template, url_for
@@ -58,6 +58,9 @@ app.config['APP_VERSION'] = get_version()
 
 # to encode a query
 app.jinja_env.filters['quote'] = quote
+
+# to strip html formatting
+app.jinja_env.filters['strip_html'] = strip_html
 
 QRcode(app)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
