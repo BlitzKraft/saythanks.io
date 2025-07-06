@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+# 
 #  _____         _____ _           _
 # |   __|___ _ _|_   _| |_ ___ ___| |_ ___
 # |__   | .'| | | | | |   | .'|   | '_|_ -|
@@ -100,7 +100,7 @@ def requires_auth(f):
 def index():
     if 'search_str' in session:
         session.pop('search_str', None)    
-    
+
     return render_template('index.htm.j2',
                            callback_url=auth_callback_url,
                            auth_id=auth_id,
@@ -131,8 +131,7 @@ def inbox():
         if 'clear' in request.form:
             session.pop('search_str', None)
             return redirect(url_for('inbox'))
-        else:
-            session['search_str'] = request.form['search_str']
+        session['search_str'] = request.form['search_str']
     # regular note set with pagination
     if request.method == "GET" and 'search_str' not in session:
         # Send over the list of all given notes for the user.
@@ -152,7 +151,7 @@ def inbox():
 
 @app.route('/inbox/export/<format>')
 @requires_auth
-def inbox_export(format):
+def inbox_export(export_format):
 
     # Auth0 stored account information.
     profile = session['profile']
@@ -161,7 +160,7 @@ def inbox_export(format):
     inbox_db = storage.Inbox(profile['nickname'])
 
     # Send over the list of all given notes for the user.
-    response = make_response(inbox_db.export(format))
+    response = make_response(inbox_db.export(export_format))
     response.headers['Content-Disposition'] = 'attachment; filename=saythanks-inbox.csv'
     response.headers['Content-type'] = 'text/csv'
     return response
@@ -231,22 +230,23 @@ def enable_inbox():
     return redirect(url_for('inbox'))
 
 
-@app.route('/to/<inbox>', methods=['GET'], defaults={"topic": ""})
-@app.route('/to/<inbox>&<topic>', methods=['GET'])
-def display_submit_note(inbox, topic):
+@app.route('/to/<inbox_id>', methods=['GET'], defaults={"topic": ""})
+@app.route('/to/<inbox_id>&<topic>', methods=['GET'])
+def display_submit_note(inbox_id, topic):
     """Display a web form in which user can edit and submit a note."""
-    if not storage.Inbox.does_exist(inbox):
+    if not storage.Inbox.does_exist(inbox_id):
         abort(404)
-    elif not storage.Inbox.is_enabled(inbox):
+    elif not storage.Inbox.is_enabled(inbox_id):
         abort(404)   
     fake_name = get_full_name()
-    topic_string = topic
-    if topic_string:
-        topic_string = " about " + topic
+    raw_topic = topic
+    display_topic = ""
+    if raw_topic:
+        display_topic = " about " + raw_topic
     return render_template(
         'submit_note.htm.j2',
-        user=inbox,
-        topic=topic_string,
+        user=inbox_id,
+        topic=display_topic,
         fake_name=fake_name)
 
 
@@ -280,11 +280,12 @@ def archive_note(uuid):
     return redirect(url_for('archived_inbox'))
 
 
-@app.route('/to/<inbox>/submit', methods=['POST'])
-def submit_note(inbox):
+@app.route('/to/<inbox_id>/submit', methods=['POST'])
+def submit_note(inbox_id):
     """Store note in database and send a copy to user's email."""
     # Fetch the current inbox.
-    inbox_db = storage.Inbox(inbox)
+    inbox_db = storage.Inbox(inbox_id)
+    inbox_db = storage.Inbox(inbox_id)
     body = request.form['body']
     content_type = request.form['content-type']
     byline = Markup(request.form['byline'])
@@ -296,16 +297,15 @@ def submit_note(inbox):
 
     if content_type == 'html':
         body = Markup(body)
-        note = storage.Note.from_inbox(inbox=None, body=body, byline=byline)
+        note_obj = storage.Note.from_inbox(inbox=None, body=body, byline=byline)
         if storage.Inbox.is_email_enabled(inbox_db.slug):
-            # note.notify(email_address)
             if session:
                 email_address = session['profile']['email']
             else:
                 email_address = storage.Inbox.get_email(inbox_db.slug)
-            note.notify(email_address)
+            note_obj.notify(email_address)
         body = remove_tags(body)
-        note = inbox_db.submit_note(body=body, byline=byline)
+        submitted_note = inbox_db.submit_note(body=body, byline=byline)
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
@@ -318,15 +318,14 @@ def submit_note(inbox):
         return redirect(url_for('thanks'))
 
     # Store the incoming note to the database.
-    note = inbox_db.submit_note(body=body, byline=byline)
+    submitted_note = inbox_db.submit_note(body=body, byline=byline)
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox_db.slug):
-        # note.notify(email_address)
         if session:
             email_address = session['profile']['email']
         else:
             email_address = storage.Inbox.get_email(inbox_db.slug)
-        note.notify(email_address)
+        submitted_note.notify(email_address)
 
     return redirect(url_for('thanks'))
 
@@ -366,7 +365,6 @@ def callback_handling():
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
-    # nickname = user_info['email']
     nickname = user_detail_info['nickname']
     email = user_detail_info['email']
     userid = user_info['sub']
