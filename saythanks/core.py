@@ -100,7 +100,7 @@ def requires_auth(f):
 def index():
     if 'search_str' in session:
         session.pop('search_str', None)    
-    
+
     return render_template('index.htm.j2',
                            callback_url=auth_callback_url,
                            auth_id=auth_id,
