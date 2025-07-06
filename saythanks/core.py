@@ -233,7 +233,9 @@ def enable_inbox():
 def display_submit_note(inbox_id, topic):
     """Display a web form in which user can edit and submit a note."""
     if not storage.Inbox.does_exist(inbox_id):
+    if not storage.Inbox.does_exist(inbox_id):
         abort(404)
+    elif not storage.Inbox.is_enabled(inbox_id):
     elif not storage.Inbox.is_enabled(inbox_id):
         abort(404)   
     fake_name = get_full_name()
@@ -282,6 +284,7 @@ def archive_note(uuid):
 def submit_note(inbox_id):
     """Store note in database and send a copy to user's email."""
     # Fetch the current inbox.
+    inbox_db = storage.Inbox(inbox_id)
     inbox_db = storage.Inbox(inbox_id)
     body = request.form['body']
     content_type = request.form['content-type']
