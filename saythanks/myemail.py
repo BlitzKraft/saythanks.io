@@ -3,7 +3,7 @@ import os
 import sendgrid
 from sendgrid.helpers.mail import Email, Content, Mail
 from urllib.error import URLError
-from flask import url_for, current_app, request
+from flask import url_for, current_app
 
 # importing module
 import logging
