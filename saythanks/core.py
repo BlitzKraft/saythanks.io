@@ -12,7 +12,7 @@ import json
 import requests
 # Import your get_version function
 from .version import get_version
-
+from .utils import strip_html
 
 from functools import wraps
 from flask import Flask, request, session, render_template, url_for
@@ -58,6 +58,9 @@ app.config['APP_VERSION'] = get_version()
 
 # to encode a query
 app.jinja_env.filters['quote'] = quote
+
+# to strip html formatting
+app.jinja_env.filters['strip_html'] = strip_html
 
 QRcode(app)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
@@ -339,9 +342,9 @@ def callback_handling():
     code = request.args.get('code')
 
     json_header = {'content-type': 'application/json',
-                   'Authorization': 'Bearer {0}'.format(auth_jwt_v2)}
+                   'Authorization': f'Bearer {auth_jwt_v2}'}
 
-    token_url = 'https://{0}/oauth/token'.format(auth_domain)
+    token_url = f'https://{auth_domain}/oauth/token'
     token_payload = {
         'client_id': auth_id,
         'client_secret': auth_secret,
@@ -353,12 +356,10 @@ def callback_handling():
     # Fetch User info from Auth0.
     token_info = requests.post(token_url, data=json.dumps(
         token_payload), headers=json_header).json()
-    user_url = 'https://{0}/userinfo?access_token={1}'.format(
-        auth_domain, token_info['access_token'])
+    user_url = f'https://{auth_domain}/userinfo?access_token={token_info["access_token"]}'
     user_info = requests.get(user_url).json()
 
-    user_info_url = 'https://{0}/api/v2/users/{1}'.format(
-        auth_domain, user_info['sub'])
+    user_info_url = f'https://{auth_domain}/api/v2/users/{user_info["sub"]}'
 
     user_detail_info = requests.get(user_info_url, headers=json_header).json()
 
