@@ -1,12 +1,9 @@
-import os
-
+import os, logging
 import sendgrid
 from sendgrid.helpers.mail import Email, Content, Mail
 from urllib.error import URLError
 from flask import url_for, current_app, request
 
-# importing module
-import logging
 
 # Create and configure logger
 logging.basicConfig(filename='Logfile.log',
@@ -23,24 +20,13 @@ logger = logging.getLogger()
 API_KEY = os.environ['SENDGRID_API_KEY']
 sg = sendgrid.SendGridAPIClient(api_key=API_KEY)
 
-TEMPLATE = """<div>{}
-<br>
-<br>
---{}
-<br>
-<br>
-The public URL for this note is <a clicktracking=off href="{}">here</a> <br> 
-<br>
-<br>
-=========
-<br>
-<br>
-This note of gratitude was brought to you by SayThanks.io.
-<br>
-<br>
-A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
-</div>
-"""
+TEMPLATE = (
+    """<div>{}<br><br>--{}<br><br>"""
+    """The public URL for this note is """
+    """<a clicktracking=off href="{}">here</a><br><br>"""
+    """=========<br><br>This note of gratitude was brought to you by SayThanks.io.<br><br>"""
+    """A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).</div>"""
+)
 
 
 def notify(note, email_address):
