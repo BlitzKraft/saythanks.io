@@ -51,7 +51,7 @@ class Note:
         self.timestamp = None
 
     def __repr__(self):
-        return '<Note size={}>'.format(len(self.body))
+        return f'<Note size={len(self.body)}>'
 
     @classmethod
     def fetch(cls, uuid):
@@ -226,11 +226,11 @@ class Inbox:
             "page": page,
             "total_pages": (total_notes + page_size - 1) // page_size  # Calculate total pages
         }
-    
+
     def search_notes(self, search_str, page, page_size):
         offset = (page - 1) * page_size
         search_str_lower = search_str.lower()
-        
+
         query = sqlalchemy.text("""
             SELECT *, 
                 COUNT(*) OVER() AS total_notes
