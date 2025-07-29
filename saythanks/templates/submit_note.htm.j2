@@ -135,11 +135,11 @@
 
   var textArea = document.getElementById("editor");
   const editor = new toastui.Editor({
-        el: textArea,
-        previewStyle: 'tab',
-        height: '500px',
-        initialValue: "Dear {{ user }},\nThank you for..."
-      });
+      el: textArea,
+      previewStyle: 'tab',
+      height: '500px',
+      initialValue: `{% if topic %}Ref:{{ topic }}\n{% endif %}Dear {{ user }},\nThank you for...`
+  });
 
   var form = document.getElementById("thankyou-note-form");
   form.addEventListener('submit', (event) => {
