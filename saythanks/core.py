@@ -285,7 +285,6 @@ def submit_note(inbox_id):
     """Store note in database and send a copy to user's email."""
     # Fetch the current inbox.
     inbox_db = storage.Inbox(inbox_id)
-    inbox_db = storage.Inbox(inbox_id)
     body = request.form['body']
     content_type = request.form['content-type']
     byline = Markup(request.form['byline'])
@@ -297,15 +296,15 @@ def submit_note(inbox_id):
 
     if content_type == 'html':
         body = Markup(body)
-        note_obj = storage.Note.from_inbox(inbox=None, body=body, byline=byline)
+        # Store the note first, so it gets a UUID
+        submitted_note = inbox_db.submit_note(body=body, byline=byline)
         if storage.Inbox.is_email_enabled(inbox_db.slug):
             if session:
                 email_address = session['profile']['email']
             else:
                 email_address = storage.Inbox.get_email(inbox_db.slug)
-            note_obj.notify(email_address)
-        body = remove_tags(body)
-        submitted_note = inbox_db.submit_note(body=body, byline=byline)
+            # Now notify, so the note has a UUID for the public URL
+            submitted_note.notify(email_address)
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
