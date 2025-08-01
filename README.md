@@ -10,6 +10,17 @@ This simple button/link can be added to READMEs and project documentation.
 
 The author can then enjoy a nice inbox (ideally) filled with very small, thoughtful messages from the happy users of the software they enjoy to toil over.
 
+## Recent Improvements
+
+- **Versatile Markdown Editor:** Added a powerful and user-friendly markdown editor (Toast UI Editor) for thank you note writing, featuring live preview and enhanced formatting options for users.
+- Codebase has been prettified and refactored for maintainability.
+- Improved CSRF protection and message inbox aggregation for users/projects.
+- Hosting migrated to [KGiSL](https://www.kgisl.com) (was Heroku); CloudFlare continues for SSL termination.
+- Unnecessary files and legacy configs cleaned up.
+- UI and UX improvements, including updated button colors.
+- Enhanced documentation and developer setup instructions.
+- Ongoing improvements to authentication (Auth0, OAuth2).
+
 ## Implementation Concepts
 
 ### ☤ The Basics
