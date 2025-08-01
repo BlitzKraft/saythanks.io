@@ -35,7 +35,7 @@ raven
 regex
 requests
 ruamel.yaml
-sendgrid
+mailersend
 six
 sqlalchemy
 tablib
