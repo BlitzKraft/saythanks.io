@@ -1,7 +1,6 @@
 import os
 
-import sendgrid
-from sendgrid.helpers.mail import Email, Content, Mail
+from mailersend import emails
 from urllib.error import URLError
 from flask import url_for, current_app
 
@@ -20,8 +19,8 @@ logger = logging.getLogger()
 # Email Infrastructure
 # --------------------
 
-API_KEY = os.environ['SENDGRID_API_KEY']
-sg = sendgrid.SendGridAPIClient(api_key=API_KEY)
+# Initialize MailerSend SDK
+mailer = emails.NewEmail(os.getenv('MAILERSEND_API_KEY'))
 
 TEMPLATE = """<div>{}
 <br>
@@ -45,7 +44,7 @@ A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
 
 def notify(note, email_address):
     """Use the note contents and a template, build a
-    formatted message. Use sendgrid to deliver the formatted
+    formatted message. Use MailerSend to deliver the formatted
     message as an email to the user.
 
     The email includes:
@@ -76,16 +75,20 @@ def notify(note, email_address):
         who = note.byline or 'someone'
 
         subject = f'saythanks.io: {who} sent a note!'
-        message = TEMPLATE.format(note.body, note.byline, note_url)
-        from_address = Email('no-reply@saythanks.io', name="SayThanks.io")
-        to_address = Email(email_address)
-        content = Content('text/html', message)
+        html_content = TEMPLATE.format(note.body, note.byline, note_url)
+        plaintext_content = f"{note.body}\n\n--{note.byline or ''}\n\n{note_url}"
 
-        mail = Mail(from_address, subject, to_address, content)
-        response = sg.client.mail.send.post(request_body=mail.get())
+        mail_body = {}
+        mailer.set_mail_from({"name": "SayThanks.io", "email": "no-reply@saythanks.io"}, mail_body)
+        mailer.set_mail_to([{"email": email_address}], mail_body)
+        mailer.set_subject(f"saythanks.io: {note.byline or 'someone'} sent a note!", mail_body)
+        mailer.set_html_content(html_content, mail_body)
+        mailer.set_plaintext_content(plaintext_content, mail_body)
+        response = mailer.send(mail_body)
+
     except URLError as e:
         logging.error("URL Error occurred "+ str(e))
         print(e)
     except Exception as e:
-        logging.error("General Error occurred: " + str(e))
+        logging.error(f"MailerSend SDK send failed: {str(e)}")
         print(e)
