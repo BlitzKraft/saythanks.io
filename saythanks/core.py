@@ -286,7 +286,7 @@ def archive_note(uuid):
 def submit_note(inbox_id, topic):
     """Store note in database and send a copy to user's email."""
     # Fetch the current inbox.
-    print("topic", topic)
+    # print("topic", topic)
     inbox_db = storage.Inbox(inbox_id)
     body = request.form['body']
     content_type = request.form['content-type']

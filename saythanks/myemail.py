@@ -63,7 +63,7 @@ def notify(note, email_address, topic=None):
     The function logs errors if the note's UUID is missing or if sending the email  
     fails.
     """
-    print("myemail:notify", topic) # Debugging line to check topic
+    # print("myemail:notify", topic) # Debugging line to check topic
 
     try:
         if not note.uuid:

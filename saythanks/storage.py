@@ -100,7 +100,7 @@ class Note:
         conn.execute(q, uuid=self.uuid)
 
     def notify(self, email_address, topic=None):
-        print("Notes:notify", topic) # Debugging line to check topic
+        # print("Notes:notify", topic) # Debugging line to check topic
         myemail.notify(self, email_address, topic)
 
 
