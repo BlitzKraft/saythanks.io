@@ -36,7 +36,7 @@
 
 
 <form id="thankyou-note-form" class="form-horizontal"
-      action="./{{ user }}/submit/{% if topic %}{{ topic|replace(' about ', '') }}{% else %}ash{% endif %}"
+      action="./{{ user }}/submit/{% if topic %}{{ topic|replace(' about ', '') }}{% else %}{% endif %}"
       method="post">
 <table>
 <tr>

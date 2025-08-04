@@ -281,7 +281,7 @@ def archive_note(uuid):
 
 
 #@app.route('/to/<inbox_id>/submit', methods=['POST'])
-@app.route('/to/<inbox_id>/submit', methods=['POST'], defaults={"topic": "general"})
+@app.route('/to/<inbox_id>/submit', methods=['POST'], defaults={"topic": ""})
 @app.route('/to/<inbox_id>/submit/<topic>', methods=['POST'])
 def submit_note(inbox_id, topic):
     """Store note in database and send a copy to user's email."""
