@@ -280,10 +280,13 @@ def archive_note(uuid):
     return redirect(url_for('archived_inbox'))
 
 
-@app.route('/to/<inbox_id>/submit', methods=['POST'])
-def submit_note(inbox_id):
+#@app.route('/to/<inbox_id>/submit', methods=['POST'])
+@app.route('/to/<inbox_id>/submit', methods=['POST'], defaults={"topic": "general"})
+@app.route('/to/<inbox_id>/submit/<topic>', methods=['POST'])
+def submit_note(inbox_id, topic):
     """Store note in database and send a copy to user's email."""
     # Fetch the current inbox.
+    print("topic", topic)
     inbox_db = storage.Inbox(inbox_id)
     body = request.form['body']
     content_type = request.form['content-type']
