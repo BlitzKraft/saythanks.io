@@ -307,7 +307,7 @@ def submit_note(inbox_id, topic):
             else:
                 email_address = storage.Inbox.get_email(inbox_db.slug)
             # Now notify, so the note has a UUID for the public URL
-            submitted_note.notify(email_address)
+            submitted_note.notify(email_address, topic)
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
@@ -327,7 +327,7 @@ def submit_note(inbox_id, topic):
             email_address = session['profile']['email']
         else:
             email_address = storage.Inbox.get_email(inbox_db.slug)
-        submitted_note.notify(email_address)
+        submitted_note.notify(email_address, topic)
 
     return redirect(url_for('thanks'))
 
