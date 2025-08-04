@@ -99,8 +99,9 @@ class Note:
         q = sqlalchemy.text("UPDATE notes SET archived = 't' WHERE uuid = :uuid")
         conn.execute(q, uuid=self.uuid)
 
-    def notify(self, email_address):
-        myemail.notify(self, email_address)
+    def notify(self, email_address, topic=None):
+        # print("Notes:notify", topic) # Debugging line to check topic
+        myemail.notify(self, email_address, topic)
 
 
 class Inbox:
