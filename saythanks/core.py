@@ -313,6 +313,22 @@ def submit_note(inbox_id, topic):
     # Strip any HTML away.
 
     body = markdown(body, extensions=['tables', 'fenced_code'])
+    # Inject CSS for better table rendering
+    table_style = """
+<style>
+table {
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    word-break: break-word;
+}
+</style>
+"""
+    body = table_style + body
     #body = remove_tags(body)
     byline = Markup(request.form['byline']).striptags()
     # Assert that the body has length.
