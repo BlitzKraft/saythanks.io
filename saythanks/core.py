@@ -312,7 +312,7 @@ def submit_note(inbox_id, topic):
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
-    body = markdown(body)
+    body = markdown(body, extensions=['tables', 'fenced_code'])
     #body = remove_tags(body)
     byline = Markup(request.form['byline']).striptags()
     # Assert that the body has length.
