@@ -299,6 +299,7 @@ def submit_note(inbox_id, topic):
 
     if content_type == 'html':
         body = Markup(body)
+        # print("after markup", body)
         # Store the note first, so it gets a UUID
         submitted_note = inbox_db.submit_note(body=body, byline=byline)
         if storage.Inbox.is_email_enabled(inbox_db.slug):
@@ -311,8 +312,24 @@ def submit_note(inbox_id, topic):
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
-    body = markdown(body)
-    body = remove_tags(body)
+    body = markdown(body, extensions=['tables', 'fenced_code'])
+    # Inject CSS for better table rendering
+    table_style = """
+<style>
+table {
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    word-break: break-word;
+}
+</style>
+"""
+    body = table_style + body
+    #body = remove_tags(body)
     byline = Markup(request.form['byline']).striptags()
     # Assert that the body has length.
     if not body:

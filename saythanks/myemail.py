@@ -79,9 +79,8 @@ def notify(note, email_address, topic=None):
         subject = f'saythanks.io: {who} sent a note!' if not topic \
             else f'saythanks.io: {who} sent a note about {topic}!'
 
-        # Convert newlines in note.body to <br> for HTML email
-        html_body = note.body.replace('\n', '<br>')
-        html_content = TEMPLATE.format(html_body, note.byline, note_url)
+        html_content = TEMPLATE.format(note.body, note.byline, note_url)
+        # print("\n\n***html_content", html_content)  # Debugging line to check html_body
         plaintext_content = f"{note.body}\n\n--{note.byline or ''}\n\n{note_url}"
 
         mail_body = {}
