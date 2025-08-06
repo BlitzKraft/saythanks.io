@@ -299,6 +299,7 @@ def submit_note(inbox_id, topic):
 
     if content_type == 'html':
         body = Markup(body)
+        # print("after markup", body)
         # Store the note first, so it gets a UUID
         submitted_note = inbox_db.submit_note(body=body, byline=byline)
         if storage.Inbox.is_email_enabled(inbox_db.slug):
@@ -312,7 +313,7 @@ def submit_note(inbox_id, topic):
     # Strip any HTML away.
 
     body = markdown(body)
-    body = remove_tags(body)
+    #body = remove_tags(body)
     byline = Markup(request.form['byline']).striptags()
     # Assert that the body has length.
     if not body:
