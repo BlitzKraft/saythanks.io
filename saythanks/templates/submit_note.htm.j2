@@ -35,7 +35,9 @@
 <h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong>{{ topic }}!</h4>
 
 
-<form id="thankyou-note-form" class="form-horizontal" action="./{{ user }}/submit" method="post">
+<form id="thankyou-note-form" class="form-horizontal"
+      action="./{{ user }}/submit{% if topic %}/{{ topic|replace(' about ', '') }}{% else %}{% endif %}"
+      method="post">
 <table>
 <tr>
 <td>
@@ -138,7 +140,7 @@
       el: textArea,
       previewStyle: 'tab',
       height: '500px',
-      initialValue: `{% if topic %}Ref:{{ topic }}\n{% endif %}Dear {{ user }},\nThank you for...`
+      initialValue: `{% if topic %}### Ref:{{ topic }}\n{% endif %}Dear {{ user }},\nThank you for...`
   });
 
   var form = document.getElementById("thankyou-note-form");
@@ -150,7 +152,8 @@
     request.onreadystatechange = function() {
         window.location.href = '/thanks';
     }
-    request.open("POST", "./{{ user }}/submit");
+    //request.open("POST", "./{{ user }}/submit&{{ topic}}");
+    request.open("POST", form.getAttribute('action'));
     request.send(formData);
   })
 

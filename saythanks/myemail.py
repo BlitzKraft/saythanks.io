@@ -42,7 +42,7 @@ A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
 """
 
 
-def notify(note, email_address):
+def notify(note, email_address, topic=None):
     """Use the note contents and a template, build a
     formatted message. Use MailerSend to deliver the formatted
     message as an email to the user.
@@ -63,6 +63,8 @@ def notify(note, email_address):
     The function logs errors if the note's UUID is missing or if sending the email  
     fails.
     """
+    # print("myemail:notify", topic) # Debugging line to check topic
+
     try:
         if not note.uuid:
             logging.error("Could not find UUID for note — link will be blank.")
@@ -74,14 +76,17 @@ def notify(note, email_address):
         # Say 'someone' if the byline is empty.
         who = note.byline or 'someone'
 
-        subject = f'saythanks.io: {who} sent a note!'
+        subject = f'saythanks.io: {who} sent a note!' if not topic \
+            else f'saythanks.io: {who} sent a note about {topic}!'
+
         html_content = TEMPLATE.format(note.body, note.byline, note_url)
+        # print("\n\n***html_content", html_content)  # Debugging line to check html_body
         plaintext_content = f"{note.body}\n\n--{note.byline or ''}\n\n{note_url}"
 
         mail_body = {}
         mailer.set_mail_from({"name": "SayThanks.io", "email": "no-reply@saythanks.io"}, mail_body)
         mailer.set_mail_to([{"email": email_address}], mail_body)
-        mailer.set_subject(f"saythanks.io: {note.byline or 'someone'} sent a note!", mail_body)
+        mailer.set_subject(subject, mail_body)
         mailer.set_html_content(html_content, mail_body)
         mailer.set_plaintext_content(plaintext_content, mail_body)
         response = mailer.send(mail_body)

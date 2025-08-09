@@ -280,10 +280,13 @@ def archive_note(uuid):
     return redirect(url_for('archived_inbox'))
 
 
-@app.route('/to/<inbox_id>/submit', methods=['POST'])
-def submit_note(inbox_id):
+#@app.route('/to/<inbox_id>/submit', methods=['POST'])
+@app.route('/to/<inbox_id>/submit', methods=['POST'], defaults={"topic": ""})
+@app.route('/to/<inbox_id>/submit/<topic>', methods=['POST'])
+def submit_note(inbox_id, topic):
     """Store note in database and send a copy to user's email."""
     # Fetch the current inbox.
+    # print("topic", topic)
     inbox_db = storage.Inbox(inbox_id)
     body = request.form['body']
     content_type = request.form['content-type']
@@ -296,6 +299,7 @@ def submit_note(inbox_id):
 
     if content_type == 'html':
         body = Markup(body)
+        # print("after markup", body)
         # Store the note first, so it gets a UUID
         submitted_note = inbox_db.submit_note(body=body, byline=byline)
         if storage.Inbox.is_email_enabled(inbox_db.slug):
@@ -304,12 +308,28 @@ def submit_note(inbox_id):
             else:
                 email_address = storage.Inbox.get_email(inbox_db.slug)
             # Now notify, so the note has a UUID for the public URL
-            submitted_note.notify(email_address)
+            submitted_note.notify(email_address, topic)
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
-    body = markdown(body)
-    body = remove_tags(body)
+    body = markdown(body, extensions=['tables', 'fenced_code'])
+    # Inject CSS for better table rendering
+    table_style = """
+<style>
+table {
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    word-break: break-word;
+}
+</style>
+"""
+    body = table_style + body
+    #body = remove_tags(body)
     byline = Markup(request.form['byline']).striptags()
     # Assert that the body has length.
     if not body:
@@ -324,7 +344,7 @@ def submit_note(inbox_id):
             email_address = session['profile']['email']
         else:
             email_address = storage.Inbox.get_email(inbox_db.slug)
-        submitted_note.notify(email_address)
+        submitted_note.notify(email_address, topic)
 
     return redirect(url_for('thanks'))
 

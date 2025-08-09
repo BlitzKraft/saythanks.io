@@ -12,6 +12,8 @@ The author can then enjoy a nice inbox (ideally) filled with very small, thought
 
 ## Recent Improvements
 
+- **Email Delivery Provider Updated:** Migrated transactional email delivery from SendGrid to MailerSend for improved deliverability, modern API support, and more reliable service. This change addresses recent deliverability issues and leverages MailerSend’s robust features for transactional messaging.
+  - Further explore this [here](https://github.com/mailersend/mailersend-python?tab=readme-ov-file#send-a-template-based-email)
 - **Versatile Markdown Editor:** Added a powerful and user-friendly markdown editor (Toast UI Editor) for thank you note writing, featuring live preview and enhanced formatting options for users.
 - Codebase has been prettified and refactored for maintainability.
 - Improved CSRF protection and message inbox aggregation for users/projects.
