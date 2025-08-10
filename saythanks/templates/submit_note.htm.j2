@@ -156,15 +156,19 @@
     event.preventDefault();
     var formData = new FormData(form);
     formData.append('body', editor.getMarkdown());
+
+    // Add recorded audio if available
+    if (audioBlob) {
+        formData.append('audio', audioBlob, 'voice_note.webm');
+    }
+
     const request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         window.location.href = '/thanks';
     }
-    //request.open("POST", "./{{ user }}/submit&{{ topic}}");
     request.open("POST", form.getAttribute('action'));
     request.send(formData);
-  })
-
+});
   editor.addHook('change', () => {
     counter.innerText = wordCount(editor.getMarkdown());
     counter1.innerText = wordCount(editor.getMarkdown());
