@@ -186,6 +186,48 @@
     });
   });
 
+// 🎙️ Voice Recording Script
+let recording = false;
+let recorder;
+let audioBlob;
+
+const recordBtn = document.getElementById('recordBtn');
+const audioPreview = document.getElementById('audioPreview');
+const recordingStatus = document.getElementById('recordingStatus');
+
+recordBtn.addEventListener('click', async () => {
+  if (!recording) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recorder = new MediaRecorder(stream);
+      const chunks = [];
+
+      recorder.ondataavailable = e => chunks.push(e.data);
+      recorder.onstop = () => {
+        audioBlob = new Blob(chunks, { type: 'audio/webm' });
+        const audioURL = URL.createObjectURL(audioBlob);
+        audioPreview.src = audioURL;
+        audioPreview.style.display = 'block';
+        recordingStatus.innerText = 'Recording complete!';
+      };
+
+      recorder.start();
+      recording = true;
+      recordBtn.innerText = '🛑 Stop Recording';
+      recordingStatus.innerText = 'Recording...';
+    } catch (err) {
+      alert('Microphone access denied or not supported.');
+      console.error(err);
+    }
+  } else {
+    recorder.stop();
+    recording = false;
+    recordBtn.innerText = '🗣️ Say Something!';
+  }
+});
+
+
+
 
 </script>
 
