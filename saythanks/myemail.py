@@ -54,17 +54,17 @@ def notify(note, email_address, topic=None):
         with the 'share_note' route.
         - If the note lacks a UUID, the URL field in the email will be left blank
         and an error is logged.
-    - If the note has an audio attachment, includes a link to listen to it.
 
     Args:
         note: An object representing the note, expected to have 'body', 'byline',  
-            'uuid', and optionally 'audio_path' attributes.  
+            and 'uuid' attributes.  
         email_address: The recipient's email address.  
-        topic: Optional topic of the note for subject line customization.
 
     The function logs errors if the note's UUID is missing or if sending the email  
     fails.
     """
+    # print("myemail:notify", topic) # Debugging line to check topic
+
     try:
         if not note.uuid:
             logging.error("Could not find UUID for note — link will be blank.")
@@ -79,15 +79,8 @@ def notify(note, email_address, topic=None):
         subject = f'saythanks.io: {who} sent a note!' if not topic \
             else f'saythanks.io: {who} sent a note about {topic}!'
 
-        #--Add audio link--
-        if hasattr(note, 'audio_path') and note.audio_path:
-            with current_app.app_context():
-                audio_url = url_for("static", filename="recordings/" + note.audio_path, _external=True)
-            audio_html = f'<br><br><strong>🎧 Voice Note:</strong> <a href="{audio_url}" target="_blank">Click to listen</a>'
-        else:
-            audio_html = ''
-
-        html_content = TEMPLATE.format(note.body + audio_html, note.byline, note_url)
+        html_content = TEMPLATE.format(note.body, note.byline, note_url)
+        # print("\n\n***html_content", html_content)  # Debugging line to check html_body
         plaintext_content = f"{note.body}\n\n--{note.byline or ''}\n\n{note_url}"
 
         mail_body = {}
