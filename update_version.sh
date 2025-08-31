@@ -8,4 +8,3 @@
 # This script is kept for reference only and does not perform any actions.
 git fetch upstream --tags
 git describe --tags > version.txt
-
