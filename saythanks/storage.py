@@ -49,7 +49,6 @@ class Note:
         self.archived = None
         self.uuid = None
         self.timestamp = None
-        self.audio_path = None
 
     def __repr__(self):
         return f'<Note size={len(self.body)}>'
@@ -65,7 +64,7 @@ class Note:
         return self
 
     @classmethod
-    def from_inbox(cls, inbox, body, byline, archived=False, uuid=None, timestamp=None, audio_path=None):
+    def from_inbox(cls, inbox, body, byline, archived=False, uuid=None, timestamp=None):
         """Creates a Note instance from a given inbox."""
         self = cls()
 
@@ -75,7 +74,6 @@ class Note:
         self.archived = archived
         self.inbox = Inbox(inbox)
         self.timestamp = timestamp
-        self.audio_path = audio_path
         return self
 
     @classmethod
@@ -87,12 +85,12 @@ class Note:
     def store(self):
         """Stores the Note instance to the database."""
         q = '''
-        INSERT INTO notes (body, byline, inboxes_auth_id, audio_path)
-        VALUES (:body, :byline, :inbox, :audio_path)
+        INSERT INTO notes (body, byline, inboxes_auth_id)
+        VALUES (:body, :byline, :inbox)
         RETURNING uuid
         '''
         q = sqlalchemy.text(q)
-        result = conn.execute(q, body=self.body, byline=self.byline, inbox=self.inbox.auth_id, audio_path=self.audio_path)
+        result = conn.execute(q, body=self.body, byline=self.byline, inbox=self.inbox.auth_id)
         # Assign the generated UUID from the database to this Note instance
         self.uuid = result.fetchone()['uuid']
         logging.error(f"Note stored with UUID: {self.uuid}")
@@ -101,9 +99,9 @@ class Note:
         q = sqlalchemy.text("UPDATE notes SET archived = 't' WHERE uuid = :uuid")
         conn.execute(q, uuid=self.uuid)
 
-    def notify(self, email_address):
+    def notify(self, email_address, topic=None):
         # print("Notes:notify", topic) # Debugging line to check topic
-        myemail.notify(self, email_address)
+        myemail.notify(self, email_address, topic)
 
 
 class Inbox:
@@ -184,8 +182,8 @@ class Inbox:
         q = sqlalchemy.text('update inboxes set enabled = true where slug = :slug')
         conn.execute(q, slug=slug)
 
-    def submit_note(self, body, byline, audio_path=None):
-        note = Note.from_inbox(self.slug, body, byline, audio_path=audio_path)
+    def submit_note(self, body, byline):
+        note = Note.from_inbox(self.slug, body, byline)
         note.store()
         return note
 
