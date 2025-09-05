@@ -279,9 +279,14 @@ def archive_note(uuid):
     # Redirect to the archived inbox.
     return redirect(url_for('archived_inbox'))
 
+def clean_topic(t):
+    if not t:
+        return None
+    return t.replace(' about ', '')
+
 
 #@app.route('/to/<inbox_id>/submit', methods=['POST'])
-@app.route('/to/<inbox_id>/submit', methods=['POST'], defaults={"topic": ""})
+@app.route('/to/<inbox_id>/submit', methods=['POST'], defaults={"topic": None})
 @app.route('/to/<inbox_id>/submit/<topic>', methods=['POST'])
 def submit_note(inbox_id, topic):
     """Store note in database and send a copy to user's email."""
@@ -296,6 +301,9 @@ def submit_note(inbox_id, topic):
     # the contents of the HTML document will be sent
     # as an email but will not be stored due to the enormous size
     # of professional email templates
+
+
+    topic = clean_topic(topic)
 
     if content_type == 'html':
         body = Markup(body)
@@ -313,18 +321,38 @@ def submit_note(inbox_id, topic):
     # Strip any HTML away.
 
     body = markdown(body, extensions=['tables', 'fenced_code'])
-    # Inject CSS for better table rendering
+    # Update the table_style to include image constraints
     table_style = """
 <style>
 table {
     width: 100%;
-    table-layout: auto;
+    table-layout: fixed;
     border-collapse: collapse;
 }
 th, td {
     padding: 8px;
     border: 1px solid #ddd;
     word-break: break-word;
+    max-width: 300px;
+    vertical-align: top;
+}
+td.message-cell {
+    max-width: 500px;
+    overflow-x: hidden;
+}
+td.message-cell img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+    margin: 10px auto;
+}
+td.message-cell p {
+    margin: 0;
+    padding: 0;
+}
+.ellipsis {
+    white-space: normal;
+    overflow-wrap: break-word;
 }
 </style>
 """

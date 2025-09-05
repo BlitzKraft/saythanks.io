@@ -91,7 +91,11 @@
   {% for note in notes %}
     <tr>
       <td class="ellipsis"><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></td> 
-      <td class="ellipsis"><a href="{{ url_for('share_note', uuid=note.uuid)}}"><span>{{ note.body }}</span></a></td> 
+      <td class="ellipsis message-cell">
+    <a href="{{ url_for('share_note', uuid=note.uuid)}}">
+        <span>{{ note.body|safe }}</span>
+    </a>
+</td> 
       <td class="ellipsis"><span>— {{ note.byline }}</span></td>
       <td class="ellipsis">{{  note.timestamp.strftime('%d-%h-%Y %H:%M:%S') }}</td>
       <td class="ellipsis"><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid)}}">♻</a></strong></td>
@@ -240,5 +244,24 @@ document.addEventListener("DOMContentLoaded", function () {
 </ul>
 
 <p><strong>Note:</strong> this website is a work in progress, and these settings will be moved to a separate settings page in the near future. If you'd like to help, send a pull request! :)</p>
+
+<style>
+.message-cell {
+    position: relative;
+    max-width: 500px;
+}
+.message-cell a {
+    display: block;
+}
+.message-cell span {
+    display: block;
+}
+.message-cell img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+    margin: 10px auto;
+}
+</style>
 
 {% endblock %}
