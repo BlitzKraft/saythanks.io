@@ -321,18 +321,38 @@ def submit_note(inbox_id, topic):
     # Strip any HTML away.
 
     body = markdown(body, extensions=['tables', 'fenced_code'])
-    # Inject CSS for better table rendering
+    # Update the table_style to include image constraints
     table_style = """
 <style>
 table {
     width: 100%;
-    table-layout: auto;
+    table-layout: fixed;
     border-collapse: collapse;
 }
 th, td {
     padding: 8px;
     border: 1px solid #ddd;
     word-break: break-word;
+    max-width: 300px;
+    vertical-align: top;
+}
+td.message-cell {
+    max-width: 500px;
+    overflow-x: hidden;
+}
+td.message-cell img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+    margin: 10px auto;
+}
+td.message-cell p {
+    margin: 0;
+    padding: 0;
+}
+.ellipsis {
+    white-space: normal;
+    overflow-wrap: break-word;
 }
 </style>
 """
