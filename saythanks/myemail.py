@@ -20,7 +20,12 @@ logger = logging.getLogger()
 # --------------------
 
 # Initialize MailerSend SDK
-mailer = emails.NewEmail(os.getenv('MAILERSEND_API_KEY'))
+mailersend_api_key = os.getenv('MAILERSEND_API_KEY')
+if not mailersend_api_key:
+    logger.error("MAILERSEND_API_KEY environment variable not set")
+    mailer = None
+else:
+    mailer = emails.NewEmail(mailersend_api_key)
 
 TEMPLATE = """<div>{}
 <br>
@@ -28,7 +33,7 @@ TEMPLATE = """<div>{}
 --{}
 <br>
 <br>
-The public URL for this note is <a clicktracking=off href="{}">here</a> <br> 
+The public URL for this note is <a clicktracking=off href="{}">here</a> <br>
 <br>
 <br>
 =========
@@ -56,14 +61,19 @@ def notify(note, email_address, topic=None):
         and an error is logged.
 
     Args:
-        note: An object representing the note, expected to have 'body', 'byline',  
-            and 'uuid' attributes.  
-        email_address: The recipient's email address.  
+        note: An object representing the note, expected to have 'body', 'byline',
+            and 'uuid' attributes.
+        email_address: The recipient's email address.
 
-    The function logs errors if the note's UUID is missing or if sending the email  
+    The function logs errors if the note's UUID is missing or if sending the email
     fails.
     """
     # print("myemail:notify", topic) # Debugging line to check topic
+
+    # Check if MailerSend is properly configured
+    if mailer is None:
+        logging.error("MailerSend not configured - email notification skipped")
+        return
 
     try:
         if not note.uuid:
@@ -90,6 +100,7 @@ def notify(note, email_address, topic=None):
         mailer.set_html_content(html_content, mail_body)
         mailer.set_plaintext_content(plaintext_content, mail_body)
         response = mailer.send(mail_body)
+        logging.error(f"MailerSend SDK send response: {response}")
 
     except URLError as e:
         logging.error("URL Error occurred "+ str(e))
