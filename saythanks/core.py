@@ -22,7 +22,7 @@ from names import get_full_name
 from raven.contrib.flask import Sentry
 from flask_qrcode import QRcode
 from . import storage
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 from lxml_html_clean import Cleaner
 from markdown import markdown
 
@@ -238,8 +238,14 @@ def display_submit_note(inbox_id, topic):
         abort(404)
     elif not storage.Inbox.is_enabled(inbox_id):
         abort(404)   
+
+    print("topic received:", topic)
+    
     fake_name = get_full_name()
     raw_topic = topic
+    # URL decode the topic if it was encoded
+    if raw_topic:
+        raw_topic = unquote(raw_topic)
     display_topic = ""
     if raw_topic:
         display_topic = " about " + raw_topic
