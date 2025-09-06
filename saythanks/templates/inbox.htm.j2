@@ -78,40 +78,114 @@
     <button type="submit" name="clear" value="true">Clear</button>
 </form>
 
-<table>
-  <thead>
-    <tr>
-      <th id="share" style="padding:5px;">Share URL</th>
-      <th id="message">Message</th>
-      <th id="from">From</th>
-      <th id="timestamp">Timestamp</th>
-    </tr>
-  </thead>
-  <tbody>
+<section class="notes-grid">
+  <header class="notes-header">
+    <div class="header-cell" id="share">Share URL</div>
+    <div class="header-cell" id="message">Message</div>
+    <div class="header-cell" id="from">From</div>
+    <div class="header-cell" id="timestamp">Timestamp</div>
+  </header>
+  
+  <div class="notes-list">
   {% for note in notes %}
-    <tr>
-      <td class="ellipsis"><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></td> 
-      <td class="ellipsis message-cell">
-    <a href="{{ url_for('share_note', uuid=note.uuid)}}">
-        <span>{{ note.body|safe }}</span>
-    </a>
-</td> 
-      <td class="ellipsis"><span>— {{ note.byline }}</span></td>
-      <td class="ellipsis">{{  note.timestamp.strftime('%d-%h-%Y %H:%M:%S') }}</td>
-      <td class="ellipsis"><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid)}}">♻</a></strong></td>
-    </tr>
+    <article class="note-item">
+      <div class="note-cell"><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></div>
+      <div class="note-cell message-cell">
+          <a href="{{ url_for('share_note', uuid=note.uuid)}}">
+              <span>{{ note.body|safe }}</span>
+          </a>
+      </div>
+      <div class="note-cell"><span>— {{ note.byline }}</span></div>
+      <div class="note-cell">{{ note.timestamp.strftime('%d-%h-%Y %H:%M:%S') }}</div>
+      <div class="note-cell"><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid)}}">♻</a></strong></div>
+    </article>
   {% endfor %}
+  
   {% if (page==total_pages or total_pages==0) and search_str=="Search by message body or byline" %}
-    <tr>
-      <td></td>
-      <td>Thanks for using SayThanks.io! :)</td>
-      <td>Kenneth Reitz & Team</td>
-      <td></td>
-      <td></td>
-    </tr>
-    {%endif%}
-  </tbody>
-</table>
+    <article class="note-item">
+      <div class="note-cell"></div>
+      <div class="note-cell">Thanks for using SayThanks.io! :)</div>
+      <div class="note-cell">Kenneth Reitz & Team</div>
+      <div class="note-cell"></div>
+      <div class="note-cell"></div>
+    </article>
+  {% endif %}
+  </div>
+</section>
+
+<style>
+.notes-grid {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.notes-header {
+  display: grid;
+  grid-template-columns: auto minmax(200px, 500px) auto auto auto;
+  gap: 1rem;
+  padding: 0.5rem;
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.note-item {
+  display: grid;
+  grid-template-columns: auto minmax(200px, 500px) auto auto auto;
+  gap: 1rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.note-cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message-cell {
+    position: relative;
+    white-space: normal;
+}
+
+.message-cell a {
+    display: block;
+    text-decoration: none;
+    color: #333; /* Dark gray text color */
+    cursor: pointer;
+}
+
+.message-cell a:hover {
+    color: #1EAEDB; /* Change text color on hover */
+    text-decoration: none; /* No underline on hover */
+}
+
+/* Style share icons */
+.share {
+    color: #1EAEDB;
+    text-decoration: none;
+}
+
+.share:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.message-cell span {
+  display: block;
+}
+
+.message-cell img {
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain;
+  margin: 10px auto;
+}
+</style>
 
 <!-- Navigation Options -->
 <div style="text-align: center; margin: 20px 0;">
@@ -244,24 +318,5 @@ document.addEventListener("DOMContentLoaded", function () {
 </ul>
 
 <p><strong>Note:</strong> this website is a work in progress, and these settings will be moved to a separate settings page in the near future. If you'd like to help, send a pull request! :)</p>
-
-<style>
-.message-cell {
-    position: relative;
-    max-width: 500px;
-}
-.message-cell a {
-    display: block;
-}
-.message-cell span {
-    display: block;
-}
-.message-cell img {
-    max-width: 100% !important;
-    height: auto !important;
-    object-fit: contain;
-    margin: 10px auto;
-}
-</style>
 
 {% endblock %}
