@@ -36,7 +36,7 @@
 
 
 <form id="thankyou-note-form" class="form-horizontal"
-      action="./{{ user }}/submit{{ '/' ~ topic if topic else '' }}"
+      action="./{{ user|urlencode }}/submit{{ '/' ~ topic if topic|urlencode else '' }}"
       method="post">
 <table>
 <tr>
