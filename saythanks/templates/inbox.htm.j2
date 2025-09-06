@@ -266,8 +266,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-// Existing Load More functionality
-
+// Replace the existing "Load More" functionality with this:
 document.addEventListener("DOMContentLoaded", function () {
   const btn = document.getElementById("load-more");
   if (!btn) return;
@@ -276,8 +275,15 @@ document.addEventListener("DOMContentLoaded", function () {
     let p = +this.dataset.page + 1, t = +this.dataset.total;
     let res = await fetch("?page=" + p, { headers: { "X-Requested-With": "XMLHttpRequest" } });
     let html = await res.text();
-    let rows = new DOMParser().parseFromString(html, "text/html").querySelectorAll("tbody tr");
-    rows.forEach(r => document.querySelector("table tbody").appendChild(r));
+    
+    // Parse the new notes and add them to the notes-list
+    let newNotes = new DOMParser()
+      .parseFromString(html, "text/html")
+      .querySelectorAll(".notes-list .note-item");
+    
+    const notesList = document.querySelector(".notes-list");
+    newNotes.forEach(note => notesList.appendChild(note));
+
     if (p >= t) {
       this.outerHTML = `<button 
         disabled 
@@ -289,6 +295,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 });
+
 </script>
 
 <br><br><br><br>
