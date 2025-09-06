@@ -1,4 +1,5 @@
 import os
+import requests
 
 from mailersend import emails
 from urllib.error import URLError
@@ -66,14 +67,17 @@ def notify(note, email_address, topic=None):
         email_address: The recipient's email address.
 
     The function logs errors if the note's UUID is missing or if sending the email
-    fails.
+    fails but ensures the note is still saved even if email delivery fails.
+    
+    Returns:
+        bool: True if email was sent successfully, False otherwise
     """
     # print("myemail:notify", topic) # Debugging line to check topic
 
     # Check if MailerSend is properly configured
     if mailer is None:
-        logging.error("MailerSend not configured - email notification skipped")
-        return
+        logger.error("MailerSend not configured - email notification skipped")
+        return False
 
     try:
         if not note.uuid:
@@ -100,11 +104,42 @@ def notify(note, email_address, topic=None):
         mailer.set_html_content(html_content, mail_body)
         mailer.set_plaintext_content(plaintext_content, mail_body)
         response = mailer.send(mail_body)
-        logging.error(f"MailerSend SDK send response: {response}")
+        logger.error(f"MailerSend SDK send response: {response}")
 
+        # Handle successful responses
+        if hasattr(response, 'status_code'):
+            if response.status_code == 202:
+                logger.error(f"Email queued successfully for delivery to {email_address}")
+                return True
+            elif response.status_code == 200:
+                logger.info(f"Email sent successfully to {email_address}")
+                return True
+            elif response.status_code >= 400:
+                logger.error(f"MailerSend API error {response.status_code}: {response.text if hasattr(response, 'text') else 'Unknown error'}")
+                return False
+        else:
+            logger.info(f"Email request submitted successfully to {email_address}")
+            return True
+
+    except requests.exceptions.ConnectionError as e:
+        logger.error(f"Network connection error when sending email: {str(e)}")
+        logger.error("Check your internet connection and MAILERSEND_API_KEY configuration")
+        return False
+    except requests.exceptions.Timeout as e:
+        logger.error(f"Timeout error when sending email: {str(e)}")
+        return False
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"HTTP error when sending email: {str(e)}")
+        if hasattr(e, 'response') and e.response is not None:
+            logger.error(f"Response status: {e.response.status_code}")
+            logger.error(f"Response body: {e.response.text}")
+        return False
     except URLError as e:
-        logging.error("URL Error occurred "+ str(e))
+        logger.error(f"URL Error occurred: {str(e)}")
         print(e)
+        return False
     except Exception as e:
-        logging.error(f"MailerSend SDK send failed: {str(e)}")
+        logger.error(f"Unexpected error when sending email: {str(e)}")
+        logger.error(f"Error type: {type(e).__name__}")
         print(e)
+        return False
