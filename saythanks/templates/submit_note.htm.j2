@@ -36,34 +36,32 @@
 
 
 <form id="thankyou-note-form" class="form-horizontal"
-      action="./{{ user }}/submit{{ '/' ~ topic if topic else '' }}"
+      action="./{{ user|urlencode }}/submit{{ '/' ~ topic if topic|urlencode else '' }}"
       method="post">
-<table>
-<tr>
-<td>
-<label for= "Font Style"> Font Style : </label>
-</td>
-<td>
-<select name="Font Style" id="fontstyle" onchange="fontforinbox(this);" >
+<div class="form-row" style="display:flex; align-items:center; gap:1rem; flex-wrap:nowrap;">
+  <label for="fontstyle" style="white-space:nowrap;">Font Style:</label>
+  <select name="font_style" id="fontstyle" onchange="fontforinbox(this);">
     <option value="0">Regular</option>
     <option value="1">Times New Roman</option>
     <option value="2">Verdana</option>
     <option value="3">Tahoma</option>
-    <option value="4">Georgia</option>  
+    <option value="4">Georgia</option>
     <option value="5">Trebuchet MS</option>
- </select>
- </td>
- <td>
-<label for= "content-type"> Content Type: </label>
-</td>
- <td>
- <input type="radio" name="content-type" id="option1" value="markdown" checked> Plain Text / Markdown</input><br>
- </td>
- <td>
-<input type="radio" name="content-type" id="option2" value="html"> HTML</input><br>
-</td>
- </tr>
- </table>
+  </select>
+
+  <fieldset aria-label="Content Type" style="border:0;padding:0;margin:0; display:flex; align-items:center; gap:0.75rem;">
+    <legend style="font-size:0.95rem;margin:0 0.5rem 0 0; white-space:nowrap;">Content Type:</legend>
+    <label for="option1" style="display:inline-flex;align-items:center;gap:0.4rem; white-space:nowrap;">
+      <input type="radio" name="content-type" id="option1" value="markdown" checked>
+      Plain Text / Markdown
+    </label>
+    <label for="option2" style="display:inline-flex;align-items:center;gap:0.4rem; white-space:nowrap;">
+      <input type="radio" name="content-type" id="option2" value="html">
+      HTML
+    </label>
+  </fieldset>
+</div>
+
 
 <fieldset>
 
