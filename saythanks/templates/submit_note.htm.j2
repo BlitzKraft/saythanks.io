@@ -36,7 +36,7 @@
 
 
 <form id="thankyou-note-form" class="form-horizontal"
-      action="./{{ user|urlencode }}/submit{{ '/' ~ topic if topic|urlencode else '' }}"
+      action="./{{ user|urlencode }}/submit{{ '/' ~ topic if topic else '' }}"
       method="post">
 <div class="form-row" style="display:flex; align-items:center; gap:1rem; flex-wrap:nowrap;">
   <label for="fontstyle" style="white-space:nowrap;">Font Style:</label>
