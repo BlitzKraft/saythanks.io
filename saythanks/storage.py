@@ -88,16 +88,54 @@ class Note:
 
     def store(self):
         """Stores the Note instance to the database."""
-        q = '''
-        INSERT INTO notes (body, byline, inboxes_auth_id, audio_path)
-        VALUES (:body, :byline, :inbox, :audio_path)
-        RETURNING uuid
-        '''
-        q = sqlalchemy.text(q)
-        result = conn.execute(q, body=self.body, byline=self.byline, inbox=self.inbox.auth_id, audio_path=self.audio_path)
-        # Assign the generated UUID from the database to this Note instance
-        self.uuid = result.fetchone()['uuid']
-        logging.error(f"Note stored with UUID: {self.uuid}")
+        try:
+            # Check if audio_path exists in the notes table
+            check_column = sqlalchemy.text("""
+                SELECT EXISTS (
+                    SELECT 1 
+                    FROM information_schema.columns 
+                    WHERE table_name='notes' 
+                    AND column_name='audio_path'
+                );
+            """)
+            has_audio_column = conn.execute(check_column).scalar()
+
+            # Prepare query based on column existence
+            if has_audio_column and self.audio_path is not None:
+                q = '''
+                INSERT INTO notes (body, byline, inboxes_auth_id, audio_path)
+                VALUES (:body, :byline, :inbox, :audio_path)
+                RETURNING uuid
+                '''
+                params = {
+                    'body': self.body,
+                    'byline': self.byline,
+                    'inbox': self.inbox.auth_id,
+                    'audio_path': self.audio_path
+                }
+            else:
+                if self.audio_path is not None:
+                    logger.error("Audio path column not available - storing note without audio")                
+                q = '''
+                INSERT INTO notes (body, byline, inboxes_auth_id)
+                VALUES (:body, :byline, :inbox)
+                RETURNING uuid
+                '''
+                params = {
+                    'body': self.body,
+                    'byline': self.byline,
+                    'inbox': self.inbox.auth_id
+                }
+
+            q = sqlalchemy.text(q)
+            # Execute the query with parameters
+            result = conn.execute(q, **params)
+            # Assign the generated UUID from the database to this Note instance
+            self.uuid = result.fetchone()['uuid']
+            logging.error(f"Note stored with UUID: {self.uuid}")
+        except Exception as e:
+            logger.error(f"Error storing note: {str(e)}")
+            raise
 
     def archive(self):
         q = sqlalchemy.text("UPDATE notes SET archived = 't' WHERE uuid = :uuid")
