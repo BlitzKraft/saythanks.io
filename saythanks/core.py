@@ -313,7 +313,7 @@ def submit_note(inbox_id, topic):
         timestamp = int(time.time())
         audio_filename = f"{inbox_id}_{timestamp}_{audio_file.filename}"
         save_path = os.path.join(upload_folder, audio_filename)
-        logging.error(f"Saving audio file to {save_path}")       
+        logging.info(f"Saving audio file to {save_path}")       
         audio_file.save(save_path)
     # -------------------------------
 
