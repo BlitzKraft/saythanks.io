@@ -10,6 +10,8 @@ import logging
 import os
 import json
 import requests
+import time  # Added to handle timestamping for audio filenames
+
 # Import your get_version function
 from .version import get_version
 from .utils import strip_html
@@ -307,8 +309,11 @@ def submit_note(inbox_id, topic):
     if audio_file:
         upload_folder = os.path.join(app.static_folder, 'recordings')
         os.makedirs(upload_folder, exist_ok=True)
-        audio_filename = f"{inbox_id}_{audio_file.filename}"
+        # Add a timestamp to the filename to ensure uniqueness
+        timestamp = int(time.time())
+        audio_filename = f"{inbox_id}_{timestamp}_{audio_file.filename}"
         save_path = os.path.join(upload_folder, audio_filename)
+        logging.error(f"Saving audio file to {save_path}")       
         audio_file.save(save_path)
     # -------------------------------
 
