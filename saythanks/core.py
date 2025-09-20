@@ -153,7 +153,7 @@ def inbox():
 
 @app.route('/inbox/export/<format>')
 @requires_auth
-def inbox_export(export_format):
+def inbox_export(format):
 
     # Auth0 stored account information.
     profile = session['profile']
@@ -162,7 +162,7 @@ def inbox_export(export_format):
     inbox_db = storage.Inbox(profile['nickname'])
 
     # Send over the list of all given notes for the user.
-    response = make_response(inbox_db.export(export_format))
+    response = make_response(inbox_db.export(format))
     response.headers['Content-Disposition'] = 'attachment; filename=saythanks-inbox.csv'
     response.headers['Content-type'] = 'text/csv'
     return response
