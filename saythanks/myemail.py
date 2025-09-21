@@ -120,7 +120,7 @@ def notify(note, email_address, topic=None):
         mailer.set_html_content(html_content, mail_body)
         mailer.set_plaintext_content(plaintext_content, mail_body)
         response = mailer.send(mail_body)
-        logger.error(f"MailerSend SDK send response: {response}")
+        logger.info(f"MailerSend SDK send response: {response}")
 
         # Handle successful responses
         if hasattr(response, 'status_code'):
