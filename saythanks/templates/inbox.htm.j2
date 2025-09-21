@@ -308,7 +308,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <ul>
   <li><a href="{{ url_for('archived_inbox') }}">Archived notes</a>.</li>
   <li>Export your inbox!
-    <a href="{{ url_for('inbox_export', format='csv') }}">CSV</a>
+    <a href="{{ url_for('inbox_export', export_format='csv') }}">CSV</a>
     .</li>
   <li>
     {% if is_email_enabled == True %}
