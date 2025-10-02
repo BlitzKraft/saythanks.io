@@ -305,6 +305,7 @@ def submit_note(inbox_id, topic):
     # ---- AUDIO UPLOAD HANDLING ----
     audio_file = request.files.get('audio')
     audio_filename = None
+    recording_url = None  
 
     if audio_file:
         upload_folder = os.path.join(app.static_folder, 'recordings')
@@ -315,6 +316,14 @@ def submit_note(inbox_id, topic):
         save_path = os.path.join(upload_folder, audio_filename)
         logging.info(f"Saving audio file to {save_path}")       
         audio_file.save(save_path)
+        
+        # Generate a secure URL for the recorded file and save it for later use
+        with app.app_context():
+            recording_url = url_for(
+                "static",
+                filename="recordings/" + audio_filename,
+                _external=True
+            )
     # -------------------------------
 
     body = request.form['body']
@@ -333,7 +342,7 @@ def submit_note(inbox_id, topic):
         body = Markup(body)
         # print("after markup", body)
         # Store the note first, so it gets a UUID
-        submitted_note = inbox_db.submit_note(body=body, byline=byline, audio_path=audio_filename)
+        submitted_note = inbox_db.submit_note(body=body, byline=byline, audio_path=audio_filename, recording_url=recording_url)
         if storage.Inbox.is_email_enabled(inbox_db.slug):
             if session:
                 email_address = session['profile']['email']
@@ -389,7 +398,7 @@ td.message-cell p {
         return redirect(url_for('thanks'))
 
     # Store the incoming note to the database.
-    submitted_note = inbox_db.submit_note(body=body, byline=byline, audio_path=audio_filename)
+    submitted_note = inbox_db.submit_note(body=body, byline=byline, audio_path=audio_filename, recording_url=recording_url)
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox_db.slug):
         if session:

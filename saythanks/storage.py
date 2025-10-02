@@ -50,6 +50,7 @@ class Note:
         self.uuid = None
         self.timestamp = None
         self.audio_path = None
+        self.recording_url = None
 
 
     def __repr__(self):
@@ -63,10 +64,12 @@ class Note:
         self.body = r[0]['body']
         self.byline = r[0]['byline']
         self.uuid = uuid
+        self.audio_path = r[0]['audio_path'] if 'audio_path' in r[0]._mapping else None
+        self.recording_url = r[0]['recording_url'] if 'recording_url' in r[0]._mapping else None
         return self
 
     @classmethod
-    def from_inbox(cls, inbox, body, byline, archived=False, uuid=None, timestamp=None, audio_path=None):
+    def from_inbox(cls, inbox, body, byline, archived=False, uuid=None, timestamp=None, audio_path=None, recording_url=None):
         """Creates a Note instance from a given inbox."""
         self = cls()
 
@@ -77,6 +80,7 @@ class Note:
         self.inbox = Inbox(inbox)
         self.timestamp = timestamp
         self.audio_path = audio_path
+        self.recording_url = recording_url  # Make sure this line exists
 
         return self
 
@@ -89,43 +93,70 @@ class Note:
     def store(self):
         """Stores the Note instance to the database."""
         try:
-            # Check if audio_path exists in the notes table
-            check_column = sqlalchemy.text("""
+            # Check if recording_url column exists
+            check_recording_url_column = sqlalchemy.text("""
                 SELECT EXISTS (
                     SELECT 1 
                     FROM information_schema.columns 
                     WHERE table_name='notes' 
-                    AND column_name='audio_path'
+                    AND column_name='recording_url'
                 );
             """)
-            has_audio_column = conn.execute(check_column).scalar()
+            has_recording_url_column = conn.execute(check_recording_url_column).scalar()
 
             # Prepare query based on column existence
-            if has_audio_column and self.audio_path is not None:
+            if has_recording_url_column and self.recording_url is not None:
                 q = '''
-                INSERT INTO notes (body, byline, inboxes_auth_id, audio_path)
-                VALUES (:body, :byline, :inbox, :audio_path)
+                INSERT INTO notes (body, byline, inboxes_auth_id, audio_path, recording_url)
+                VALUES (:body, :byline, :inbox, :audio_path, :recording_url)
                 RETURNING uuid
                 '''
                 params = {
                     'body': self.body,
                     'byline': self.byline,
                     'inbox': self.inbox.auth_id,
-                    'audio_path': self.audio_path
+                    'audio_path': self.audio_path,
+                    'recording_url': self.recording_url
                 }
             else:
-                if self.audio_path is not None:
-                    logger.error("Audio path column not available - storing note without audio")                
-                q = '''
-                INSERT INTO notes (body, byline, inboxes_auth_id)
-                VALUES (:body, :byline, :inbox)
-                RETURNING uuid
-                '''
-                params = {
-                    'body': self.body,
-                    'byline': self.byline,
-                    'inbox': self.inbox.auth_id
-                }
+                # Fallback to existing logic if column doesn't exist
+                if self.recording_url is not None:
+                    logger.error("Recording URL column not available - storing note without recording URL")
+                
+                # Existing audio_path logic
+                check_audio_column = sqlalchemy.text("""
+                    SELECT EXISTS (
+                        SELECT 1 
+                        FROM information_schema.columns 
+                        WHERE table_name='notes' 
+                        AND column_name='audio_path'
+                    );
+                """)
+                has_audio_column = conn.execute(check_audio_column).scalar()
+
+                if has_audio_column and self.audio_path is not None:
+                    q = '''
+                    INSERT INTO notes (body, byline, inboxes_auth_id, audio_path)
+                    VALUES (:body, :byline, :inbox, :audio_path)
+                    RETURNING uuid
+                    '''
+                    params = {
+                        'body': self.body,
+                        'byline': self.byline,
+                        'inbox': self.inbox.auth_id,
+                        'audio_path': self.audio_path
+                    }
+                else:
+                    q = '''
+                    INSERT INTO notes (body, byline, inboxes_auth_id)
+                    VALUES (:body, :byline, :inbox)
+                    RETURNING uuid
+                    '''
+                    params = {
+                        'body': self.body,
+                        'byline': self.byline,
+                        'inbox': self.inbox.auth_id
+                    }
 
             q = sqlalchemy.text(q)
             # Execute the query with parameters
@@ -224,8 +255,8 @@ class Inbox:
         q = sqlalchemy.text('update inboxes set enabled = true where slug = :slug')
         conn.execute(q, slug=slug)
 
-    def submit_note(self, body, byline, audio_path=None):
-        note = Note.from_inbox(self.slug, body, byline, audio_path=audio_path)
+    def submit_note(self, body, byline, audio_path=None, recording_url=None):
+        note = Note.from_inbox(self.slug, body, byline, audio_path=audio_path, recording_url=recording_url)
         note.store()
         return note
 
@@ -258,7 +289,13 @@ class Inbox:
         notes = [
             Note.from_inbox(
                 self.slug,
-                n["body"], n["byline"], n["archived"], n["uuid"], n["timestamp"]
+                n["body"], 
+                n["byline"], 
+                n["archived"], 
+                n["uuid"], 
+                n["timestamp"],
+                n["audio_path"] if "audio_path" in n else None,  # Fixed this line
+                n["recording_url"] if "recording_url" in n else None  # Fixed this line
             )
             for n in result
         ]
@@ -267,7 +304,7 @@ class Inbox:
             "notes": notes,
             "total_notes": total_notes,
             "page": page,
-            "total_pages": (total_notes + page_size - 1) // page_size  # Calculate total pages
+            "total_pages": (total_notes + page_size - 1) // page_size
         }
 
     def search_notes(self, search_str, page, page_size):
@@ -292,7 +329,13 @@ class Inbox:
         notes = [
             Note.from_inbox(
                 self.slug,
-                n["body"], n["byline"], n["archived"], n["uuid"], n["timestamp"]
+                n["body"], 
+                n["byline"], 
+                n["archived"], 
+                n["uuid"], 
+                n["timestamp"],
+                n["audio_path"] if "audio_path" in n else None,  # Fixed this line
+                n["recording_url"] if "recording_url" in n else None  # Fixed this line
             )
             for n in result
         ]
@@ -304,7 +347,7 @@ class Inbox:
             "notes": notes,
             "total_notes": total_notes,
             "page": page,
-            "total_pages": (total_notes + page_size - 1) // page_size  # Calculate total pages
+            "total_pages": (total_notes + page_size - 1) // page_size
         }
 
     def export(self, file_format):
@@ -319,5 +362,13 @@ class Inbox:
         r = conn.execute(q, auth_id=self.auth_id).fetchall()
 
         notes = [Note.from_inbox(
-            self.slug, n['body'], n['byline'], n['archived'], n['uuid']) for n in r]
+            self.slug, 
+            n['body'], 
+            n['byline'], 
+            n['archived'], 
+            n['uuid'],
+            n['timestamp'] if 'timestamp' in n else None,
+            n['audio_path'] if 'audio_path' in n else None,  
+            n['recording_url'] if 'recording_url' in n else None  
+        ) for n in r]
         return notes[::-1]
