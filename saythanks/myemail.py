@@ -48,7 +48,7 @@ A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
 """
 
 
-def notify(note, email_address, topic=None):
+def notify(note, email_address, topic=None, audio_path=None):
     """Use the note contents and a template, build a
     formatted message. Use MailerSend to deliver the formatted
     message as an email to the user.
@@ -97,11 +97,11 @@ def notify(note, email_address, topic=None):
 
         # ---- AUDIO HANDLING ----
         audio_html = ''
-        if hasattr(note, 'audio_path') and note.audio_path:
+        if audio_path is not None: 
             with current_app.app_context():
                 audio_url = url_for(
                     "static",
-                    filename="recordings/" + note.audio_path,
+                    filename="recordings/" + audio_path,
                     _external=True
                 )
             audio_html = (

@@ -101,21 +101,21 @@ class Note:
             has_audio_column = conn.execute(check_column).scalar()
 
             # Prepare query based on column existence
-            if has_audio_column and self.audio_path is not None:
-                q = '''
-                INSERT INTO notes (body, byline, inboxes_auth_id, audio_path)
-                VALUES (:body, :byline, :inbox, :audio_path)
-                RETURNING uuid
-                '''
-                params = {
-                    'body': self.body,
-                    'byline': self.byline,
-                    'inbox': self.inbox.auth_id,
-                    'audio_path': self.audio_path
-                }
+            if has_audio_column: 
+                if self.audio_path:
+                    q = '''
+                    INSERT INTO notes (body, byline, inboxes_auth_id, audio_path)
+                    VALUES (:body, :byline, :inbox, :audio_path)
+                    RETURNING uuid
+                    '''
+                    params = {
+                        'body': self.body,
+                        'byline': self.byline,
+                        'inbox': self.inbox.auth_id,
+                        'audio_path': self.audio_path
+                    }
             else:
-                if self.audio_path is not None:
-                    logger.error("Audio path column not available - storing note without audio")                
+                logger.error("Audio path column not available - storing note without audio")                
                 q = '''
                 INSERT INTO notes (body, byline, inboxes_auth_id)
                 VALUES (:body, :byline, :inbox)
@@ -141,9 +141,9 @@ class Note:
         q = sqlalchemy.text("UPDATE notes SET archived = 't' WHERE uuid = :uuid")
         conn.execute(q, uuid=self.uuid)
 
-    def notify(self, email_address, topic=None):
+    def notify(self, email_address, topic=None, audio_path=None):
         # print("Notes:notify", topic) # Debugging line to check topic
-        myemail.notify(self, email_address, topic)
+        myemail.notify(self, email_address, topic, audio_path)
 
 
 class Inbox:
