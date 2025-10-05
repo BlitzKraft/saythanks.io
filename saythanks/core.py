@@ -304,7 +304,6 @@ def clean_topic(t):
     return t.replace(' about ', '')
 
 
-#@app.route('/to/<inbox_id>/submit', methods=['POST'])
 @app.route('/to/<inbox_id>/submit', methods=['POST'], defaults={"topic": None})
 @app.route('/to/<inbox_id>/submit/<topic>', methods=['POST'])
 def submit_note(inbox_id, topic):
@@ -392,7 +391,6 @@ td.message-cell p {
 </style>
 """
     body = table_style + body
-    #body = remove_tags(body)
     byline = Markup(request.form['byline']).striptags()
     # Assert that the body has length.
     if not body:
