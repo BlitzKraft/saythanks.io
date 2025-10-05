@@ -1,6 +1,7 @@
-$(document).on("change", "#badge-format", function () {
+$(document).on("change", "#badge-format", () => {
   const selectedFormat = $("#badge-format").val();
   const username = $("#username").val();
+
   if (selectedFormat === "imageurl") {
     $("#badgeCode").val(
       "https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg"
@@ -23,7 +24,7 @@ function handleTopicUrlEncoding() {
   const currentUrl = window.location.href;
   const urlPattern = /\/to\/([^\/]+)&(.+)/;
   const match = currentUrl.match(urlPattern);
-  
+
   if (match) {
     const [, inboxId, topic] = match;
     // Check if topic contains unencoded special characters
@@ -52,7 +53,7 @@ function handleFragmentToTopic() {
 }
 
 // Run URL encoding check when page loads
-$(document).ready(function() {
+$(document).ready(() => {
   handleFragmentToTopic();
   //handleTopicUrlEncoding();
 });
