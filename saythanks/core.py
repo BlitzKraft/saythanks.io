@@ -298,6 +298,7 @@ def archive_note(uuid):
     # Redirect to the archived inbox.
     return redirect(url_for('archived_inbox'))
 
+
 def clean_topic(t):
     if not t:
         return None

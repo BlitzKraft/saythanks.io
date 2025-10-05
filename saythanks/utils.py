@@ -1,5 +1,6 @@
 import re
 
+
 def strip_html(text):
     if not text:
         return ""
