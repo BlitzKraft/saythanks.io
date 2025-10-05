@@ -127,15 +127,15 @@ def notify(note, email_address, topic=None, audio_path=None):
             if response.status_code == 202:
                 logger.error(f"Email queued successfully for delivery to {email_address}")
                 return True
-            elif response.status_code == 200:
+            if response.status_code == 200:
                 logger.info(f"Email sent successfully to {email_address}")
                 return True
-            elif response.status_code >= 400:
+            if response.status_code >= 400:
                 logger.error(f"MailerSend API error {response.status_code}: {response.text if hasattr(response, 'text') else 'Unknown error'}")
                 return False
-        else:
-            logger.info(f"Email request submitted successfully to {email_address}")
-            return True
+        
+        logger.info(f"Email request submitted successfully to {email_address}")
+        return True
 
     except requests.exceptions.ConnectionError as e:
         logger.error(f"Network connection error when sending email: {str(e)}")
