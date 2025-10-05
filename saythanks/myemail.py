@@ -60,7 +60,8 @@ def notify(note, email_address, topic=None, audio_path=None):
         with the 'share_note' route.
         - If the note lacks a UUID, the URL field in the email will be left blank
         and an error is logged.
-        - An optional audio link if the note includes an audio_path.
+        - topic: An optional string representing the topic of the note.
+        - An optional audio link if the note includes an audio_path.                
 
 
     Args:
@@ -70,7 +71,7 @@ def notify(note, email_address, topic=None, audio_path=None):
 
     The function logs errors if the note's UUID is missing or if sending the email
     fails but ensures the note is still saved even if email delivery fails.
-    
+
     Returns:
         bool: True if email was sent successfully, False otherwise
     """
@@ -127,15 +128,15 @@ def notify(note, email_address, topic=None, audio_path=None):
             if response.status_code == 202:
                 logger.error(f"Email queued successfully for delivery to {email_address}")
                 return True
-            elif response.status_code == 200:
+            if response.status_code == 200:
                 logger.info(f"Email sent successfully to {email_address}")
                 return True
-            elif response.status_code >= 400:
+            if response.status_code >= 400:
                 logger.error(f"MailerSend API error {response.status_code}: {response.text if hasattr(response, 'text') else 'Unknown error'}")
                 return False
-        else:
-            logger.info(f"Email request submitted successfully to {email_address}")
-            return True
+        
+        logger.info(f"Email request submitted successfully to {email_address}")
+        return True
 
     except requests.exceptions.ConnectionError as e:
         logger.error(f"Network connection error when sending email: {str(e)}")

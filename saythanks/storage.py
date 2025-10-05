@@ -38,7 +38,6 @@ conn = engine.connect()
 # Note: Some of these are a little fancy (send email and such).
 # --------------
 
-
 class Note:
     """A generic note of thankfulness."""
 
@@ -115,7 +114,9 @@ class Note:
                         'audio_path': self.audio_path
                     }
             else:
-                logger.error("Audio path column not available - storing note without audio")                
+                logger.error(
+                    "Audio path column not available - storing note without audio"
+                )                
                 q = '''
                 INSERT INTO notes (body, byline, inboxes_auth_id)
                 VALUES (:body, :byline, :inbox)
@@ -157,6 +158,7 @@ class Inbox:
         q = sqlalchemy.text("SELECT * FROM inboxes WHERE slug=:inbox")
         r = conn.execute(q, inbox=self.slug).fetchall()
         return r[0]['auth_id']
+    
     @classmethod
     def is_linked(cls, auth_id):
         q = sqlalchemy.text('SELECT * from inboxes where auth_id = :auth_id')
@@ -242,7 +244,7 @@ class Inbox:
         # print("myemail prop",emailinfo)
         # return emailinfo
 
-    def notes(self,page,page_size):
+    def notes(self, page, page_size):
         """Returns a list of notes, ordered reverse-chronologically with pagination."""
         offset = (page - 1) * page_size
         count_query = sqlalchemy.text("SELECT COUNT(*) FROM notes WHERE inboxes_auth_id = :auth_id AND archived = 'f'")

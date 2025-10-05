@@ -125,7 +125,7 @@ def inbox():
         return render_template("404notfound.htm.j2")
     data = inbox_db.notes(page, page_size)
     if page > data['total_pages'] and data['total_pages']!=0:
-                return render_template("404notfound.htm.j2")
+        return render_template("404notfound.htm.j2")
     is_email_enabled = storage.Inbox.is_email_enabled(inbox_db.slug)
 
     # handling search with pagination
@@ -137,18 +137,29 @@ def inbox():
     # regular note set with pagination
     if request.method == "GET" and 'search_str' not in session:
         # Send over the list of all given notes for the user.
-        return render_template('inbox.htm.j2',
-                               user=profile, notes=data['notes'],
-                               inbox=inbox_db, is_enabled=is_enabled,
-                               is_email_enabled=is_email_enabled, page=data['page'],
-                               total_pages=data['total_pages'], search_str="Search by message body or byline")
+        return render_template(
+            "inbox.htm.j2",
+            user=profile,
+            notes=data["notes"],
+            inbox=inbox_db,
+            is_enabled=is_enabled,
+            is_email_enabled=is_email_enabled,
+            page=data["page"],
+            total_pages=data["total_pages"],
+            search_str="Search by message body or byline",
+        )
     # reassessing data when search is used
-    if 'search_str' in session:
-            data = inbox_db.search_notes(session['search_str'], page, page_size)
-    return render_template('inbox.htm.j2',
-                           user=profile, notes=data['notes'],
-                           is_email_enabled=is_email_enabled, page=data['page'],
-                           total_pages=data['total_pages'], search_str=session['search_str'])
+    if "search_str" in session:
+        data = inbox_db.search_notes(session["search_str"], page, page_size)
+    return render_template(
+        "inbox.htm.j2",
+        user=profile,
+        notes=data["notes"],
+        is_email_enabled=is_email_enabled,
+        page=data["page"],
+        total_pages=data["total_pages"],
+        search_str=session["search_str"],
+    )
 
 
 @app.route('/inbox/export/<export_format>')
@@ -287,13 +298,13 @@ def archive_note(uuid):
     # Redirect to the archived inbox.
     return redirect(url_for('archived_inbox'))
 
+
 def clean_topic(t):
     if not t:
         return None
     return t.replace(' about ', '')
 
 
-#@app.route('/to/<inbox_id>/submit', methods=['POST'])
 @app.route('/to/<inbox_id>/submit', methods=['POST'], defaults={"topic": None})
 @app.route('/to/<inbox_id>/submit/<topic>', methods=['POST'])
 def submit_note(inbox_id, topic):
@@ -381,7 +392,6 @@ td.message-cell p {
 </style>
 """
     body = table_style + body
-    #body = remove_tags(body)
     byline = Markup(request.form['byline']).striptags()
     # Assert that the body has length.
     if not body:
