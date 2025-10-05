@@ -72,7 +72,7 @@
   <h3>Notes of Thankfulness:</h3>
 </p>
 
-<form action="/inbox" method="POST">
+<form action="{{ url_for('inbox_search') }}" method="POST">
   <input type="text" style="font-size:14px" size=30 placeholder="{{search_str}}" name="search_str">
     <button style="font-size:10px" type="submit">Search</button>
     <button type="submit" name="clear" value="true">Clear</button>
