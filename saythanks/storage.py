@@ -115,7 +115,9 @@ class Note:
                         'audio_path': self.audio_path
                     }
             else:
-                logger.error("Audio path column not available - storing note without audio")                
+                logger.error(
+                    "Audio path column not available - storing note without audio"
+                )                
                 q = '''
                 INSERT INTO notes (body, byline, inboxes_auth_id)
                 VALUES (:body, :byline, :inbox)
