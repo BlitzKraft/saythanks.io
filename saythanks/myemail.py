@@ -60,7 +60,8 @@ def notify(note, email_address, topic=None, audio_path=None):
         with the 'share_note' route.
         - If the note lacks a UUID, the URL field in the email will be left blank
         and an error is logged.
-        - An optional audio link if the note includes an audio_path.
+        - topic: An optional string representing the topic of the note.
+        - An optional audio link if the note includes an audio_path.                
 
 
     Args:
@@ -70,7 +71,7 @@ def notify(note, email_address, topic=None, audio_path=None):
 
     The function logs errors if the note's UUID is missing or if sending the email
     fails but ensures the note is still saved even if email delivery fails.
-    
+
     Returns:
         bool: True if email was sent successfully, False otherwise
     """
