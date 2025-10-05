@@ -48,115 +48,96 @@ A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
 """
 
 
+def _get_note_url(note):
+    """Generate the public URL for a note."""
+    if not note.uuid:
+        logging.error("Could not find UUID for note — link will be blank.")
+        return ''
+    with current_app.app_context():
+        return url_for('share_note', uuid=note.uuid, _external=True)
+
+def _get_audio_html(audio_path):
+    """Generate HTML for audio attachment if present."""
+    if audio_path is None:
+        return ''
+    with current_app.app_context():
+        audio_url = url_for(
+            "static",
+            filename="recordings/" + audio_path,
+            _external=True
+        )
+    return (
+        f'<br><br><strong>🎧 Voice Note:</strong> '
+        f'<a href="{audio_url}" target="_blank">Click to listen</a>'
+    )
+
+def _build_email_content(note, note_url, audio_html):
+    """Build the email content in HTML and plaintext formats."""
+    who = note.byline or 'someone'
+    html_content = TEMPLATE.format(note.body + audio_html, note.byline, note_url)
+    plaintext_content = f"{note.body}\n\n--{note.byline or ''}\n\n{note_url}"
+    return who, html_content, plaintext_content
+
+def _send_email(mailer, email_address, subject, html_content, plaintext_content):
+    """Send email using MailerSend and handle the response."""
+    mail_body = {}
+    mailer.set_mail_from({"name": "SayThanks.io", "email": "no-reply@saythanks.io"}, mail_body)
+    mailer.set_mail_to([{"email": email_address}], mail_body)
+    mailer.set_subject(subject, mail_body)
+    mailer.set_html_content(html_content, mail_body)
+    mailer.set_plaintext_content(plaintext_content, mail_body)
+    
+    response = mailer.send(mail_body)
+    logger.info(f"MailerSend SDK send response: {response}")
+    
+    if not hasattr(response, 'status_code'):
+        logger.info(f"Email request submitted successfully to {email_address}")
+        return True
+        
+    if response.status_code == 202:
+        logger.error(f"Email queued successfully for delivery to {email_address}")
+        return True
+    if response.status_code == 200:
+        logger.info(f"Email sent successfully to {email_address}")
+        return True
+    if response.status_code >= 400:
+        logger.error(f"MailerSend API error {response.status_code}: {response.text if hasattr(response, 'text') else 'Unknown error'}")
+        return False
+    
+    return True
+
 def notify(note, email_address, topic=None, audio_path=None):
-    """Use the note contents and a template, build a
-    formatted message. Use MailerSend to deliver the formatted
-    message as an email to the user.
-
-    The email includes:
-    - The note's body and byline.
-    - A public URL for the note, allowing the user to share it with others.
-        - If the note has a UUID, the URL is generated using Flask's `url_for`
-        with the 'share_note' route.
-        - If the note lacks a UUID, the URL field in the email will be left blank
-        and an error is logged.
-        - topic: An optional string representing the topic of the note.
-        - An optional audio link if the note includes an audio_path.                
-
-
-    Args:
-        note: An object representing the note, expected to have 'body', 'byline',
-            'uuid', and optionally 'audio_path'.
-        email_address: The recipient's email address.
-
-    The function logs errors if the note's UUID is missing or if sending the email
-    fails but ensures the note is still saved even if email delivery fails.
-
-    Returns:
-        bool: True if email was sent successfully, False otherwise
-    """
-    # print("myemail:notify", topic) # Debugging line to check topic
-
-    # Check if MailerSend is properly configured
+    """Send an email notification for a thank you note."""
     if mailer is None:
         logger.error("MailerSend not configured - email notification skipped")
         return False
 
     try:
-        if not note.uuid:
-            logging.error("Could not find UUID for note — link will be blank.")
-            note_url = ''
-        else:
-            with current_app.app_context():
-                note_url = url_for('share_note', uuid=note.uuid, _external=True)
-
-        # Say 'someone' if the byline is empty.
-        who = note.byline or 'someone'
-
+        note_url = _get_note_url(note)
+        audio_html = _get_audio_html(audio_path)
+        who, html_content, plaintext_content = _build_email_content(note, note_url, audio_html)
+        
         subject = f'saythanks.io: {who} sent a note!' if not topic \
             else f'saythanks.io: {who} sent a note about {topic}!'
-
-        # ---- AUDIO HANDLING ----
-        audio_html = ''
-        if audio_path is not None: 
-            with current_app.app_context():
-                audio_url = url_for(
-                    "static",
-                    filename="recordings/" + audio_path,
-                    _external=True
-                )
-            audio_html = (
-                f'<br><br><strong>🎧 Voice Note:</strong> '
-                f'<a href="{audio_url}" target="_blank">Click to listen</a>'
-            )
-        # ------------------------
-
-        html_content = TEMPLATE.format(note.body + audio_html, note.byline, note_url)
-        plaintext_content = f"{note.body}\n\n--{note.byline or ''}\n\n{note_url}"
-
-        mail_body = {}
-        mailer.set_mail_from({"name": "SayThanks.io", "email": "no-reply@saythanks.io"}, mail_body)
-        mailer.set_mail_to([{"email": email_address}], mail_body)
-        mailer.set_subject(subject, mail_body)
-        mailer.set_html_content(html_content, mail_body)
-        mailer.set_plaintext_content(plaintext_content, mail_body)
-        response = mailer.send(mail_body)
-        logger.info(f"MailerSend SDK send response: {response}")
-
-        # Handle successful responses
-        if hasattr(response, 'status_code'):
-            if response.status_code == 202:
-                logger.error(f"Email queued successfully for delivery to {email_address}")
-                return True
-            if response.status_code == 200:
-                logger.info(f"Email sent successfully to {email_address}")
-                return True
-            if response.status_code >= 400:
-                logger.error(f"MailerSend API error {response.status_code}: {response.text if hasattr(response, 'text') else 'Unknown error'}")
-                return False
         
-        logger.info(f"Email request submitted successfully to {email_address}")
-        return True
+        return _send_email(mailer, email_address, subject, html_content, plaintext_content)
 
     except requests.exceptions.ConnectionError as e:
         logger.error(f"Network connection error when sending email: {str(e)}")
         logger.error("Check your internet connection and MAILERSEND_API_KEY configuration")
-        return False
     except requests.exceptions.Timeout as e:
         logger.error(f"Timeout error when sending email: {str(e)}")
-        return False
     except requests.exceptions.HTTPError as e:
         logger.error(f"HTTP error when sending email: {str(e)}")
         if hasattr(e, 'response') and e.response is not None:
             logger.error(f"Response status: {e.response.status_code}")
             logger.error(f"Response body: {e.response.text}")
-        return False
     except URLError as e:
         logger.error(f"URL Error occurred: {str(e)}")
         print(e)
-        return False
     except Exception as e:
         logger.error(f"Unexpected error when sending email: {str(e)}")
         logger.error(f"Error type: {type(e).__name__}")
         print(e)
-        return False
+    
+    return False
