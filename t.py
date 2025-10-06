@@ -17,5 +17,6 @@ if __name__ == '__main__' and not is_test_run:
 
     # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # s.bind(('127.0.0.1', 31137)) # Binding to local host    
-    # saythanks.app.run(host='0.0.0.0', port=5000)
-    saythanks.app.run(host='127.0.0.1', port=5000)
+    # saythanks.app.run(host='127.0.0.1', port=5000)
+
+    saythanks.app.run(host='0.0.0.0', port=5000)
