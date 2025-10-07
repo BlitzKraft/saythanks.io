@@ -266,7 +266,12 @@ class Inbox:
         """Returns a list of notes, ordered reverse-chronologically with pagination."""
         offset = (page - 1) * page_size
         count_query = sqlalchemy.text(
-            "SELECT COUNT(*) FROM notes WHERE inboxes_auth_id = :auth_id AND archived = 'f'"
+            """
+            SELECT COUNT(*) 
+            FROM notes 
+            WHERE inboxes_auth_id = :auth_id 
+            AND archived = 'f'
+        """
         )
         total_notes = conn.execute(count_query, auth_id=self.auth_id).scalar()
         query = sqlalchemy.text(
