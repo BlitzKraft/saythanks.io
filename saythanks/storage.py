@@ -102,9 +102,9 @@ class Note:
             check_column = sqlalchemy.text(
                 """
                 SELECT EXISTS (
-                    SELECT 1 
-                    FROM information_schema.columns 
-                    WHERE table_name='notes' 
+                    SELECT 1
+                    FROM information_schema.columns
+                    WHERE table_name='notes'
                     AND column_name='audio_path'
                 );
             """
@@ -272,16 +272,16 @@ class Inbox:
         offset = (page - 1) * page_size
         count_query = sqlalchemy.text(
             """
-            SELECT COUNT(*) 
-            FROM notes 
-            WHERE inboxes_auth_id = :auth_id 
+            SELECT COUNT(*)
+            FROM notes
+            WHERE inboxes_auth_id = :auth_id
             AND archived = 'f'
         """
         )
         total_notes = conn.execute(count_query, auth_id=self.auth_id).scalar()
         query = sqlalchemy.text(
             """
-            SELECT * FROM notes 
+            SELECT * FROM notes
             WHERE inboxes_auth_id = :auth_id AND archived = 'f'
             ORDER BY timestamp DESC
             LIMIT :limit OFFSET :offset
