@@ -83,8 +83,9 @@ def _build_email_content(note, note_url, audio_html):
     return who, html_content, plaintext_content
 
 
-def _send_email(mailer, email_address, subject, html_content, plaintext_content):
+def _send_email(email_address, subject, html_content, plaintext_content):
     """Send email using MailerSend and handle the response."""
+    global mailer  # Add this to explicitly show we're using the global variable
     mail_body = {}
     mailer.set_mail_from(
         {"name": "SayThanks.io", "email": "no-reply@saythanks.io"}, mail_body
@@ -135,7 +136,7 @@ def notify(note, email_address, topic=None, audio_path=None):
         )
 
         return _send_email(
-            mailer, email_address, subject, html_content, plaintext_content
+            email_address, subject, html_content, plaintext_content
         )
 
     except requests.exceptions.ConnectionError as e:
