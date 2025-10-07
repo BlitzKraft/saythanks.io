@@ -182,9 +182,9 @@ class Inbox:
         try:
             q = sqlalchemy.text(
                 '''
-                INSERT into inboxes 
-                    (slug, auth_id, email) 
-                VALUES 
+                INSERT into inboxes
+                    (slug, auth_id, email)
+                VALUES
                     (:slug, :auth_id, :email)
             '''
             )
@@ -317,11 +317,11 @@ class Inbox:
 
         query = sqlalchemy.text(
             """
-            SELECT *, 
+            SELECT *,
                 COUNT(*) OVER() AS total_notes
             FROM notes
             WHERE (
-                LOWER(body) LIKE '%' || :param || '%' 
+                LOWER(body) LIKE '%' || :param || '%'
                 OR LOWER(byline) LIKE '%' || :param || '%'
             )
             AND inboxes_auth_id = :auth_id
