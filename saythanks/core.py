@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 
+#
 #  _____         _____ _           _
 # |   __|___ _ _|_   _| |_ ___ ___| |_ ___
 # |__   | .'| | | | | |   | .'|   | '_|_ -|
@@ -33,8 +33,63 @@ cleaner.javascript = True
 cleaner.style = True
 cleaner.remove_tags = ['script', 'style', 'link']
 cleaner.allow_attributes = ['alt', 'href']
-cleaner.remove_attributes = ['id', 'class', 'style', 'align', 'border', 'cellpadding', 'cellspacing', 'width', 'height', 'hspace', 'vspace', 'frameborder', 'marginwidth', 'marginheight', 'noresize', 'scrolling', 'target', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseover', 'onmouseout', 'onmouseup', 'onkeypress', 'onkeydown', 'onkeyup', 'onblur',
-                             'onchange', 'onfocus', 'onselect', 'onreset', 'onsubmit', 'onabort', 'oncanplay', 'oncanplaythrough', 'oncuechange', 'ondurationchange', 'onemptied', 'onended', 'onloadeddata', 'onloadedmetadata', 'onloadstart', 'onpause', 'onplay', 'onplaying', 'onprogress', 'onratechange', 'onseeked', 'onseeking', 'onstalled', 'onsuspend', 'ontimeupdate', 'onvolumechange', 'onwaiting']
+cleaner.remove_attributes = [
+    'id',
+    'class',
+    'style',
+    'align',
+    'border',
+    'cellpadding',
+    'cellspacing',
+    'width',
+    'height',
+    'hspace',
+    'vspace',
+    'frameborder',
+    'marginwidth',
+    'marginheight',
+    'noresize',
+    'scrolling',
+    'target',
+    'onclick',
+    'ondblclick',
+    'onmousedown',
+    'onmousemove',
+    'onmouseover',
+    'onmouseout',
+    'onmouseup',
+    'onkeypress',
+    'onkeydown',
+    'onkeyup',
+    'onblur',
+    'onchange',
+    'onfocus',
+    'onselect',
+    'onreset',
+    'onsubmit',
+    'onabort',
+    'oncanplay',
+    'oncanplaythrough',
+    'oncuechange',
+    'ondurationchange',
+    'onemptied',
+    'onended',
+    'onloadeddata',
+    'onloadedmetadata',
+    'onloadstart',
+    'onpause',
+    'onplay',
+    'onplaying',
+    'onprogress',
+    'onratechange',
+    'onseeked',
+    'onseeking',
+    'onstalled',
+    'onsuspend',
+    'ontimeupdate',
+    'onvolumechange',
+    'onwaiting',
+]
 
 
 def remove_tags(html):
@@ -44,10 +99,12 @@ def remove_tags(html):
 # importing module
 
 # Create and configure logger
-logging.basicConfig(filename='Logfile.log',
-                    filemode='a',
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    datefmt='%d-%b-%y %H:%M:%S')
+logging.basicConfig(
+    filename='Logfile.log',
+    filemode='a',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%d-%b-%y %H:%M:%S',
+)
 
 # Creating an object
 logger = logging.getLogger()
@@ -94,6 +151,7 @@ def requires_auth(f):
 
     return decorated
 
+
 # Application Routes
 # ------------------
 
@@ -101,12 +159,14 @@ def requires_auth(f):
 @app.route('/')
 def index():
     if 'search_str' in session:
-        session.pop('search_str', None)    
+        session.pop('search_str', None)
 
-    return render_template('index.htm.j2',
-                           callback_url=auth_callback_url,
-                           auth_id=auth_id,
-                           auth_domain=auth_domain)
+    return render_template(
+        'index.htm.j2',
+        callback_url=auth_callback_url,
+        auth_id=auth_id,
+        auth_domain=auth_domain,
+    )
 
 
 @app.route('/inbox', methods=['GET'])
@@ -127,7 +187,7 @@ def inbox():
     # checking for invalid page numbers
     if page < 0:
         return render_template("404notfound.htm.j2")
-    
+
     # Get search string from session if it exists
     search_str = session.get('search_str')
 
@@ -152,6 +212,7 @@ def inbox():
         total_pages=data["total_pages"],
         search_str=search_str,
     )
+
 
 @app.route('/inbox/search', methods=['POST'])
 @requires_auth
@@ -195,18 +256,24 @@ def archived_inbox():
 
     is_email_enabled = storage.Inbox.is_email_enabled(inbox_db.slug)
     # Send over the list of all given notes for the user.
-    return render_template('inbox_archived.htm.j2',
-                           user=profile, notes=inbox_db.archived_notes,
-                           inbox=inbox_db, is_enabled=is_enabled,
-                           is_email_enabled=is_email_enabled)
+    return render_template(
+        'inbox_archived.htm.j2',
+        user=profile,
+        notes=inbox_db.archived_notes,
+        inbox=inbox_db,
+        is_enabled=is_enabled,
+        is_email_enabled=is_email_enabled,
+    )
 
 
 @app.route('/thanks')
 def thanks():
-    return render_template('thanks.htm.j2',
-                           callback_url=auth_callback_url,
-                           auth_id=auth_id,
-                           auth_domain=auth_domain)
+    return render_template(
+        'thanks.htm.j2',
+        callback_url=auth_callback_url,
+        auth_id=auth_id,
+        auth_domain=auth_domain,
+    )
 
 
 @app.route('/disable-email')
@@ -252,7 +319,7 @@ def display_submit_note(inbox_id, topic):
     if not storage.Inbox.does_exist(inbox_id):
         abort(404)
     elif not storage.Inbox.is_enabled(inbox_id):
-        abort(404)   
+        abort(404)
 
     print("topic received:", topic)
 
@@ -326,14 +393,16 @@ def submit_note(inbox_id, topic):
         timestamp = int(time.time())
         audio_filename = f"{inbox_id}_{timestamp}_{audio_file.filename}"
         save_path = os.path.join(upload_folder, audio_filename)
-        logging.info(f"Saving audio file to {save_path}")       
-        try: 
+        logging.info(f"Saving audio file to {save_path}")
+        try:
             audio_file.save(save_path)
             # print("Audio file creation success!")
             logging.info(f"Audio file saved successfully: {audio_filename}")
-        except Exception as e: 
+        except Exception as e:
             # print("Audio file creation failed!")
-            logging.error(f"Failed to save audio file: {str(e)}")  # Improved error logging
+            logging.error(
+                f"Failed to save audio file: {str(e)}"
+            )  # Improved error logging
             audio_filename = None
 
     body = request.form['body']
@@ -345,14 +414,15 @@ def submit_note(inbox_id, topic):
     # as an email but will not be stored due to the enormous size
     # of professional email templates
 
-
     topic = clean_topic(topic)
 
     if content_type == 'html':
         body = Markup(body)
         # print("after markup", body)
         # Store the note first, so it gets a UUID
-        submitted_note = inbox_db.submit_note(body=body, byline=byline, audio_path=audio_filename)
+        submitted_note = inbox_db.submit_note(
+            body=body, byline=byline, audio_path=audio_filename
+        )
         if storage.Inbox.is_email_enabled(inbox_db.slug):
             if session:
                 email_address = session['profile']['email']
@@ -407,7 +477,9 @@ td.message-cell p {
         return redirect(url_for('thanks'))
 
     # Store the incoming note to the database.
-    submitted_note = inbox_db.submit_note(body=body, byline=byline, audio_path=audio_filename)
+    submitted_note = inbox_db.submit_note(
+        body=body, byline=byline, audio_path=audio_filename
+    )
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox_db.slug):
         if session:
@@ -429,8 +501,10 @@ def user_logout():
 def callback_handling():
     code = request.args.get('code')
 
-    json_header = {'content-type': 'application/json',
-                   'Authorization': f'Bearer {auth_jwt_v2}'}
+    json_header = {
+        'content-type': 'application/json',
+        'Authorization': f'Bearer {auth_jwt_v2}',
+    }
 
     token_url = f'https://{auth_domain}/oauth/token'
     token_payload = {
@@ -438,13 +512,16 @@ def callback_handling():
         'client_secret': auth_secret,
         'redirect_uri': auth_callback_url,
         'code': code,
-        'grant_type': 'authorization_code'
+        'grant_type': 'authorization_code',
     }
 
     # Fetch User info from Auth0.
-    token_info = requests.post(token_url, data=json.dumps(
-        token_payload), headers=json_header).json()
-    user_url = f'https://{auth_domain}/userinfo?access_token={token_info["access_token"]}'
+    token_info = requests.post(
+        token_url, data=json.dumps(token_payload), headers=json_header
+    ).json()
+    user_url = (
+        f'https://{auth_domain}/userinfo?access_token={token_info["access_token"]}'
+    )
     user_info = requests.get(user_url).json()
 
     user_info_url = f'https://{auth_domain}/api/v2/users/{user_info["sub"]}'
