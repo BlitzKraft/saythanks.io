@@ -9,10 +9,12 @@ from flask import url_for, current_app
 import logging
 
 # Create and configure logger
-logging.basicConfig(filename='Logfile.log',
-                    filemode='a',
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    datefmt='%d-%b-%y %H:%M:%S')
+logging.basicConfig(
+    filename='Logfile.log',
+    filemode='a',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%d-%b-%y %H:%M:%S',
+)
 
 # Creating an object
 logger = logging.getLogger()
@@ -56,6 +58,7 @@ def _get_note_url(note):
     with current_app.app_context():
         return url_for('share_note', uuid=note.uuid, _external=True)
 
+
 def _get_audio_html(audio_path):
     """Generate HTML for audio attachment if present."""
     if audio_path is None:
@@ -71,6 +74,7 @@ def _get_audio_html(audio_path):
         f'<a href="{audio_url}" target="_blank">Click to listen</a>'
     )
 
+
 def _build_email_content(note, note_url, audio_html):
     """Build the email content in HTML and plaintext formats."""
     who = note.byline or 'someone'
@@ -78,10 +82,13 @@ def _build_email_content(note, note_url, audio_html):
     plaintext_content = f"{note.body}\n\n--{note.byline or ''}\n\n{note_url}"
     return who, html_content, plaintext_content
 
+
 def _send_email(mailer, email_address, subject, html_content, plaintext_content):
     """Send email using MailerSend and handle the response."""
     mail_body = {}
-    mailer.set_mail_from({"name": "SayThanks.io", "email": "no-reply@saythanks.io"}, mail_body)
+    mailer.set_mail_from(
+        {"name": "SayThanks.io", "email": "no-reply@saythanks.io"}, mail_body
+    )
     mailer.set_mail_to([{"email": email_address}], mail_body)
     mailer.set_subject(subject, mail_body)
     mailer.set_html_content(html_content, mail_body)
@@ -101,10 +108,13 @@ def _send_email(mailer, email_address, subject, html_content, plaintext_content)
         logger.info(f"Email sent successfully to {email_address}")
         return True
     if response.status_code >= 400:
-        logger.error(f"MailerSend API error {response.status_code}: {response.text if hasattr(response, 'text') else 'Unknown error'}")
+        logger.error(
+            f"MailerSend API error {response.status_code}: {response.text if hasattr(response, 'text') else 'Unknown error'}"
+        )
         return False
 
     return True
+
 
 def notify(note, email_address, topic=None, audio_path=None):
     """Send an email notification for a thank you note."""
@@ -115,16 +125,25 @@ def notify(note, email_address, topic=None, audio_path=None):
     try:
         note_url = _get_note_url(note)
         audio_html = _get_audio_html(audio_path)
-        who, html_content, plaintext_content = _build_email_content(note, note_url, audio_html)
+        who, html_content, plaintext_content = _build_email_content(
+            note, note_url, audio_html
+        )
 
-        subject = f'saythanks.io: {who} sent a note!' if not topic \
+        subject = (
+            f'saythanks.io: {who} sent a note!'
+            if not topic
             else f'saythanks.io: {who} sent a note about {topic}!'
+        )
 
-        return _send_email(mailer, email_address, subject, html_content, plaintext_content)
+        return _send_email(
+            mailer, email_address, subject, html_content, plaintext_content
+        )
 
     except requests.exceptions.ConnectionError as e:
         logger.error(f"Network connection error when sending email: {str(e)}")
-        logger.error("Check your internet connection and MAILERSEND_API_KEY configuration")
+        logger.error(
+            "Check your internet connection and MAILERSEND_API_KEY configuration"
+        )
     except requests.exceptions.Timeout as e:
         logger.error(f"Timeout error when sending email: {str(e)}")
     except requests.exceptions.HTTPError as e:

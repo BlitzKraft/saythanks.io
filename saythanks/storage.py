@@ -15,10 +15,12 @@ UniqueViolation = errors.lookup('23505')
 # importing module
 
 # Create and configure logger
-logging.basicConfig(filename='Logfile.log',
-                    filemode='a',
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    datefmt='%d-%b-%y %H:%M:%S')
+logging.basicConfig(
+    filename='Logfile.log',
+    filemode='a',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%d-%b-%y %H:%M:%S',
+)
 
 # Creating an object
 logger = logging.getLogger()
@@ -33,10 +35,10 @@ engine = sqlalchemy.create_engine(os.environ['DATABASE_URL'])
 conn = engine.connect()
 
 
-
 # Storage Models
 # Note: Some of these are a little fancy (send email and such).
 # --------------
+
 
 class Note:
     """A generic note of thankfulness."""
@@ -49,7 +51,6 @@ class Note:
         self.uuid = None
         self.timestamp = None
         self.audio_path = None
-
 
     def __repr__(self):
         return f'<Note size={len(self.body)}>'
@@ -65,7 +66,16 @@ class Note:
         return self
 
     @classmethod
-    def from_inbox(cls, inbox, body, byline, archived=False, uuid=None, timestamp=None, audio_path=None):
+    def from_inbox(
+        cls,
+        inbox,
+        body,
+        byline,
+        archived=False,
+        uuid=None,
+        timestamp=None,
+        audio_path=None,
+    ):
         """Creates a Note instance from a given inbox."""
         self = cls()
 
@@ -89,18 +99,20 @@ class Note:
         """Stores the Note instance to the database."""
         try:
             # Check if audio_path exists in the notes table
-            check_column = sqlalchemy.text("""
+            check_column = sqlalchemy.text(
+                """
                 SELECT EXISTS (
                     SELECT 1 
                     FROM information_schema.columns 
                     WHERE table_name='notes' 
                     AND column_name='audio_path'
                 );
-            """)
+            """
+            )
             has_audio_column = conn.execute(check_column).scalar()
 
             # Prepare query based on column existence
-            if has_audio_column: 
+            if has_audio_column:
                 if self.audio_path:
                     q = '''
                     INSERT INTO notes (body, byline, inboxes_auth_id, audio_path)
@@ -111,12 +123,12 @@ class Note:
                         'body': self.body,
                         'byline': self.byline,
                         'inbox': self.inbox.auth_id,
-                        'audio_path': self.audio_path
+                        'audio_path': self.audio_path,
                     }
             else:
                 logger.error(
                     "Audio path column not available - storing note without audio"
-                )                
+                )
                 q = '''
                 INSERT INTO notes (body, byline, inboxes_auth_id)
                 VALUES (:body, :byline, :inbox)
@@ -125,7 +137,7 @@ class Note:
                 params = {
                     'body': self.body,
                     'byline': self.byline,
-                    'inbox': self.inbox.auth_id
+                    'inbox': self.inbox.auth_id,
                 }
 
             q = sqlalchemy.text(q)
@@ -168,7 +180,9 @@ class Inbox:
     @classmethod
     def store(cls, slug, auth_id, email):
         try:
-            q = sqlalchemy.text('INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)')
+            q = sqlalchemy.text(
+                'INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)'
+            )
             conn.execute(q, slug=slug, auth_id=auth_id, email=email)
 
         except UniqueViolation:
@@ -195,12 +209,16 @@ class Inbox:
 
     @classmethod
     def disable_email(cls, slug):
-        q = sqlalchemy.text('update inboxes set email_enabled = false where slug = :slug')
+        q = sqlalchemy.text(
+            'update inboxes set email_enabled = false where slug = :slug'
+        )
         conn.execute(q, slug=slug)
 
     @classmethod
     def enable_email(cls, slug):
-        q = sqlalchemy.text('update inboxes set email_enabled = true where slug = :slug')
+        q = sqlalchemy.text(
+            'update inboxes set email_enabled = true where slug = :slug'
+        )
         conn.execute(q, slug=slug)
 
     @classmethod
@@ -247,20 +265,30 @@ class Inbox:
     def notes(self, page, page_size):
         """Returns a list of notes, ordered reverse-chronologically with pagination."""
         offset = (page - 1) * page_size
-        count_query = sqlalchemy.text("SELECT COUNT(*) FROM notes WHERE inboxes_auth_id = :auth_id AND archived = 'f'")
+        count_query = sqlalchemy.text(
+            "SELECT COUNT(*) FROM notes WHERE inboxes_auth_id = :auth_id AND archived = 'f'"
+        )
         total_notes = conn.execute(count_query, auth_id=self.auth_id).scalar()
-        query = sqlalchemy.text("""
+        query = sqlalchemy.text(
+            """
             SELECT * FROM notes 
             WHERE inboxes_auth_id = :auth_id AND archived = 'f'
             ORDER BY timestamp DESC
             LIMIT :limit OFFSET :offset
-        """)
-        result = conn.execute(query, auth_id=self.auth_id, limit=page_size, offset=offset).fetchall()
+        """
+        )
+        result = conn.execute(
+            query, auth_id=self.auth_id, limit=page_size, offset=offset
+        ).fetchall()
 
         notes = [
             Note.from_inbox(
                 self.slug,
-                n["body"], n["byline"], n["archived"], n["uuid"], n["timestamp"]
+                n["body"],
+                n["byline"],
+                n["archived"],
+                n["uuid"],
+                n["timestamp"],
             )
             for n in result
         ]
@@ -269,14 +297,16 @@ class Inbox:
             "notes": notes,
             "total_notes": total_notes,
             "page": page,
-            "total_pages": (total_notes + page_size - 1) // page_size  # Calculate total pages
+            "total_pages": (total_notes + page_size - 1)
+            // page_size,  # Calculate total pages
         }
 
     def search_notes(self, search_str, page, page_size):
         offset = (page - 1) * page_size
         search_str_lower = search_str.lower()
 
-        query = sqlalchemy.text("""
+        query = sqlalchemy.text(
+            """
             SELECT *, 
                 COUNT(*) OVER() AS total_notes
             FROM notes
@@ -285,16 +315,25 @@ class Inbox:
             AND archived = 'f'
             ORDER BY timestamp DESC
             LIMIT :limit OFFSET :offset
-        """)
+        """
+        )
         # Execute the query with the search string and pagination parameters
         result = conn.execute(
-            query, param=search_str_lower, auth_id=self.auth_id, limit=page_size, offset=offset
+            query,
+            param=search_str_lower,
+            auth_id=self.auth_id,
+            limit=page_size,
+            offset=offset,
         ).fetchall()
 
         notes = [
             Note.from_inbox(
                 self.slug,
-                n["body"], n["byline"], n["archived"], n["uuid"], n["timestamp"]
+                n["body"],
+                n["byline"],
+                n["archived"],
+                n["uuid"],
+                n["timestamp"],
             )
             for n in result
         ]
@@ -306,20 +345,27 @@ class Inbox:
             "notes": notes,
             "total_notes": total_notes,
             "page": page,
-            "total_pages": (total_notes + page_size - 1) // page_size  # Calculate total pages
+            "total_pages": (total_notes + page_size - 1)
+            // page_size,  # Calculate total pages
         }
 
     def export(self, file_format):
-        q = sqlalchemy.text("SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'")
+        q = sqlalchemy.text(
+            "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'"
+        )
         r = conn.execute(q, auth_id=self.auth_id).fetchall()
         return tablib.Dataset(r).export(file_format)
 
     @property
     def archived_notes(self):
         """Returns a list of archived notes, ordered reverse-chronologically."""
-        q = sqlalchemy.text("SELECT * from notes where inboxes_auth_id = :auth_id and archived = 't'")
+        q = sqlalchemy.text(
+            "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 't'"
+        )
         r = conn.execute(q, auth_id=self.auth_id).fetchall()
 
-        notes = [Note.from_inbox(
-            self.slug, n['body'], n['byline'], n['archived'], n['uuid']) for n in r]
+        notes = [
+            Note.from_inbox(self.slug, n['body'], n['byline'], n['archived'], n['uuid'])
+            for n in r
+        ]
         return notes[::-1]

@@ -23,7 +23,9 @@ def get_version():
     status, version = commands.getstatusoutput("git describe --tags --long")
     if not status:
         # Get the commit date
-        date_status, commit_date = commands.getstatusoutput('git log -1 --format=%cd --date=short')
+        date_status, commit_date = commands.getstatusoutput(
+            'git log -1 --format=%cd --date=short'
+        )
         if not date_status:
             # Parse the version and date
             version = version.split('-g')[0]  # Remove git hash
@@ -43,6 +45,7 @@ def get_version():
         version = "unknown"
 
     return version
+
 
 version_file = "version.txt"
 
