@@ -158,7 +158,7 @@ class Inbox:
         q = sqlalchemy.text("SELECT * FROM inboxes WHERE slug=:inbox")
         r = conn.execute(q, inbox=self.slug).fetchall()
         return r[0]['auth_id']
-    
+
     @classmethod
     def is_linked(cls, auth_id):
         q = sqlalchemy.text('SELECT * from inboxes where auth_id = :auth_id')

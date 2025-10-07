@@ -119,25 +119,25 @@ def inbox():
     inbox_db = storage.Inbox(profile['nickname'])
     is_enabled = storage.Inbox.is_enabled(inbox_db.slug)
     is_email_enabled = storage.Inbox.is_email_enabled(inbox_db.slug)
-    
+
     # pagination
     page = request.args.get('page', 1, type=int)
     page_size = 25
-    
+
     # checking for invalid page numbers
     if page < 0:
         return render_template("404notfound.htm.j2")
-        
+    
     # Get search string from session if it exists
     search_str = session.get('search_str')
-    
+
     # Get appropriate data based on search status
     if search_str:
         data = inbox_db.search_notes(search_str, page, page_size)
     else:
         data = inbox_db.notes(page, page_size)
         search_str = "Search by message body or byline"
-    
+
     if page > data['total_pages'] and data['total_pages'] != 0:
         return render_template("404notfound.htm.j2")
 
@@ -255,7 +255,7 @@ def display_submit_note(inbox_id, topic):
         abort(404)   
 
     print("topic received:", topic)
-    
+
     fake_name = get_full_name()
     raw_topic = topic
     # URL decode the topic if it was encoded

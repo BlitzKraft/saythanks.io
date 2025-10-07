@@ -86,14 +86,14 @@ def _send_email(mailer, email_address, subject, html_content, plaintext_content)
     mailer.set_subject(subject, mail_body)
     mailer.set_html_content(html_content, mail_body)
     mailer.set_plaintext_content(plaintext_content, mail_body)
-    
+
     response = mailer.send(mail_body)
     logger.info(f"MailerSend SDK send response: {response}")
-    
+
     if not hasattr(response, 'status_code'):
         logger.info(f"Email request submitted successfully to {email_address}")
         return True
-        
+
     if response.status_code == 202:
         logger.error(f"Email queued successfully for delivery to {email_address}")
         return True
@@ -103,7 +103,7 @@ def _send_email(mailer, email_address, subject, html_content, plaintext_content)
     if response.status_code >= 400:
         logger.error(f"MailerSend API error {response.status_code}: {response.text if hasattr(response, 'text') else 'Unknown error'}")
         return False
-    
+
     return True
 
 def notify(note, email_address, topic=None, audio_path=None):
@@ -116,10 +116,10 @@ def notify(note, email_address, topic=None, audio_path=None):
         note_url = _get_note_url(note)
         audio_html = _get_audio_html(audio_path)
         who, html_content, plaintext_content = _build_email_content(note, note_url, audio_html)
-        
+
         subject = f'saythanks.io: {who} sent a note!' if not topic \
             else f'saythanks.io: {who} sent a note about {topic}!'
-        
+
         return _send_email(mailer, email_address, subject, html_content, plaintext_content)
 
     except requests.exceptions.ConnectionError as e:
@@ -139,5 +139,5 @@ def notify(note, email_address, topic=None, audio_path=None):
         logger.error(f"Unexpected error when sending email: {str(e)}")
         logger.error(f"Error type: {type(e).__name__}")
         print(e)
-    
+
     return False

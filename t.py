@@ -4,7 +4,6 @@ import saythanks
 is_test_run = 'TEST' in os.environ
 
 if __name__ == '__main__' and not is_test_run:
-    
     # When binding to 0.0.0.0, you accept incoming connections 
     # from anywhere. During development, an application may have 
     # security vulnerabilities making it susceptible to SQL injections
