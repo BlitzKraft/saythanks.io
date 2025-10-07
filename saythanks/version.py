@@ -17,7 +17,7 @@ def get_version():
     Retrieve the current version of the project using git tags and commit date.
 
     Returns:
-        str: The version string with date in format 
+        str: The version string with date in format
         'V X.X-XX MMM-DD', otherwise "unknown".
     """
     # Get version tag
