@@ -102,9 +102,9 @@ class Note:
             check_column = sqlalchemy.text(
                 """
                 SELECT EXISTS (
-                    SELECT 1 
-                    FROM information_schema.columns 
-                    WHERE table_name='notes' 
+                    SELECT 1
+                    FROM information_schema.columns
+                    WHERE table_name='notes'
                     AND column_name='audio_path'
                 );
             """
@@ -181,7 +181,12 @@ class Inbox:
     def store(cls, slug, auth_id, email):
         try:
             q = sqlalchemy.text(
-                'INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)'
+                '''
+                INSERT into inboxes
+                    (slug, auth_id, email)
+                VALUES
+                    (:slug, :auth_id, :email)
+            '''
             )
             conn.execute(q, slug=slug, auth_id=auth_id, email=email)
 
@@ -266,12 +271,17 @@ class Inbox:
         """Returns a list of notes, ordered reverse-chronologically with pagination."""
         offset = (page - 1) * page_size
         count_query = sqlalchemy.text(
-            "SELECT COUNT(*) FROM notes WHERE inboxes_auth_id = :auth_id AND archived = 'f'"
+            """
+            SELECT COUNT(*)
+            FROM notes
+            WHERE inboxes_auth_id = :auth_id
+            AND archived = 'f'
+        """
         )
         total_notes = conn.execute(count_query, auth_id=self.auth_id).scalar()
         query = sqlalchemy.text(
             """
-            SELECT * FROM notes 
+            SELECT * FROM notes
             WHERE inboxes_auth_id = :auth_id AND archived = 'f'
             ORDER BY timestamp DESC
             LIMIT :limit OFFSET :offset
@@ -307,10 +317,13 @@ class Inbox:
 
         query = sqlalchemy.text(
             """
-            SELECT *, 
+            SELECT *,
                 COUNT(*) OVER() AS total_notes
             FROM notes
-            WHERE (LOWER(body) LIKE '%' || :param || '%' OR LOWER(byline) LIKE '%' || :param || '%')
+            WHERE (
+                LOWER(body) LIKE '%' || :param || '%'
+                OR LOWER(byline) LIKE '%' || :param || '%'
+            )
             AND inboxes_auth_id = :auth_id
             AND archived = 'f'
             ORDER BY timestamp DESC
