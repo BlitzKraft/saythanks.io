@@ -396,13 +396,9 @@ def submit_note(inbox_id, topic):
         logging.info(f"Saving audio file to {save_path}")
         try:
             audio_file.save(save_path)
-            # print("Audio file creation success!")
             logging.info(f"Audio file saved successfully: {audio_filename}")
         except Exception as e:
-            # print("Audio file creation failed!")
-            logging.error(
-                f"Failed to save audio file: {str(e)}"
-            )  # Improved error logging
+            logging.error(f"Failed to save audio file: {str(e)}")  
             audio_filename = None
 
     body = request.form['body']
