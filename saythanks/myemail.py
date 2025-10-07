@@ -108,10 +108,9 @@ def _send_email(mailer, email_address, subject, html_content, plaintext_content)
         logger.info(f"Email sent successfully to {email_address}")
         return True
     if response.status_code >= 400:
-        logger.error(
-            f"MailerSend API error {response.status_code}: {response.text if hasattr(response, 'text') else 'Unknown error'}"
-        )
-        return False
+        error_text = response.text if hasattr(response, 'text') else 'Unknown error'
+        error_msg = f"MailerSend API error {response.status_code}: {error_text}"
+        logger.error(error_msg)
 
     return True
 

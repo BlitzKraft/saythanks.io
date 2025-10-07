@@ -181,7 +181,12 @@ class Inbox:
     def store(cls, slug, auth_id, email):
         try:
             q = sqlalchemy.text(
-                'INSERT into inboxes (slug, auth_id,email) VALUES (:slug, :auth_id, :email)'
+                '''
+                INSERT into inboxes 
+                    (slug, auth_id, email) 
+                VALUES 
+                    (:slug, :auth_id, :email)
+            '''
             )
             conn.execute(q, slug=slug, auth_id=auth_id, email=email)
 
@@ -315,7 +320,10 @@ class Inbox:
             SELECT *, 
                 COUNT(*) OVER() AS total_notes
             FROM notes
-            WHERE (LOWER(body) LIKE '%' || :param || '%' OR LOWER(byline) LIKE '%' || :param || '%')
+            WHERE (
+                LOWER(body) LIKE '%' || :param || '%' 
+                OR LOWER(byline) LIKE '%' || :param || '%'
+            )
             AND inboxes_auth_id = :auth_id
             AND archived = 'f'
             ORDER BY timestamp DESC
