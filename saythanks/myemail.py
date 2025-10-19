@@ -83,7 +83,7 @@ def _build_email_content(note, note_url, audio_html):
     return who, html_content, plaintext_content
 
 
-def _send_email(mailer, email_address, subject, html_content, plaintext_content):
+def _send_email(email_address, subject, html_content, plaintext_content):
     """Send email using MailerSend and handle the response."""
     mail_body = {}
     mailer.set_mail_from(
@@ -135,7 +135,7 @@ def notify(note, email_address, topic=None, audio_path=None):
         )
 
         return _send_email(
-            mailer, email_address, subject, html_content, plaintext_content
+            email_address, subject, html_content, plaintext_content
         )
 
     except requests.exceptions.ConnectionError as e:
