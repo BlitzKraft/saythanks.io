@@ -403,7 +403,7 @@ def submit_note(inbox_id, topic):
 
     body = request.form['body']
     content_type = request.form['content-type']
-    byline = Markup(request.form['byline'])
+    byline = Markup(request.form['byline']).striptags()
 
     # If the user chooses to send an HTML email,
     # the contents of the HTML document will be sent
@@ -413,7 +413,23 @@ def submit_note(inbox_id, topic):
     topic = clean_topic(topic)
 
     if content_type == 'html':
-        body = Markup(body)
+        # Sanitize attacker-controlled HTML before marking it safe.
+        # The submission endpoint is unauthenticated and the stored body
+        # is later rendered through {{ note.body|safe }} in
+        # inbox.htm.j2 and also embedded into the HTML email sent to
+        # the inbox owner (myemail.py). Without sanitization a POST
+        # with content-type=html and body=<script>...</script> stores
+        # an exploit that fires when the owner opens /inbox or the
+        # notification email — full session takeover via document.cookie
+        # since the Auth0 cookies are not HttpOnly.
+        from lxml_html_clean import Cleaner
+        cleaner = Cleaner(
+            scripts=True, javascript=True, embedded=True, frames=True,
+            forms=True, meta=True, links=False, page_structure=True,
+            processing_instructions=True, style=True,
+            safe_attrs_only=True, remove_unknown_tags=True,
+        )
+        body = Markup(cleaner.clean_html(body))
         # print("after markup", body)
         # Store the note first, so it gets a UUID
         submitted_note = inbox_db.submit_note(
