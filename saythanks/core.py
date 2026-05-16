@@ -393,12 +393,12 @@ def submit_note(inbox_id, topic):
         timestamp = int(time.time())
         audio_filename = f"{inbox_id}_{timestamp}_{audio_file.filename}"
         save_path = os.path.join(upload_folder, audio_filename)
-        logging.info(f"Saving audio file to {save_path}")
+        logging.info("Saving audio file to %s", save_path)
         try:
             audio_file.save(save_path)
-            logging.info(f"Audio file saved successfully: {audio_filename}")
+            logging.info("Audio file saved successfully: %s", filename)
         except Exception as e:
-            logging.error(f"Failed to save audio file: {str(e)}")
+            logging.error("Failed to save audio file: %s", str(e))
             audio_filename = None
 
     body = request.form['body']

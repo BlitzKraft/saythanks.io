@@ -145,7 +145,7 @@ class Note:
             result = conn.execute(q, **params)
             # Assign the generated UUID from the database to this Note instance
             self.uuid = result.fetchone()['uuid']
-            logging.info(f"Note stored with UUID: {self.uuid}")
+            logging.info("Note stored with UUID: %s", self.uuid)
         except Exception as e:
             logger.error(f"Error storing note: {str(e)}")
             raise
