@@ -89,7 +89,11 @@
   <div class="notes-list">
   {% for note in notes %}
     <article class="note-item">
-      <div class="note-cell"><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></div>
+      <div class="note-cell">
+       <a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a><br>
+       <a href="https://twitter.com/intent/tweet?text={{ note.body }}%0A- {{ note.byline }}%0A{{ request.base_url[0:-6] + url_for('share_note', uuid=note.uuid) }}" class="twitter-share-button" data-hashtags="SayThanks">Tweet</a><br>
+       <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ request.base_url[0:-6] + url_for('share_note', uuid=note.uuid) }}&layout=button&size=small&width=67&height=20&appId" width="67" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+      </div>
       <div class="note-cell message-cell">
           <a href="{{ url_for('share_note', uuid=note.uuid)}}">
               <span>{{ note.body|safe }}</span>
