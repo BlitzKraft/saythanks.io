@@ -8,13 +8,36 @@
         pre {
             max-width: 600px!important;
         }
+        .archived-notes-grid {
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+        .archived-notes-header {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            padding: 0.5rem;
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        .archived-notes-list {
+            display: flex;
+            flex-direction: column;
+        }
+        .archived-note-item {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
 
 
-<form action="../logout" method="POST">
+<form action="{{ url_for('user_logout') }}" method="POST">
 <button type="submit" class="logoutLblPos" >Log Out</button>
 </form>
 
@@ -29,24 +52,22 @@
 </p>
 
 
-<table class='u-full-width'>
-  <thead>
-    <tr>
-      <th>Message</th>
-      <th>From</th>
-      <th>Share URL</th>
-    </tr>
-  </thead>
-  <tbody>
+<section class="archived-notes-grid">
+  <header class="archived-notes-header">
+    <div class="header-cell">Message</div>
+    <div class="header-cell">From</div>
+    <div class="header-cell">Share URL</div>
+  </header>
+  <div class="archived-notes-list">
   {% for note in notes %}
-    <tr>
-      <td><pre class='note' width=180>{{ note.body }}</pre></td>
-      <td width='300px'><pre class='note'><strong>— {{ note.byline }}</strong></pre></td>
-      <td width='50px'><pre class='note'><strong><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></strong></pre></td>
-    </tr>
+    <article class="archived-note-item">
+      <div class="note-cell"><pre class='note'>{{ note.body }}</pre></div>
+      <div class="note-cell"><pre class='note'><strong>— {{ note.byline }}</strong></pre></div>
+      <div class="note-cell"><strong><a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a></strong></div>
+    </article>
   {% endfor %}
-  </tbody>
-</table>
+  </div>
+</section>
 
 <p><a href="{{ url_for('inbox')}}">Go to regular inbox</a>.</p>
 
