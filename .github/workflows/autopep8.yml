@@ -1,0 +1,21 @@
+# This action works with pull requests and pushes
+name: Python Pep8 Continuous Integration
+
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        # Make sure the actual branch is checked out when running on pull requests
+        ref: ${{ github.head_ref }}
+    - uses: creyD/action_autopep8@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

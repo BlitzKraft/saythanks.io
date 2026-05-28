@@ -1,0 +1,7 @@
+.git
+.circleci
+.github
+env
+conf
+conf_template
+docs

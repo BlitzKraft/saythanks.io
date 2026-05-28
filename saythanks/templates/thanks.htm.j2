@@ -1,0 +1,69 @@
+{% extends "base.htm.j2" %}
+
+{% block title %}Say Thank You{% endblock %}
+
+{% block content %}
+
+
+<div class="sixteen columns">
+    <div class="eight columns offset-by-one">
+
+<h4>Thanks for spreading positivity!</h4>
+
+<p>You can create your own thankfulness inbox by visiting <a href="https://saythanks.io/"><strong>SayThanks.io</strong></a> or clicking below!</p>
+
+<p style="text-align:center;">
+<img style="height: 25rem; margin-left: auto; margin-right: auto; " src="{{ url_for('static', filename='images/inbox.png') }}" alt="Thankfulness Inbox of Love">
+</p>
+
+
+        <script src="https://cdn.auth0.com/js/lock/11.33/lock.min.js"></script>
+        <script>
+            var options_signup = {
+              theme: {
+                logo: '{{ url_for('static', filename='images/owly.svg') }}',
+                primaryColor: '#3ac025',
+              },
+              allowSignUp: true,
+              allowLogin: false,
+              auth: {
+                redirectUrl: '{{ callback_url }}',
+                params: {
+                  scope: 'openid email name picture'
+                }
+              }
+            }
+
+            var options_signin = {
+              theme: {
+                logo: '{{ url_for('static', filename='images/owly.svg') }}',
+                primaryColor: '#3ac025',
+              },
+              allowSignUp: false,
+              allowLogin: true,
+              auth: {
+                redirectUrl: '{{ callback_url }}',
+                params: {
+                  scope: 'openid email name picture'
+                }
+              }
+            }
+            var lock1 = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options_signup);
+            var lock2 = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options_signin);
+</script>
+
+<hr>
+<button class="button-primary" type="submit" onClick="lock1.show();">Create Your Thankfulness Inbox</button>
+
+<span>or...</span>
+
+<button type="submit" onClick="lock2.show();">Access Your Thankfulness Inbox</button>
+
+<hr>
+
+<p>Thanks for helping to make the world a little bit of a better place! :)</p>
+
+   
+</div>
+</div>
+{% endblock %}

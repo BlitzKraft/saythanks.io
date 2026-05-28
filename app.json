@@ -1,0 +1,11 @@
+{
+    "addons": [
+        "auth0",
+        "heroku-postgresql",
+        "sendgrid",
+        "sentry"
+    ],
+    "scripts": {
+        "test": "TEST=1 python t.py"
+    }
+}

@@ -1,0 +1,7 @@
+*.pyc
+__pycache__/
+.env
+.vscode/
+Logfile
+Logfile.log
+conf

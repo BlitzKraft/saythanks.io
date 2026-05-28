@@ -1,0 +1,239 @@
+{% extends "base.htm.j2" %}
+
+{% block title %}Say Thank You{% endblock %}
+
+{% block extra_head %} 
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <style>
+      #counter {
+        color: red;
+        font-weight: bold;
+      }
+      #counter1 {
+        color: red;
+        font-weight: bold;
+      }
+      /* Set font size and fixed font family for Toast UI Editor content */
+     .toastui-editor-defaultUI .toastui-editor-contents,
+     .toastui-editor-defaultUI .toastui-editor-md-preview-content,
+     .toastui-editor-defaultUI .ProseMirror {
+        font-size: 16px !important;
+        font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', 'Liberation Mono', monospace !important;
+      }
+    </style>
+     
+{% endblock %}
+
+{% block content %}
+
+
+<form action="{{ url_for('user_logout') }}" method="POST">
+<button type="submit" class="logoutLblPos" >Log Out</button>
+</form>
+
+<h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong>{{ topic }}!</h4>
+
+
+<form id="thankyou-note-form" class="form-horizontal"
+      action="{{ url_for('submit_note', inbox_id=user, topic=topic) if topic else url_for('submit_note', inbox_id=user) }}"
+      method="post">
+<div class="form-row" style="display:flex; align-items:center; gap:1rem; flex-wrap:nowrap;">
+  <label for="fontstyle" style="white-space:nowrap;">Font Style:</label>
+  <select name="font_style" id="fontstyle" onchange="fontforinbox(this);">
+    <option value="0">Regular</option>
+    <option value="1">Times New Roman</option>
+    <option value="2">Verdana</option>
+    <option value="3">Tahoma</option>
+    <option value="4">Georgia</option>
+    <option value="5">Trebuchet MS</option>
+  </select>
+
+  <fieldset aria-label="Content Type" style="border:0;padding:0;margin:0; display:flex; align-items:center; gap:0.75rem;">
+    <legend style="font-size:0.95rem;margin:0 0.5rem 0 0; white-space:nowrap;">Content Type:</legend>
+    <label for="option1" style="display:inline-flex;align-items:center;gap:0.4rem; white-space:nowrap;">
+      <input type="radio" name="content-type" id="option1" value="markdown" checked>
+      Plain Text / Markdown
+    </label>
+    <label for="option2" style="display:inline-flex;align-items:center;gap:0.4rem; white-space:nowrap;">
+      <input type="radio" name="content-type" id="option2" value="html">
+      HTML
+    </label>
+  </fieldset>
+</div>
+
+
+<fieldset>
+
+<!-- Form Name -->
+<legend>❝ THANK YOU ❞ </legend>
+
+<h6>You have written <strong><span id=counter>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
+
+<div id="suggestion-templates" style="margin-bottom: 1em;">
+  <strong>Need inspiration?</strong>
+  <button type="button" class="suggestion-btn" 
+    data-message="Thank you for always being so helpful!">Thankful</button>
+  <button type="button" class="suggestion-btn" 
+    data-message="Your support means a lot to me.">Gratitude</button>
+  <button type="button" class="suggestion-btn" 
+    data-message="I appreciate your hard work and dedication.">Admiration</button>
+  <button type="button" class="suggestion-btn" 
+    data-message="Some things were not clear and left me confused.">Confusing</button>
+  <button type="button" class="suggestion-btn" 
+    data-message="It would help if you did the following:">Actionable</button>
+  
+</div>
+
+
+<!-- Textarea -->
+<div class="form-group">
+  <div class="col-md-4">
+    <div id="editor"></div>
+  </div>
+</div>
+
+<!-- Voice Recording part -->
+<div style="margin: 1em 0;">
+  <button type="button" id="recordBtn">🗣️ Say Something!</button>
+  <audio id="audioPreview" controls style="display: none; margin-top: 10px;"></audio>
+  <p id="recordingStatus" style="color: green; font-weight: bold;"></p>
+</div>
+
+
+
+<h6>You have written <strong><span id=counter1>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="byline">Sincerely, </label>
+  <div class="col-md-4">
+  <input class='notebodyfont' id="byline" class="u-full-width" name="byline" type="text" placeholder="{{ fake_name }}" class="form-control input-md">
+  </div>
+</div>
+
+<!-- Button -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="submit"></label>
+  <div class="col-md-4">
+    <button id="submit" name="submit" class="btn button-primary" type="submit">Send Note <img id="eve-send" src="{{ url_for('static', filename='images/owly.svg') }}" alt="Eve the Owl"> </button>
+  </div>
+</div>
+<h2>🝐</h2>
+</fieldset>
+</form>
+
+
+<script>
+  function wordCount(data) {
+    var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
+    var m = data.match(pattern);
+    var count = 0;
+    if(m === null) return count;
+    for(var i = 0; i < m.length; i++) {
+      if(m[i].charCodeAt(0) >= 0x4E00) {
+        count += m[i].length;
+      } else {
+        count += 1;
+      }
+    }
+    return count;
+  }
+  var counter = document.getElementById("counter");
+  var counter1 = document.getElementById("counter1");
+
+  var textArea = document.getElementById("editor");
+  const editor = new toastui.Editor({
+      el: textArea,
+      previewStyle: 'tab',
+      height: '500px',
+      initialValue: `{% if topic %}### Ref:{{ topic }}\n{% endif %}Dear {{ user }},\nThank you for...`
+  });
+
+  var form = document.getElementById("thankyou-note-form");
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    var formData = new FormData(form);
+    formData.append('body', editor.getMarkdown());
+
+    // Add recorded audio if available
+    if (audioBlob) {
+        formData.append('audio', audioBlob, 'voice_note.webm');
+    }
+
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+        window.location.href = '/thanks';
+    }
+    //request.open("POST", "./{{ user }}/submit&{{ topic}}");
+    request.open("POST", form.getAttribute('action'));
+    request.send(formData);
+});
+
+
+  editor.addHook('change', () => {
+    counter.innerText = wordCount(editor.getMarkdown());
+    counter1.innerText = wordCount(editor.getMarkdown());
+    if (wordCount(editor.getMarkdown()) > 42) {
+      counter.style.color = "green";
+      counter1.style.color = "green";
+    } else {
+      counter.style.color = "red";
+      counter1.style.color = "red";
+    }
+  });
+
+  document.querySelectorAll('.suggestion-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const msg = btn.getAttribute('data-message');
+      // For Toast UI Editor:
+      //editor.setMarkdown(msg);
+      editor.setMarkdown(editor.getMarkdown() + '\n' + msg);
+    });
+  });
+
+
+  // Voice Recording Script
+  let recording = false;
+  let recorder;
+  let audioBlob;
+
+  const recordBtn = document.getElementById('recordBtn');
+  const audioPreview = document.getElementById('audioPreview');
+  const recordingStatus = document.getElementById('recordingStatus');
+
+  recordBtn.addEventListener('click', async () => {
+    if (!recording) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        recorder = new MediaRecorder(stream);
+        const chunks = [];
+
+        recorder.ondataavailable = e => chunks.push(e.data);
+        recorder.onstop = () => {
+          audioBlob = new Blob(chunks, { type: 'audio/webm' });
+          const audioURL = URL.createObjectURL(audioBlob);
+          audioPreview.src = audioURL;
+          audioPreview.style.display = 'block';
+          recordingStatus.innerText = 'Recording complete!';
+        };
+
+        recorder.start();
+        recording = true;
+        recordBtn.innerText = '🛑 Stop Recording';
+        recordingStatus.innerText = 'Recording...';
+      } catch (err) {
+        alert('Microphone access denied or not supported.');
+        console.error(err);
+      }
+    } else {
+      recorder.stop();
+      recording = false;
+      recordBtn.innerText = '🗣️ Say Something!';
+    }
+  });
+
+
+</script>
+
+
+{% endblock %}

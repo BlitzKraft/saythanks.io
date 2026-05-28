@@ -1,0 +1,1 @@
+web: gunicorn saythanks:app -w 6 --log-file -
