@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<form action="./logout" method="POST">
+<form action="{{ url_for('user_logout') }}" method="POST">
 <button type="submit" class="logoutLblPos" >Log Out</button>
 </form>
 

@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<form action="../logout" method="POST">
+<form action="{{ url_for('user_logout') }}" method="POST">
 <button type="submit" class="logoutLblPos" >Log Out</button>
 </form>
 <div class="sharelinks">
@@ -12,7 +12,7 @@
     <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ request.root_url + url_for('share_note', uuid=note.uuid)[1:] }}&layout=button&size=small&width=67&height=20&appId" width="67" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe> 
 </div>
 <br>
-<form class="form-horizontal" action="./{{ user }}/submit" method="post">
+<form class="form-horizontal" action="{{ url_for('submit_note', inbox_id=user) }}" method="post">
 
 
 <fieldset>
