@@ -13,10 +13,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        # Make sure the actual branch is checked out when running on pull requests
-        ref: ${{ github.head_ref }}
+      uses: actions/checkout@v4
 
     - name: Prettify code
       uses: creyD/prettier_action@v3.1
@@ -25,4 +22,3 @@ jobs:
         prettier_options: --write **/*.{js,md}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
