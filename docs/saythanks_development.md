@@ -60,13 +60,13 @@
 
     ![image](https://user-images.githubusercontent.com/63831132/149557084-3da38b01-97ad-4fba-aa71-9c8a91bf1454.png)
 
-14. \*\* Go to <https://app.sendgrid.com>
+14. Go to <https://www.mailersend.com> and sign up for a free account (or log in if you already have one).
 
-15. ` `Create and get API Key as mentioned below:
+15. Navigate to **Email API** > **API Keys** in the dashboard, then click **Create API Key**. Give it a label like "saythanks-dev" and copy the generated key.
 
-> ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.009.jpeg)
+    > **Note:** The free tier includes 12,500 emails/month which is sufficient for development.
 
-16. Make a copy of `sample.env` and save it as `.env`. Then update environmental variables values related to project in `.env` file.
+16. Make a copy of `sample.env` and save it as `.env`. Then update the environment variables in `.env` with your MailerSend API key and other credentials:
 
 17. Go to “<https://www.enterprisedb.com/downloads/postgres-postgresql-downloads>” , download and install the required version of “Postgres”
 
