@@ -51,7 +51,20 @@ A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
 
 
 def _get_note_url(note):
-    """Generate the public URL for a note."""
+    """Generate the public URL for a note.
+
+    Uses Flask's url_for with _external=True to produce an absolute URL
+    for the 'share_note' endpoint using note.uuid.
+
+    Parameters
+    - note: object with attribute `uuid`.
+
+    Returns
+    - str: Absolute URL for the note if uuid is present, otherwise an empty string.
+
+    Side effects
+    - Logs an error if note.uuid is missing.
+    """
     if not note.uuid:
         logging.error("Could not find UUID for note — link will be blank.")
         return ''
@@ -60,7 +73,19 @@ def _get_note_url(note):
 
 
 def _get_audio_html(audio_path):
-    """Generate HTML for audio attachment if present."""
+    """Return an HTML snippet linking to a stored audio recording.
+
+    Parameters
+    - audio_path: filename of the audio in the 'static/recordings' folder,
+      or None if no audio is attached.
+
+    Returns
+    - str: HTML anchor snippet pointing to the recording, or an empty string
+      when no audio_path is provided.
+
+    Notes
+    - Uses Flask's url_for with _external=True to build an absolute URL.
+    """
     if audio_path is None:
         return ''
     with current_app.app_context():
@@ -76,7 +101,19 @@ def _get_audio_html(audio_path):
 
 
 def _build_email_content(note, note_url, audio_html):
-    """Build the email content in HTML and plaintext formats."""
+    """Assemble HTML and plaintext email bodies.
+
+    Parameters
+    - note: object with attributes `body` and `byline`.
+    - note_url: public URL for the note (string).
+    - audio_html: optional HTML snippet for audio (string).
+
+    Returns
+    - tuple: (who, html_content, plaintext_content)
+      - who: display name for the sender (note.byline or 'someone')
+      - html_content: full HTML email body
+      - plaintext_content: plain text representation for fallback
+    """
     who = note.byline or 'someone'
     html_content = TEMPLATE.format(note.body + audio_html, note.byline, note_url)
     plaintext_content = f"{note.body}\n\n--{note.byline or ''}\n\n{note_url}"
@@ -84,7 +121,24 @@ def _build_email_content(note, note_url, audio_html):
 
 
 def _send_email(email_address, subject, html_content, plaintext_content):
-    """Send email using MailerSend and handle the response."""
+    """Send an email via the MailerSend SDK.
+
+    Builds the mail payload, issues the send call and logs the response.
+
+    Parameters
+    - email_address: recipient email address (string or list accepted by SDK)
+    - subject: email subject (string)
+    - html_content: HTML body (string)
+    - plaintext_content: plaintext body (string)
+
+    Returns
+    - bool: True when the send routine reports success or is queued.
+      Logs errors for response codes >= 400.
+
+    Notes
+    - This function relies on the module-level `mailer` object initialized
+      from the MAILERSEND_API_KEY environment variable.
+    """
     mail_body = {}
     mailer.set_mail_from(
         {"name": "SayThanks.io", "email": "no-reply@saythanks.io"}, mail_body
@@ -116,7 +170,26 @@ def _send_email(email_address, subject, html_content, plaintext_content):
 
 
 def notify(note, email_address, topic=None, audio_path=None):
-    """Send an email notification for a thank you note."""
+    """Send an email notification for a thank-you note.
+
+    Orchestrates URL generation, optional audio handling, content assembly,
+    subject formatting and the final send attempt. Catches and logs common
+    network and HTTP-related exceptions.
+
+    Parameters
+    - note: note object (expects attributes `uuid`, `body`, `byline`)
+    - email_address: recipient email address (string)
+    - topic: optional topic string used in the email subject
+    - audio_path: optional filename for an attached voice note
+
+    Returns
+    - bool: True if the email was successfully submitted/queued, False on failure
+      or when MailerSend is not configured.
+
+    Error handling
+    - Logs and returns False when mailer is not configured.
+    - Catches requests and urllib errors and logs details for diagnosis.
+    """
     if mailer is None:
         logger.error("MailerSend not configured - email notification skipped")
         return False
