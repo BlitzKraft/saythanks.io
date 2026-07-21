@@ -393,17 +393,17 @@ def submit_note(inbox_id, topic):
         timestamp = int(time.time())
         audio_filename = f"{inbox_id}_{timestamp}_{audio_file.filename}"
         save_path = os.path.join(upload_folder, audio_filename)
-        logging.info(f"Saving audio file to {save_path}")
+        logging.info("Saving audio file to %s", save_path)
         try:
             audio_file.save(save_path)
-            logging.info(f"Audio file saved successfully: {audio_filename}")
+            logging.info("Audio file saved successfully: %s", filename)
         except Exception as e:
-            logging.error(f"Failed to save audio file: {str(e)}")
+            logging.error("Failed to save audio file: %s", str(e))
             audio_filename = None
 
     body = request.form['body']
     content_type = request.form['content-type']
-    byline = Markup(request.form['byline'])
+    byline = Markup(request.form['byline']).striptags()
 
     # If the user chooses to send an HTML email,
     # the contents of the HTML document will be sent
@@ -413,7 +413,23 @@ def submit_note(inbox_id, topic):
     topic = clean_topic(topic)
 
     if content_type == 'html':
-        body = Markup(body)
+        # Sanitize attacker-controlled HTML before marking it safe.
+        # The submission endpoint is unauthenticated and the stored body
+        # is later rendered through {{ note.body|safe }} in
+        # inbox.htm.j2 and also embedded into the HTML email sent to
+        # the inbox owner (myemail.py). Without sanitization a POST
+        # with content-type=html and body=<script>...</script> stores
+        # an exploit that fires when the owner opens /inbox or the
+        # notification email — full session takeover via document.cookie
+        # since the Auth0 cookies are not HttpOnly.
+        from lxml_html_clean import Cleaner
+        cleaner = Cleaner(
+            scripts=True, javascript=True, embedded=True, frames=True,
+            forms=True, meta=True, links=False, page_structure=True,
+            processing_instructions=True, style=True,
+            safe_attrs_only=True, remove_unknown_tags=True,
+        )
+        body = Markup(cleaner.clean_html(body))
         # print("after markup", body)
         # Store the note first, so it gets a UUID
         submitted_note = inbox_db.submit_note(
