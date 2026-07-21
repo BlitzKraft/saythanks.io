@@ -60,13 +60,17 @@
 
     ![image](https://user-images.githubusercontent.com/63831132/149557084-3da38b01-97ad-4fba-aa71-9c8a91bf1454.png)
 
-14. \*\* Go to <https://app.sendgrid.com>
+14. Go to https://app.mailersend.com and create an account.
 
-15. ` `Create and get API Key as mentioned below:
+15. Generate a MailerSend API key with email sending permissions.
 
 > ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.009.jpeg)
 
 16. Make a copy of `sample.env` and save it as `.env`. Then update environmental variables values related to project in `.env` file.
+
+```env
+MAILERSEND_API_KEY=your_api_key_here
+```
 
 17. Go to “<https://www.enterprisedb.com/downloads/postgres-postgresql-downloads>” , download and install the required version of “Postgres”
 
