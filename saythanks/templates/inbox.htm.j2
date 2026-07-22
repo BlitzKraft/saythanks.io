@@ -102,11 +102,19 @@
         data-hashtags="SayThanks">
        </a><br>
        
-       {% set fb_url = request.root_url ~ url_for('share_note', uuid=note.uuid)[1:] %}
-       {% set fb_quote = note.body|strip_html ~ '\n- ' ~ note.byline %}
-       {% set share_link = 'https://www.facebook.com/sharer/sharer.php?u=' ~ 
-         fb_url|urlencode ~ '&quote=' ~ fb_quote|urlencode %}
-       <a target="_blank" href="{{ share_link }}">Share on Facebook</a>
+       {% set fb_url = request.url_root.rstrip('/') ~ url_for('share_note', uuid=note.uuid) %}
+       {% set fb_quote = (note.body|strip_html ~ ' — ' ~ note.byline)|urlencode %}
+       {% set share_href =
+          'https://www.facebook.com/dialog/share'
+          ~ '?app_id=' ~ config['FB_APP_ID']
+          ~ '&display=popup'
+          ~ '&href=' ~ fb_url|urlencode
+          ~ '&quote=' ~ fb_quote
+          ~ '&redirect_uri=' ~ fb_url|urlencode %}
+
+       <a  target="_blank" href="{{ share_href }}" class="fb-share" rel="noopener">
+        Share on Facebook
+       </a>
       </div>
       <div class="note-cell message-cell">
           <a href="{{ url_for('share_note', uuid=note.uuid)}}">
@@ -315,6 +323,13 @@ document.addEventListener("DOMContentLoaded", function () {
       this.dataset.page = p;
     }
   };
+});
+
+document.querySelectorAll('a.fb-share').forEach(function (a) {
+  a.addEventListener('click', function (e) {
+    e.preventDefault();
+    window.open(a.href, 'fbshare', 'width=600,height=540,noopener');
+  });
 });
 
 </script>
