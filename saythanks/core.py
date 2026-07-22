@@ -155,6 +155,10 @@ def requires_auth(f):
 # Application Routes
 # ------------------
 
+@app.route('/privacy')
+def privacy():
+    return render_template("privacy.htm.j2")
+
 
 @app.route('/')
 def index():
