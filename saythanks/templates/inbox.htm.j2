@@ -104,9 +104,9 @@
        
        {% set fb_url = request.root_url ~ url_for('share_note', uuid=note.uuid)[1:] %}
        {% set fb_quote = note.body|strip_html ~ '\n- ' ~ note.byline %}
-       {% set share_link = ('https://www.facebook.com/sharer/sharer.php?u=' ~ 
-         fb_url)|urlencode ~ ('&quote=' ~ fb_quote)|urlencode %}
-       <a target="_blank" href="{{ share_link }}">Share on Facebook</a>     
+       {% set share_link = 'https://www.facebook.com/sharer/sharer.php?u=' ~ 
+         fb_url|urlencode ~ '&quote=' ~ fb_quote|urlencode %}
+       <a target="_blank" href="{{ share_link }}">Share on Facebook</a>
       </div>
       <div class="note-cell message-cell">
           <a href="{{ url_for('share_note', uuid=note.uuid)}}">
