@@ -2,6 +2,14 @@
 
 {% block title %}Thank You{% endblock %}
 
+{% block extra_head %}
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="{{ request.url }}">
+  <meta property="og:title" content="{{ note_body|strip_html|trim|truncate(90)|e }}">
+  <meta property="og:description" content="— {{ note.byline|e }}, via SayThanks.io">
+  <meta property="og:site_name" content="SayThanks.io">
+{% endblock %}
+
 {% block content %}
 
 <form action="../logout" method="POST">
