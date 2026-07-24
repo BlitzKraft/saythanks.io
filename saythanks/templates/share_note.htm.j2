@@ -9,6 +9,7 @@
   <meta property="og:title" content="Some title!">
   <meta property="og:description" content="— {{ note.byline|e }}, via saythanks.io">
   <meta property="og:site_name" content="saythanks.io">
+  <meta property="og:image" content="https://saythanks.io/static/images/inbox.png>
 {% endblock %}
 
 {% block content %}
@@ -18,7 +19,12 @@
 </form>
 <div class="sharelinks">
     <a class="twitter-share-button" target="_blank" href="https://twitter.com/intent/tweet?text={{ note_body|strip_html|quote + "%0A%0A- " + note.byline + "%0A%0A" + request.root_url + url_for('share_note', uuid=note.uuid)[1:] + "%0A" }}" data-url=" "></a> </br>
-    <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ request.root_url + url_for('share_note', uuid=note.uuid)[1:] }}&layout=button&size=small&width=67&height=20&appId" width="67" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe> 
+    <!-- 
+      <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ request.root_url + url_for('share_note', uuid=note.uuid)[1:] }}&layout=button&size=small&width=67&height=20&appId" width="67" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+    -->
+    {% set note_url = 'https://saythanks.io' ~ url_for('share_note', uuid=note.uuid) %}
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ note_url|urlencode }}"
+       target="_blank" rel="noopener">Share on Facebook</a> 
 </div>
 <br>
 <form class="form-horizontal" action="./{{ user }}/submit" method="post">
