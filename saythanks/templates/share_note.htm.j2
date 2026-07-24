@@ -5,8 +5,8 @@
 {% block extra_head %}
   <meta property="og:url" content="https://saythanks.io{{ request.path }}">
   <meta property="og:type" content="article">
-  {# <meta property="og:title" content="{{ note_body|strip_html|trim|truncate(90)|e }}"> #}
-  <meta property="og:title" content="Some title!">
+  <meta property="og:title" content="{{ note_body|strip_html|trim|truncate(90)|e }}">
+  {# <meta property="og:title" content="Some title!">  #}
   <meta property="og:description" content="— {{ note.byline|e }}, via saythanks.io">
   <meta property="og:site_name" content="saythanks.io">
   <meta property="og:image" content="https://saythanks.io/static/images/inbox.png>
