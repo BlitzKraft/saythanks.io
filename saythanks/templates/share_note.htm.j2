@@ -35,7 +35,6 @@
       ~ '?app_id=' ~ config['FB_APP_ID']
       ~ '&display=popup'
       ~ '&href=' ~ fb_url|urlencode
-      ~ '&quote=' ~ fb_quote
       ~ '&redirect_uri=' ~ fb_url|urlencode %}
           
     <a  target="_blank" href="{{ share_href }}" class="fb-share" rel="noopener">
