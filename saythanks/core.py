@@ -551,7 +551,15 @@ def callback_handling():
     session['profile']['nickname'] = nickname
     session['profile']['picture'] = picture
     session['profile']['name'] = name
-    if not storage.Inbox.does_exist(nickname):
-        # Using nickname by default, can be changed manually later if needed.
-        storage.Inbox.store(nickname, userid, email)
+    if storage.Inbox.is_linked(userid):
+        current_slug = storage.Inbox.get_slug(userid)
+        if current_slug and current_slug != nickname:
+            if not storage.Inbox.does_exist(nickname):
+                storage.Inbox.update_slug(userid, nickname)
+            else:
+                session['profile']['nickname'] = current_slug
+    else:
+        if not storage.Inbox.does_exist(nickname):
+            # Using nickname by default, can be changed manually later if needed.
+            storage.Inbox.store(nickname, userid, email)
     return redirect(url_for('inbox'))
