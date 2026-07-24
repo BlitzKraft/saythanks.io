@@ -9,7 +9,7 @@
   {# <meta property="og:title" content="Some title!">  #}
   <meta property="og:description" content="— {{ note.byline|e }}, via saythanks.io">
   <meta property="og:site_name" content="saythanks.io">
-  <meta property="og:image" content="https://saythanks.io/saythanks/static/icons/owly.png">
+  <meta property="og:image" content="https://saythanks.io/saythanks/static/images/inbox.png">
 {% endblock %}
 
 {% block content %}
@@ -23,11 +23,6 @@
       <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ request.root_url + url_for('share_note', uuid=note.uuid)[1:] }}&layout=button&size=small&width=67&height=20&appId" width="67" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
       <a href="https://www.facebook.com/sharer/sharer.php?u={{ note_url|urlencode }}"
        target="_blank" rel="noopener">Share on Facebook</a>
-     {% set note_url = 'https://saythanks.io' ~ url_for('share_note', uuid=note.uuid) %}
-      <a href="https://www.facebook.com/dialog/share?app_id=YOUR_APP_ID&href={{ note_url|urlencode }}&redirect_uri={{ note_url|urlencode }}"
-      target="_blank" rel="noopener"> Share on Facebook </a>
-    -->
-    
     {% set fb_url = request.url_root.rstrip('/') ~ url_for('share_note', uuid=note.uuid) %}
     {% set fb_quote = (note.body|strip_html ~ ' — ' ~ note.byline)|urlencode %}
     {% set share_href =
@@ -36,10 +31,14 @@
       ~ '&display=popup'
       ~ '&href=' ~ fb_url|urlencode
       ~ '&redirect_uri=' ~ fb_url|urlencode %}
-          
     <a  target="_blank" href="{{ share_href }}" class="fb-share" rel="noopener">
         Share on Facebook
     </a>
+    -->
+   {% set note_url = 'https://saythanks.io' ~ url_for('share_note', uuid=note.uuid) %}
+   <a href="https://www.facebook.com/dialog/share?app_id={{config['FB_APP_ID']}}&href={{ note_url|urlencode }}&redirect_uri={{ note_url|urlencode }}"
+      target="_blank" rel="noopener"> Share on Facebook </a>
+    
 </div>
 <br>
 <form class="form-horizontal" action="./{{ user }}/submit" method="post">
