@@ -19,6 +19,7 @@ from .utils import strip_html
 from functools import wraps
 from flask import Flask, request, session, render_template, url_for
 from flask import abort, redirect, Markup, make_response
+from flask import send_from_directory
 from flask_common import Common
 from names import get_full_name
 from raven.contrib.flask import Sentry
@@ -155,6 +156,11 @@ def requires_auth(f):
 
 # Application Routes
 # ------------------
+
+@app.route("/robots.txt")
+def robots():    
+    return send_from_directory("static", "robots.txt")
+
 
 @app.route('/privacy')
 def privacy():
