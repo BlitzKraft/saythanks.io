@@ -151,3 +151,20 @@ a.share {
 .github-fork-ribbon:before {
   background-color: #333;
 }
+
+.fb-share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background-color: #1877f2;
+  color: #ffffff;
+  border-radius: 4px;
+  vertical-align: middle;   /* aligns with the X Post button */
+}
+
+.fb-share:hover,
+.fb-share:focus {
+  background-color: #1664d9;
+}
