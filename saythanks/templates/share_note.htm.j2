@@ -22,8 +22,39 @@
 <button type="submit" class="logoutLblPos" >Log Out</button>
 </form>
 <div class="sharelinks">
-    <a class="twitter-share-button" target="_blank" href="https://twitter.com/intent/tweet?text={{ note_body|strip_html|quote + "%0A%0A- " + note.byline + "%0A%0A" + request.root_url + url_for('share_note', uuid=note.uuid)[1:] + "%0A" }}" data-url=" "></a> </br>
+    {# --- Sharing --------- #}
+    {% set share_url =
+        url_for('share_note', uuid=note.uuid, _external=True) %}
+
+    {% set tweet_text = note_body|strip_html
+        ~ '\n\n- ' ~ note.byline
+        ~ '\n\n' ~ share_url %}
+
+    {% set fb_params = {
+        'app_id': config['FB_APP_ID'],
+        'display': 'popup',
+        'href': share_url,
+        'redirect_uri': share_url,
+      } %}
+
+    <a class="twitter-share-button" target="_blank" rel="noopener"
+      href="https://twitter.com/intent/tweet?text={{ tweet_text|urlencode }}" data-url=" ">
+      Share on X
+    </a>
+
+    <a class="fb-share" target="_blank" rel="noopener"
+      aria-label="Share on Facebook" title="Share on Facebook"
+      href="https://www.facebook.com/dialog/share?{{ fb_params|urlencode }}">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"
+          aria-hidden="true">
+        <path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.6-1.6h1.6V4.2
+                c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.6H7.6V14h2.7v8h3.2z"/>
+      </svg>
+    </a>
+
+  
     <!-- 
+    <a class="twitter-share-button" target="_blank" href="https://twitter.com/intent/tweet?text={{ note_body|strip_html|quote + "%0A%0A- " + note.byline + "%0A%0A" + request.root_url + url_for('share_note', uuid=note.uuid)[1:] + "%0A" }}" data-url=" "></a> </br>
       <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ request.root_url + url_for('share_note', uuid=note.uuid)[1:] }}&layout=button&size=small&width=67&height=20&appId" width="67" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
       <a href="https://www.facebook.com/sharer/sharer.php?u={{ note_url|urlencode }}"
        target="_blank" rel="noopener">Share on Facebook</a>
@@ -38,10 +69,10 @@
     <a  target="_blank" href="{{ share_href }}" class="fb-share" rel="noopener">
         Share on Facebook
     </a>
-    -->
    {% set note_url = 'https://saythanks.io' ~ url_for('share_note', uuid=note.uuid) %}
    <a href="https://www.facebook.com/dialog/share?app_id={{config['FB_APP_ID']}}&href={{ note_url|urlencode }}&redirect_uri={{ note_url|urlencode }}"
       target="_blank" rel="noopener"> Share on Facebook </a>
+    -->
     
 </div>
 <br>
