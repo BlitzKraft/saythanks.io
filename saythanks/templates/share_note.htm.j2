@@ -23,7 +23,7 @@
 </form>
 <div class="sharelinks">
     {# --- Sharing --------- #}
-    {% set note_url = 'https://saythanks.io' ~ url_for('share_note', uuid=note.uuid) %}
+    {% set share_url = 'https://saythanks.io' ~ url_for('share_note', uuid=note.uuid) %}
    
     {% set tweet_text = note_body|strip_html
         ~ '\n\n- ' ~ note.byline
