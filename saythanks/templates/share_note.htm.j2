@@ -3,6 +3,7 @@
 {% block title %}Thank You{% endblock %}
 
 {% block extra_head %}
+  <meta property="fb:app_id" content="{{ config['FB_APP_ID'] }}">
   <meta property="og:url" content="https://saythanks.io{{ request.path }}">
   <meta property="og:type" content="article">
   <meta property="og:title" content="{{ note_body|strip_html|trim|truncate(90)|e }}">
