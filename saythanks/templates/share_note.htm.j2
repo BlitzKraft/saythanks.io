@@ -28,7 +28,7 @@
     {# --- Sharing --------- #}
     {% set share_url = 'https://saythanks.io' ~ url_for('share_note', uuid=note.uuid) %}
    
-    {% set tweet_text = note_body|strip_html
+    {% set tweet_text = note.body|strip_html
         ~ '\n\n- ' ~ note.byline
         ~ '\n\n' ~ share_url %}
 
