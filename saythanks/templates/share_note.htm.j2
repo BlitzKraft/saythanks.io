@@ -23,17 +23,16 @@
 </form>
 <div class="sharelinks">
     {# --- Sharing --------- #}
-    {% set share_url =
-        url_for('share_note', uuid=note.uuid, _external=True) %}
-
+    {% set note_url = 'https://saythanks.io' ~ url_for('share_note', uuid=note.uuid) %}
+   
     {% set tweet_text = note_body|strip_html
         ~ '\n\n- ' ~ note.byline
         ~ '\n\n' ~ share_url %}
 
     {% set fb_params = {
         'app_id': config['FB_APP_ID'],
-        'href': share_url|urlencode,
-        'redirect_uri': share_url|urlencode,
+        'href': share_url
+        'redirect_uri': share_url,
       } %}
 
     <a class="twitter-share-button" target="_blank" rel="noopener"
