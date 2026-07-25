@@ -21,23 +21,23 @@
 
 {% block content %}
 
-<form action="../logout" method="POST">
-<button type="submit" class="logoutLblPos" >Log Out</button>
-</form>
-<div class="sharelinks">
+  <form action="../logout" method="POST">
+    <button type="submit" class="logoutLblPos" >Log Out</button>
+  </form>
+
+  <div class="sharelinks">
     {# --- Sharing --------- #}
-    {% set share_url = 'https://saythanks.io' ~ url_for('share_note', uuid=note.uuid) %}
-   
+    {% set share_url = 'https://saythanks.io'
+        ~ url_for('share_note', uuid=note.uuid) %}
     {% set tweet_text = note.body|strip_html
         ~ '\n\n- ' ~ note.byline
         ~ '\n\n' ~ share_url %}
-
-  {% set fb_params = {
-    'app_id': config['FB_APP_ID'],
-    'display': 'popup',
-    'href': share_url,
-    'redirect_uri': share_url
-  } %}
+    {% set fb_params = {
+      'app_id': config['FB_APP_ID'],
+      'display': 'popup',
+      'href': share_url,
+      'redirect_uri': share_url
+    } %}
 
   <a class="x-share" target="_blank" rel="noopener"
      aria-label="Share on X" title="Share on X"
@@ -63,29 +63,25 @@
 </div>
 <br>
 
-<form class="form-horizontal" action="./{{ user }}/submit" method="post">
+  <form class="form-horizontal" action="./{{ user }}/submit" method="post">  
+    <fieldset>  
+      <!-- Form Name -->  
+      <legend>❝ THANK YOU ❞</legend>  
 
+      <!-- Note body -->
+      <div class="form-group">
+        <div class="col-md-4">
+          <p class="note">{{ note.body }}</p>
+        </div>
+      </div>
 
-<fieldset>
-
-<!-- Form Name -->
-<legend>❝ THANK YOU ❞ </legend>
-
-<!-- Textarea -->
-<div class="form-group">
-  <div class="col-md-4">
-    <p class="note">{{ note.body }}</p>
-  </div>
-</div>
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="byline">Sincerely, </label>
-  <div class="col-md-4">
-  — {{ note.byline }}
-
-  </div>
-</div>
+      <!-- Byline -->
+      <div class="form-group">
+        <label class="col-md-4 control-label" for="byline">Sincerely,</label>
+        <div class="col-md-4">
+          — {{ note.byline }}
+        </div>
+      </div>
 
 <h2>🝐</h2>
 </fieldset>
@@ -100,7 +96,6 @@
   countDirection: 'up'
 });
 </script>
-
 
 {% endblock %}
 
