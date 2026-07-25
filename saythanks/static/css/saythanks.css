@@ -168,3 +168,21 @@ a.share {
 .fb-share:focus {
   background-color: #1664d9;
 }
+
+.x-share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background-color: #000000;
+  color: #ffffff;
+  border-radius: 4px;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.x-share:hover,
+.x-share:focus {
+  background-color: #333333;
+}

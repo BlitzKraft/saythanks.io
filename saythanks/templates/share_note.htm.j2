@@ -39,9 +39,15 @@
         'redirect_uri': share_url
       } %}
 
-    <a class="twitter-share-button" target="_blank" rel="noopener"
-      href="https://twitter.com/intent/tweet?text={{ tweet_text|urlencode }}" data-url=" ">
-      Share on X
+    <a class="x-share" target="_blank" rel="noopener"
+       aria-label="Share on X" title="Share on X"
+       href="https://twitter.com/intent/tweet?text={{ tweet_text|urlencode }}">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"
+           aria-hidden="true">
+        <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584
+                 -6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61
+                 20.644h2.039L6.486 3.24H4.298Z"/>
+      </svg>
     </a>
 
     <a class="fb-share" target="_blank" rel="noopener"
