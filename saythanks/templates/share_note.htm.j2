@@ -32,9 +32,8 @@
 
     {% set fb_params = {
         'app_id': config['FB_APP_ID'],
-        'display': 'popup',
-        'href': share_url,
-        'redirect_uri': share_url,
+        'href': share_url|urlencode,
+        'redirect_uri': share_url|urlencode,
       } %}
 
     <a class="twitter-share-button" target="_blank" rel="noopener"
