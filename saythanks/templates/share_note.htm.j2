@@ -32,12 +32,14 @@
     {% set tweet_text = note.body|strip_html
         ~ '\n\n- ' ~ note.byline
         ~ '\n\n' ~ share_url %}
-    {% set fb_params = {
-      'app_id': config['FB_APP_ID'],
-      'display': 'popup',
-      'href': share_url,
-      'redirect_uri': share_url
-    } %}
+    {% set fb_quote = (note.body|strip_html ~ ' — ' ~ note.byline)|urlencode %}
+    {% set share_href =
+       'https://www.facebook.com/dialog/share'
+       ~ '?app_id=' ~ config['FB_APP_ID']
+       ~ '&display=popup'
+       ~ '&href=' ~ share_url|urlencode
+       ~ '&quote=' ~ fb_quote
+       ~ '&redirect_uri=' ~ share_url|urlencode %}
 
   <a class="x-share" target="_blank" rel="noopener"
      aria-label="Share on X" title="Share on X"
@@ -52,7 +54,7 @@
 
   <a class="fb-share" target="_blank" rel="noopener"
      aria-label="Share on Facebook" title="Share on Facebook"
-     href="https://www.facebook.com/dialog/share?{{ fb_params|urlencode }}">
+     href="{{ share_href }}">
     <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"
          aria-hidden="true">
       <path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.6-1.6h1.6V4.2
@@ -95,6 +97,16 @@
   countType: 'words',
   countDirection: 'up'
 });
+</script>
+
+{# Open Facebook share in a popup dialog instead of redirecting #}
+<script>
+  document.querySelectorAll('a.fb-share').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      window.open(a.href, 'fbshare', 'width=600,height=540,noopener');
+    });
+  });
 </script>
 
 {% endblock %}
