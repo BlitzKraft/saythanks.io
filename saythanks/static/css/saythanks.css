@@ -111,13 +111,8 @@ a.share {
   animation: octocat-wave 560ms ease-in-out
 }
 
-#message {}
-
 #from {
   width: 15%;
-}
-
-#timestamp {
 }
 
 @keyframes octocat-wave {
@@ -201,6 +196,14 @@ a.share {
   margin-top: 0.5em;
 }
 
+.u-mt-xl {
+  margin-top: 6rem;
+}
+
+.hr-section {
+  margin: 4rem 0;
+}
+
 /* --- Header / avatar ---------------------------------------- */
 
 .avatar {
@@ -222,7 +225,7 @@ a.share {
   font-size: 10px;
 }
 
-/* --- Notes grid (moved verbatim from template <style> block) - */
+/* --- Notes grid ---------------------------------------------- */
 
 .notes-grid {
   width: 100%;
@@ -273,14 +276,6 @@ a.share {
   color: #1EAEDB; /* Change text color on hover */
   text-decoration: none; /* No underline on hover */
 }
-
-/* Style share icons */
-/*
-.share {
-    color: #1EAEDB;
-    text-decoration: none;
-}
-*/
 
 .share:hover {
   text-decoration: underline;
