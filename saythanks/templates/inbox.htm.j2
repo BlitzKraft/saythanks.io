@@ -4,11 +4,14 @@
 
 {% block content %}
 
+{% set submit_url = url_for('display_submit_note', inbox_id=user['nickname']) %}
+{% set submit_url_abs = url_for('display_submit_note', inbox_id=user['nickname'], _external=True) %}
+
 <form action="./logout" method="POST">
 <button type="submit" class="logoutLblPos" >Log Out</button>
 </form>
 
-<input type="hidden" id="username" value={{user['nickname']}}>
+<input type="hidden" id="username" value="{{ user['nickname'] }}">
 
 <div id="badge-modal" class="is-hidden">
     <h4>The <strong>‘</strong><a>Say Thanks</a><strong>’</strong> badge<span class="green"><strong>.</strong></span></h4>
@@ -20,31 +23,29 @@
     <textarea onclick="this.select()" class="u-full-width" id="badgeCode">https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg</textarea>
 </div>
 
-<img class="avatar" src="{{user['picture']}}"/ width=100px;>
+<img class="avatar" src="{{ user['picture'] }}" width="100" alt="Avatar">
 <h2>Welcome, {{ user['name'] }}!</h2>
 
 <p>
     You may now direct your users (in a README or documentation, for example)
-    to <a href="{{ url_for('display_submit_note', inbox_id=user['nickname'])}}">this URL</a>, where they can submit a note of thankfulness:
+    to <a href="{{ submit_url }}">this URL</a>, where they can submit a note of thankfulness:
 </p>
 <hr>
 
 <div class="sixteen columns">
 
   <div class="two columns u-mt-sm">
-
-  <p ><strong>Buttons & Links:</strong></p>
+  <p><strong>Buttons & Links:</strong></p>
   </div>
 
   <div class="three columns">
-  <a href="{{ url_for('display_submit_note', inbox_id=user['nickname'])}}">
+  <a href="{{ submit_url }}">
       <button class="button">
           Say Thanks!
       </button>
   </a>
   </div>
 
-  
   <div class="three columns u-mt-sm">
   <a href="#badge-modal" rel="modal:open">
       <img src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg" />
@@ -52,28 +53,23 @@
   </div>
 
   <div class="u-mt-sm">
-  <a href="{{ url_for('display_submit_note', inbox_id=user['nickname'])}}">
+  <a href="{{ submit_url }}">
       Say Thanks!
   </a>
   </div>
 
-  <div class="qr-code">  
-     <img src="{{ qrcode(request.base_url[0:-6] + url_for('display_submit_note', inbox_id=user['nickname']))}}" width="100px">
+  <div class="qr-code">
+     <img src="{{ qrcode(submit_url_abs) }}" width="100">
   </div>
 
 </div>
 
-<hr>
+<hr class="hr-section">
 
-<hr>
-
-<hr>
-<p class="u-textcenter">
-  <h3>Notes of Thankfulness:</h3>
-</p>
+<h3 class="u-textcenter">Notes of Thankfulness:</h3>
 
 <form class="search-form" action="{{ url_for('inbox_search') }}" method="POST">
-  <input type="text" size=30 placeholder="{{search_str}}" name="search_str">
+  <input type="text" size="30" placeholder="{{ search_str }}" name="search_str">
     <button class="search-submit" type="submit">Search</button>
     <button type="submit" name="clear" value="true">Clear</button>
 </form>
@@ -84,8 +80,9 @@
     <div class="header-cell" id="message">Message</div>
     <div class="header-cell" id="from">From</div>
     <div class="header-cell" id="timestamp">Timestamp</div>
+    <div class="header-cell"></div>
   </header>
-  
+
   <div class="notes-list">
   {% for note in notes %}
     <article class="note-item">
@@ -140,7 +137,7 @@
       <div class="note-cell"><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid)}}">♻</a></strong></div>
     </article>
   {% endfor %}
-  
+
   {% if (page==total_pages or total_pages==0) and search_str=="Search by message body or byline" %}
     <article class="note-item">
       <div class="note-cell"></div>
@@ -232,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-// Replace the existing "Load More" functionality with this:
+// Load More: fetch next page and append its rows
 document.addEventListener("DOMContentLoaded", function () {
   const btn = document.getElementById("load-more");
   if (!btn) return;
@@ -241,18 +238,18 @@ document.addEventListener("DOMContentLoaded", function () {
     let p = +this.dataset.page + 1, t = +this.dataset.total;
     let res = await fetch("?page=" + p, { headers: { "X-Requested-With": "XMLHttpRequest" } });
     let html = await res.text();
-    
+
     // Parse the new notes and add them to the notes-list
     let newNotes = new DOMParser()
       .parseFromString(html, "text/html")
       .querySelectorAll(".notes-list .note-item");
-    
+
     const notesList = document.querySelector(".notes-list");
     newNotes.forEach(note => notesList.appendChild(note));
 
     if (p >= t) {
-      this.outerHTML = `<button 
-        disabled 
+      this.outerHTML = `<button
+        disabled
         class="btn-load-more">
         All messages loaded
       </button>`;
@@ -271,8 +268,7 @@ document.querySelectorAll('a.fb-share').forEach(function (a) {
 
 </script>
 
-<br><br><br><br>
-<h4>Manage your Inbox:</h4>
+<h4 class="u-mt-xl">Manage your Inbox:</h4>
 
 <p>Below are some rudimentary account management tools, available, to you, today, for free!</p>
 <ul>
