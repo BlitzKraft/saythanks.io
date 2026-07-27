@@ -95,6 +95,13 @@
   countType: 'words',
   countDirection: 'up'
 });
+
+document.querySelectorAll('a.fb-share').forEach(function (a) {
+  a.addEventListener('click', function (e) {
+    e.preventDefault();
+    window.open(a.href, 'fbshare', 'width=600,height=540,noopener');
+  });
+});
 </script>
 
 {% endblock %}
