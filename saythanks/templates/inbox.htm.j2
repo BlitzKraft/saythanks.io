@@ -85,6 +85,7 @@
 
   <div class="notes-list">
   {% for note in notes %}
+    {% set share_url_abs = url_for('share_note', uuid=note.uuid, _external=True) %}
     <article class="note-item">
       <div class="note-cell">
         <a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a><br>
@@ -92,10 +93,9 @@
         <a class="x-share"
            target="_blank" rel="noopener"
            aria-label="Share on X" title="Share on X"
-           href="https://twitter.com/intent/tweet?text={{ 
-             (note.body|strip_html + '\n- ' + note.byline + '\n' + 
-             request.root_url + url_for('share_note', uuid=note.uuid)[1:])
-             |urlencode 
+           href="https://twitter.com/intent/tweet?text={{
+             (note.body|strip_html + '\n- ' + note.byline + '\n' + share_url_abs)
+             |urlencode
            }}&hashtags=SayThanks">
           <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true">
             <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584
@@ -104,15 +104,14 @@
           </svg>
         </a><br>
 
-        {% set fb_url = request.url_root.rstrip('/') ~ url_for('share_note', uuid=note.uuid) %}
         {% set fb_quote = (note.body|strip_html ~ ' — ' ~ note.byline)|urlencode %}
         {% set share_href =
            'https://www.facebook.com/dialog/share'
            ~ '?app_id=' ~ config['FB_APP_ID']
            ~ '&display=popup'
-           ~ '&href=' ~ fb_url|urlencode
+           ~ '&href=' ~ share_url_abs|urlencode
            ~ '&quote=' ~ fb_quote
-           ~ '&redirect_uri=' ~ fb_url|urlencode %}
+           ~ '&redirect_uri=' ~ share_url_abs|urlencode %}
 
         <a class="fb-share"
            target="_blank" rel="noopener"
