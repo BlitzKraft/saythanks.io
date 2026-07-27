@@ -92,10 +92,9 @@
         <a class="x-share"
            target="_blank" rel="noopener"
            aria-label="Share on X" title="Share on X"
-           href="https://twitter.com/intent/tweet?text={{ 
-             (note.body|strip_html + '\n- ' + note.byline + '\n' + 
-             request.root_url + url_for('share_note', uuid=note.uuid)[1:])
-             |urlencode 
+           href="https://twitter.com/intent/tweet?text={{
+             (note.body|strip_html + '\n- ' + note.byline + '\n' + share_url_abs)
+             |urlencode
            }}&hashtags=SayThanks">
           <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true">
             <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584
