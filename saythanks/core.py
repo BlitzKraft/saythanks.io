@@ -28,6 +28,7 @@ from . import storage
 from urllib.parse import quote, unquote
 from lxml_html_clean import Cleaner
 from markdown import markdown
+from werkzeug.utils import secure_filename
 
 cleaner = Cleaner()
 cleaner.javascript = True
@@ -397,19 +398,20 @@ def submit_note(inbox_id, topic):
     audio_file = request.files.get('audio')
     audio_filename = None
 
-    if audio_file:
+    if audio_file and audio_file.filename:   # empty FileStorage is truthy — guard on filename
         upload_folder = os.path.join(app.static_folder, 'recordings')
         os.makedirs(upload_folder, exist_ok=True)
         # Add a timestamp to the filename to ensure uniqueness
         timestamp = int(time.time())
-        audio_filename = f"{inbox_id}_{timestamp}_{audio_file.filename}"
+        safe_name = secure_filename(audio_file.filename) or 'recording.webm'
+        audio_filename = f"{secure_filename(inbox_id)}_{timestamp}_{safe_name}"
         save_path = os.path.join(upload_folder, audio_filename)
         logging.info("Saving audio file to %s", save_path)
         try:
             audio_file.save(save_path)
-            logging.info("Audio file saved successfully: %s", filename)
+            logging.info("Audio file saved successfully: %s", audio_filename)
         except Exception as e:
-            logging.error("Failed to save audio file: %s", str(e))
+            logging.exception("Failed to save audio file: %s", e)
             audio_filename = None
 
     body = request.form['body']

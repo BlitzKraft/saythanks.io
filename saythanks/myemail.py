@@ -72,6 +72,16 @@ def _get_note_url(note):
         return url_for('share_note', uuid=note.uuid, _external=True)
 
 
+def _get_audio_text(audio_path):
+    if not audio_path:
+        return ''
+    with current_app.app_context():
+        audio_url = url_for(
+            "static", filename="recordings/" + audio_path, _external=True
+        )
+    return f"\n\nVoice note: {audio_url}"
+
+
 def _get_audio_html(audio_path):
     """Return an HTML snippet linking to a stored audio recording.
 
@@ -100,7 +110,7 @@ def _get_audio_html(audio_path):
     )
 
 
-def _build_email_content(note, note_url, audio_html):
+def _build_email_content(note, note_url, audio_html, audio_text=''):
     """Assemble HTML and plaintext email bodies.
 
     Parameters
@@ -116,7 +126,9 @@ def _build_email_content(note, note_url, audio_html):
     """
     who = note.byline or 'someone'
     html_content = TEMPLATE.format(note.body + audio_html, note.byline, note_url)
-    plaintext_content = f"{note.body}\n\n--{note.byline or ''}\n\n{note_url}"
+    plaintext_content = (
+        f"{note.body}\n\n--{note.byline or ''}{audio_text}\n\n{note_url}"
+    )
     return who, html_content, plaintext_content
 
 
@@ -197,8 +209,9 @@ def notify(note, email_address, topic=None, audio_path=None):
     try:
         note_url = _get_note_url(note)
         audio_html = _get_audio_html(audio_path)
+        audio_text = _get_audio_text(audio_path)
         who, html_content, plaintext_content = _build_email_content(
-            note, note_url, audio_html
+            note, note_url, audio_html, audio_text
         )
 
         subject = (
