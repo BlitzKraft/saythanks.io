@@ -65,8 +65,12 @@ class Note:
 
     def __repr__(self):
         """Return a short representation for debugging."""
-        return f'<Note size={len(self.body)}>' if self.body else '<Note (empty)>'.strip()
+        if self.body:
+            return f"<Note size={len(self.body)}>"
 
+        return "<Note (empty)>"
+
+    
     @classmethod
     def fetch(cls, uuid):
         """Retrieve a Note from the database by UUID.
