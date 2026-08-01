@@ -250,6 +250,8 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 });
 
+var sdkFailed = false;
+
 window.fbAsyncInit = function () {
   FB.init({
     appId: '{{ config['FB_APP_ID'] }}',
@@ -261,14 +263,21 @@ window.fbAsyncInit = function () {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) { return; }
   js = d.createElement(s); js.id = id;
+  js.onerror = function () { sdkFailed = true; };
   js.src = 'https://connect.facebook.net/en_US/sdk.js';
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
 document.querySelectorAll('a.fb-share').forEach(function (a) {
   a.addEventListener('click', function (e) {
-    if (typeof FB === 'undefined') { return; }
     e.preventDefault();
+    if (typeof FB === 'undefined' || sdkFailed) {
+      window.open(
+        'https://www.facebook.com/dialog/share?app_id={{ config['FB_APP_ID'] }}&display=popup&href=' + encodeURIComponent(a.href) + '&redirect_uri=' + encodeURIComponent(a.href),
+        '_blank', 'noopener'
+      );
+      return;
+    }
     var options = { method: 'share', href: a.href };
     if (a.dataset.quote) {
       options.quote = a.dataset.quote;
