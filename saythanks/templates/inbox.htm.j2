@@ -104,19 +104,11 @@
           </svg>
         </a><br>
 
-        {% set fb_quote = (note.body|strip_html ~ ' — ' ~ note.byline)|urlencode %}
-        {% set share_href =
-           'https://www.facebook.com/dialog/share'
-           ~ '?app_id=' ~ config['FB_APP_ID']
-           ~ '&display=popup'
-           ~ '&href=' ~ share_url_abs|urlencode
-           ~ '&quote=' ~ fb_quote
-           ~ '&redirect_uri=' ~ share_url_abs|urlencode %}
-
         <a class="fb-share"
            target="_blank" rel="noopener"
            aria-label="Share on Facebook" title="Share on Facebook"
-           href="{{ share_href }}">
+           href="{{ share_url_abs }}"
+           data-quote="{{ note.body|strip_html ~ ' — ' ~ note.byline }}">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99
                      4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007
@@ -258,10 +250,30 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 });
 
+window.fbAsyncInit = function () {
+  FB.init({
+    appId: '{{ config['FB_APP_ID'] }}',
+    version: 'v26.0'
+  });
+};
+
+(function (d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) { return; }
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_US/sdk.js';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
 document.querySelectorAll('a.fb-share').forEach(function (a) {
   a.addEventListener('click', function (e) {
+    if (typeof FB === 'undefined') { return; }
     e.preventDefault();
-    window.open(a.href, 'fbshare', 'width=600,height=540,noopener');
+    var options = { method: 'share', href: a.href };
+    if (a.dataset.quote) {
+      options.quote = a.dataset.quote;
+    }
+    FB.ui(options, function (response) {});
   });
 });
 
