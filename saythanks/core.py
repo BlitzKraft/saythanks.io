@@ -435,14 +435,14 @@ def submit_note(inbox_id, topic):
         # an exploit that fires when the owner opens /inbox or the
         # notification email — full session takeover via document.cookie
         # since the Auth0 cookies are not HttpOnly.
-        from lxml_html_clean import Cleaner
-        cleaner = Cleaner(
+        # Use a local name so we do not shadow the module-level `cleaner`.
+        html_cleaner = Cleaner(
             scripts=True, javascript=True, embedded=True, frames=True,
             forms=True, meta=True, links=False, page_structure=True,
             processing_instructions=True, style=True,
             safe_attrs_only=True, remove_unknown_tags=True,
         )
-        body = Markup(cleaner.clean_html(body))
+        body = Markup(html_cleaner.clean_html(body))
         # print("after markup", body)
         # Store the note first, so it gets a UUID
         submitted_note = inbox_db.submit_note(
