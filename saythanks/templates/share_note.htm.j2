@@ -113,7 +113,9 @@ document.querySelectorAll('a.fb-share').forEach(function (a) {
     e.preventDefault();
     if (typeof FB === 'undefined' || sdkFailed) {
       window.open(
-        'https://www.facebook.com/dialog/share?app_id={{ config['FB_APP_ID'] }}&display=popup&href=' + encodeURIComponent(a.href) + '&redirect_uri=' + encodeURIComponent(a.href),
+        'https://www.facebook.com/dialog/share?app_id={{ config['FB_APP_ID'] }}'
+        + '&display=popup&href=' + encodeURIComponent(a.href)
+        + '&redirect_uri=' + encodeURIComponent(a.href),
         '_blank', 'noopener'
       );
       return;
