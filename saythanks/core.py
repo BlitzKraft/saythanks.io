@@ -159,7 +159,7 @@ def requires_auth(f):
 # ------------------
 
 @app.route("/robots.txt")
-def robots():    
+def robots():
     return send_from_directory("static", "robots.txt")
 
 
