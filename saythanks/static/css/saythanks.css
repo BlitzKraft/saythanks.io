@@ -293,6 +293,50 @@ a.share {
   margin: 10px auto;
 }
 
+.note table,
+.message-cell table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.note th,
+.note td,
+.message-cell th,
+.message-cell td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  word-break: break-word;
+  max-width: 300px;
+  vertical-align: top;
+}
+
+.note td.message-cell,
+.message-cell td.message-cell {
+  max-width: 500px;
+  overflow-x: hidden;
+}
+
+.note td.message-cell img,
+.message-cell td.message-cell img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: 10px auto;
+}
+
+.note td.message-cell p,
+.message-cell td.message-cell p {
+  margin: 0;
+  padding: 0;
+}
+
+.note .ellipsis,
+.message-cell .ellipsis {
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
 /* --- View mode toggle (Load More / Pagination) --------------- */
 
 .view-mode {
