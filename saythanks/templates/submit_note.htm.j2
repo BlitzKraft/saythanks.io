@@ -96,10 +96,10 @@
 <!-- Voice Recording part -->
 <div style="margin: 1em 0;">
   <button type="button" id="recordBtn">🗣️ Say Something!</button>
-  <label for="audioFileInput" id="audioFilePickerLabel" style="margin-left: 0.5rem; cursor: pointer;">
-    📁 Attach Audio File
+  <label for="audioFileInput" id="audioFilePickerLabel" style="margin-left: 0.5rem;">
+    📁 Use Mobile Mic / Audio File
   </label>
-  <input id="audioFileInput" type="file" accept=".m4a,.mp3,.wav,.aac,.caf,.mp4,audio/*" style="position:absolute;left:-9999px;opacity:0;width:1px;height:1px;">
+  <input id="audioFileInput" type="file" accept="audio/*" capture="environment" style="display: none;">
   <audio id="audioPreview" controls style="display: none; margin-top: 10px;"></audio>
   <p id="recordingStatus" style="color: green; font-weight: bold;"></p>
 </div>
@@ -212,10 +212,6 @@
   const audioFileInput = document.getElementById('audioFileInput');
   const audioFilePickerLabel = document.getElementById('audioFilePickerLabel');
 
-  audioFilePickerLabel.addEventListener('click', () => {
-    audioFileInput.click();
-  });
-
   function showAudioPreview(file, fileName) {
     const previewUrl = URL.createObjectURL(file);
     audioPreview.src = previewUrl;
@@ -241,7 +237,7 @@
       navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function';
 
     if (!recorderSupported) {
-      recordingStatus.innerText = 'In-browser recording is not available on this device. Please use the Attach Audio File picker.';
+      recordingStatus.innerText = 'This device does not support in-browser recording. Please use the mobile audio picker instead.';
       audioFilePickerLabel.style.display = 'inline-block';
       audioFileInput.click();
       return;
