@@ -333,7 +333,7 @@ def display_submit_note(inbox_id, topic):
     elif not storage.Inbox.is_enabled(inbox_id):
         abort(404)
 
-    print("topic received:", topic)
+    print("topic received:", topic if topic else "No topic provided")
 
     fake_name = get_full_name()
     raw_topic = topic

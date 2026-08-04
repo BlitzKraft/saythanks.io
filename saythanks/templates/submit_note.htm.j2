@@ -96,6 +96,10 @@
 <!-- Voice Recording part -->
 <div style="margin: 1em 0;">
   <button type="button" id="recordBtn">🗣️ Say Something!</button>
+  <label for="audioFileInput" id="audioFilePickerLabel" style="margin-left: 0.5rem;">
+    📁 Use Mobile Mic / Audio File
+  </label>
+  <input id="audioFileInput" type="file" accept="audio/*" capture="environment" style="display: none;">
   <audio id="audioPreview" controls style="display: none; margin-top: 10px;"></audio>
   <p id="recordingStatus" style="color: green; font-weight: bold;"></p>
 </div>
@@ -157,7 +161,11 @@
 
     // Add recorded audio if available
     if (audioBlob) {
-        formData.append('audio', audioBlob, 'voice_note.webm');
+        const audioFileName = audioBlob.name || 'voice_note.webm';
+        formData.append('audio', audioBlob, audioFileName);
+    } else if (audioFileInput.files.length > 0) {
+        const file = audioFileInput.files[0];
+        formData.append('audio', file, file.name || 'voice_note.webm');
     }
 
     const request = new XMLHttpRequest();
@@ -196,25 +204,60 @@
   let recording = false;
   let recorder;
   let audioBlob;
+  let mediaStream;
 
   const recordBtn = document.getElementById('recordBtn');
   const audioPreview = document.getElementById('audioPreview');
   const recordingStatus = document.getElementById('recordingStatus');
+  const audioFileInput = document.getElementById('audioFileInput');
+  const audioFilePickerLabel = document.getElementById('audioFilePickerLabel');
+
+  function showAudioPreview(file, fileName) {
+    const previewUrl = URL.createObjectURL(file);
+    audioPreview.src = previewUrl;
+    audioPreview.style.display = 'block';
+    recordingStatus.innerText = 'Voice note ready to submit.';
+    if (fileName) {
+      recordingStatus.innerText += ` Selected file: ${fileName}`;
+    }
+  }
+
+  audioFileInput.addEventListener('change', () => {
+    if (audioFileInput.files.length === 0) {
+      return;
+    }
+
+    const selectedFile = audioFileInput.files[0];
+    audioBlob = selectedFile;
+    showAudioPreview(selectedFile, selectedFile.name);
+  });
 
   recordBtn.addEventListener('click', async () => {
+    const recorderSupported = typeof window.MediaRecorder !== 'undefined' &&
+      navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function';
+
+    if (!recorderSupported) {
+      recordingStatus.innerText = 'This device does not support in-browser recording. Please use the mobile audio picker instead.';
+      audioFilePickerLabel.style.display = 'inline-block';
+      audioFileInput.click();
+      return;
+    }
+
     if (!recording) {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaStream = stream;
         recorder = new MediaRecorder(stream);
         const chunks = [];
 
         recorder.ondataavailable = e => chunks.push(e.data);
         recorder.onstop = () => {
           audioBlob = new Blob(chunks, { type: 'audio/webm' });
-          const audioURL = URL.createObjectURL(audioBlob);
-          audioPreview.src = audioURL;
-          audioPreview.style.display = 'block';
-          recordingStatus.innerText = 'Recording complete!';
+          audioBlob.name = 'voice_note.webm';
+          showAudioPreview(audioBlob, audioBlob.name);
+          if (mediaStream) {
+            mediaStream.getTracks().forEach(track => track.stop());
+          }
         };
 
         recorder.start();
@@ -222,7 +265,7 @@
         recordBtn.innerText = '🛑 Stop Recording';
         recordingStatus.innerText = 'Recording...';
       } catch (err) {
-        alert('Microphone access denied or not supported.');
+        alert('Microphone access denied or not supported on this device. Use the audio picker to attach a voice note instead.');
         console.error(err);
       }
     } else {
