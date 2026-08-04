@@ -154,7 +154,7 @@
   });
 
   var form = document.getElementById("thankyou-note-form");
-  form.addEventListener('submit', async (event) => {
+  form.addEventListener('submit', (event) => {
     event.preventDefault();
     var formData = new FormData(form);
     formData.append('body', editor.getMarkdown());
@@ -168,21 +168,13 @@
         formData.append('audio', file, file.name || 'voice_note.webm');
     }
 
-    try {
-        const response = await fetch(form.getAttribute('action'), {
-            method: 'POST',
-            body: formData,
-        });
-
-        if (!response.ok) {
-            throw new Error('Submit failed');
-        }
-
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
         window.location.href = '/thanks';
-    } catch (err) {
-        console.error(err);
-        alert('The note could not be submitted. Please try again.');
     }
+    //request.open("POST", "./{{ user }}/submit&{{ topic}}");
+    request.open("POST", form.getAttribute('action'));
+    request.send(formData);
 });
 
 
