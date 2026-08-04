@@ -247,13 +247,24 @@
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaStream = stream;
-        recorder = new MediaRecorder(stream);
+
+        const preferredMimeType = [
+          'audio/mp4',
+          'audio/mp4;codecs=mp4a.40.2',
+          'audio/webm;codecs=opus',
+          'audio/webm'
+        ].find(type => typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported(type));
+
+        const recorderOptions = preferredMimeType ? { mimeType: preferredMimeType } : {};
+        recorder = new MediaRecorder(stream, recorderOptions);
         const chunks = [];
 
         recorder.ondataavailable = e => chunks.push(e.data);
         recorder.onstop = () => {
-          audioBlob = new Blob(chunks, { type: 'audio/webm' });
-          audioBlob.name = 'voice_note.webm';
+          const mimeType = recorder.mimeType || 'audio/mp4';
+          const extension = mimeType.includes('mp4') ? 'm4a' : 'webm';
+          audioBlob = new Blob(chunks, { type: mimeType });
+          audioBlob.name = `voice_note.${extension}`;
           showAudioPreview(audioBlob, audioBlob.name);
           if (mediaStream) {
             mediaStream.getTracks().forEach(track => track.stop());
