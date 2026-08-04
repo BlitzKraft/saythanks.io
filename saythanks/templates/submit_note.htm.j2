@@ -169,9 +169,16 @@
     }
 
     const request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-        window.location.href = '/thanks';
-    }
+    request.onload = function() {
+        if (request.status >= 200 && request.status < 300) {
+            window.location.href = '/thanks';
+        } else {
+            alert('The note could not be submitted. Please try again.');
+        }
+    };
+    request.onerror = function() {
+        alert('The note could not be submitted due to a network error. Please try again.');
+    };
     //request.open("POST", "./{{ user }}/submit&{{ topic}}");
     request.open("POST", form.getAttribute('action'));
     request.send(formData);
