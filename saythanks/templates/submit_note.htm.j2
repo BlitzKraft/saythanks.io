@@ -2,43 +2,42 @@
 
 {% block title %}Say Thank You{% endblock %}
 
-{% block extra_head %} 
-    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+{% block extra_head %}
+    <script src="https://uicdn.toast.com/editor/3.2.2/toastui-editor-all.min.js"></script>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/3.2.2/toastui-editor.min.css" />
     <style>
-      #counter {
-        color: red;
-        font-weight: bold;
-      }
-      #counter1 {
-        color: red;
-        font-weight: bold;
-      }
-      /* Set font size and fixed font family for Toast UI Editor content */
-     .toastui-editor-defaultUI .toastui-editor-contents,
-     .toastui-editor-defaultUI .toastui-editor-md-preview-content,
-     .toastui-editor-defaultUI .ProseMirror {
+      #counter, #counter1 { color: red; font-weight: bold; }
+      .toastui-editor-defaultUI .toastui-editor-contents,
+      .toastui-editor-defaultUI .toastui-editor-md-preview-content,
+      .toastui-editor-defaultUI .ProseMirror {
         font-size: 16px !important;
         font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', 'Liberation Mono', monospace !important;
       }
+      #submit-status { font-weight: bold; margin-top: 0.5rem; }
+      #plain-body { width: 100%; height: 300px; font-size: 16px; font-family: monospace; }
     </style>
-     
 {% endblock %}
 
 {% block content %}
 
-
 <form action="../logout" method="POST">
-<button type="submit" class="logoutLblPos" >Log Out</button>
+  <button type="submit" class="logoutLblPos">Log Out</button>
 </form>
 
 <h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong>{{ topic }}!</h4>
 
+{# Build the action with url_for so the topic is percent-encoded correctly.
+   `topic` arrives as " about <raw>", so strip the prefix before encoding. #}
+{% set clean_topic = topic.replace(' about ', '') if topic else None %}
+<form id="thankyou-note-form"
+      class="form-horizontal"
+      action="{{ url_for('submit_note', inbox_id=user, topic=clean_topic) if clean_topic
+                 else url_for('submit_note', inbox_id=user) }}"
+      method="post"
+      enctype="multipart/form-data"
+      accept-charset="UTF-8">
 
-<form id="thankyou-note-form" class="form-horizontal"
-      action="./{{ user|urlencode }}/submit{{ '/' ~ topic if topic else '' }}"
-      method="post">
-<div class="form-row" style="display:flex; align-items:center; gap:1rem; flex-wrap:nowrap;">
+<div class="form-row" style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
   <label for="fontstyle" style="white-space:nowrap;">Font Style:</label>
   <select name="font_style" id="fontstyle" onchange="fontforinbox(this);">
     <option value="0">Regular</option>
@@ -62,237 +61,290 @@
   </fieldset>
 </div>
 
-
 <fieldset>
+<legend>❝ THANK YOU ❞</legend>
 
-<!-- Form Name -->
-<legend>❝ THANK YOU ❞ </legend>
-
-<h6>You have written <strong><span id=counter>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
+<h6>You have written <strong><span id="counter">0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
 
 <div id="suggestion-templates" style="margin-bottom: 1em;">
   <strong>Need inspiration?</strong>
-  <button type="button" class="suggestion-btn" 
-    data-message="Thank you for always being so helpful!">Thankful</button>
-  <button type="button" class="suggestion-btn" 
-    data-message="Your support means a lot to me.">Gratitude</button>
-  <button type="button" class="suggestion-btn" 
-    data-message="I appreciate your hard work and dedication.">Admiration</button>
-  <button type="button" class="suggestion-btn" 
-    data-message="Some things were not clear and left me confused.">Confusing</button>
-  <button type="button" class="suggestion-btn" 
-    data-message="It would help if you did the following:">Actionable</button>
-  
+  <button type="button" class="suggestion-btn" data-message="Thank you for always being so helpful!">Thankful</button>
+  <button type="button" class="suggestion-btn" data-message="Your support means a lot to me.">Gratitude</button>
+  <button type="button" class="suggestion-btn" data-message="I appreciate your hard work and dedication.">Admiration</button>
+  <button type="button" class="suggestion-btn" data-message="Some things were not clear and left me confused.">Confusing</button>
+  <button type="button" class="suggestion-btn" data-message="It would help if you did the following:">Actionable</button>
 </div>
 
-
-<!-- Textarea -->
+<!-- Editor mount point -->
 <div class="form-group">
   <div class="col-md-4">
     <div id="editor"></div>
   </div>
 </div>
 
-<!-- Voice Recording part -->
+<!-- REAL form field: guarantees request.form['body'] exists even if JS fails -->
+<textarea id="body-field" name="body" style="display:none;" aria-hidden="true"></textarea>
+
+<!-- Voice Recording -->
 <div style="margin: 1em 0;">
   <button type="button" id="recordBtn">🗣️ Say Something!</button>
-  <label for="audioFileInput" id="audioFilePickerLabel" style="margin-left: 0.5rem;">
+  <label for="audioFileInput" id="audioFilePickerLabel" style="margin-left: 0.5rem; cursor:pointer;">
     📁 Use Mobile Mic / Audio File
   </label>
-  <input id="audioFileInput" type="file" accept="audio/*" capture="environment" style="display: none;">
-  <audio id="audioPreview" controls style="display: none; margin-top: 10px;"></audio>
-  <p id="recordingStatus" style="color: green; font-weight: bold;"></p>
+  <!-- name="audio" so a native submit uploads the picked file with no JS -->
+  <input id="audioFileInput" name="audio" type="file" accept="audio/*" style="display:none;">
+  <audio id="audioPreview" controls style="display:none; margin-top:10px;"></audio>
+  <p id="recordingStatus" style="color:green; font-weight:bold;"></p>
 </div>
 
+<h6>You have written <strong><span id="counter1">0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
 
-
-<h6>You have written <strong><span id=counter1>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
-<!-- Text input-->
 <div class="form-group">
   <label class="col-md-4 control-label" for="byline">Sincerely, </label>
   <div class="col-md-4">
-  <input class='notebodyfont' id="byline" class="u-full-width" name="byline" type="text" placeholder="{{ fake_name }}" class="form-control input-md">
+    <input class="notebodyfont u-full-width form-control input-md"
+           id="byline" name="byline" type="text" value=""
+           placeholder="{{ fake_name }}">
   </div>
 </div>
 
-<!-- Button -->
 <div class="form-group">
   <label class="col-md-4 control-label" for="submit"></label>
   <div class="col-md-4">
-    <button id="submit" name="submit" class="btn button-primary" type="submit">Send Note <img id="eve-send" src="{{ url_for('static', filename='images/owly.svg') }}" alt="Eve the Owl"> </button>
+    <button id="submit" name="submit" class="btn button-primary" type="submit">
+      Send Note
+      <img id="eve-send" src="{{ url_for('static', filename='images/owly.svg') }}" alt="Eve the Owl">
+    </button>
+    <p id="submit-status"></p>
   </div>
 </div>
 <h2>🝐</h2>
 </fieldset>
 </form>
 
-
 <script>
+(function () {
+  'use strict';
+
+  var form           = document.getElementById('thankyou-note-form');
+  var bodyField      = document.getElementById('body-field');
+  var submitBtn      = document.getElementById('submit');
+  var submitStatus   = document.getElementById('submit-status');
+  var counter        = document.getElementById('counter');
+  var counter1       = document.getElementById('counter1');
+  var editorEl       = document.getElementById('editor');
+  var recordBtn      = document.getElementById('recordBtn');
+  var audioPreview   = document.getElementById('audioPreview');
+  var recordingStatus= document.getElementById('recordingStatus');
+  var audioFileInput = document.getElementById('audioFileInput');
+
+  var editor = null;
+  var plainBody = null;
+
+  var INITIAL_VALUE = {{ (('### Ref:' ~ (topic.replace(' about ','') if topic else '') ~ '\n') if topic else '')
+                        ~ 'Dear ' ~ user ~ ',\nThank you for...' | tojson }};
+
+  // ---- 1. Attach submit listener FIRST, so nothing later can detach it ----
+  form.addEventListener('submit', function () {
+    syncBody();
+    submitBtn.disabled = true;
+    submitStatus.style.color = 'green';
+    submitStatus.textContent = 'Sending your note…';
+    // No preventDefault: the browser performs a normal multipart POST and
+    // follows the server's redirect to /thanks. Nothing for iOS to abort.
+  });
+
+  // ---- 2. Editor init, with graceful fallback ----
+  try {
+    if (typeof toastui === 'undefined' || !toastui.Editor) {
+      throw new Error('Toast UI Editor unavailable');
+    }
+    editor = new toastui.Editor({
+      el: editorEl,
+      previewStyle: 'tab',
+      height: '500px',
+      initialValue: INITIAL_VALUE
+    });
+    editor.addHook('change', onBodyChange);
+  } catch (err) {
+    editorEl.innerHTML = '<textarea id="plain-body"></textarea>';
+    plainBody = document.getElementById('plain-body');
+    plainBody.value = INITIAL_VALUE;
+    plainBody.addEventListener('input', onBodyChange);
+  }
+
+  function getBody() {
+    if (editor) { return editor.getMarkdown(); }
+    return plainBody ? plainBody.value : '';
+  }
+
+  function setBody(text) {
+    if (editor) { editor.setMarkdown(text); }
+    else if (plainBody) { plainBody.value = text; }
+    onBodyChange();
+  }
+
+  function syncBody() {
+    bodyField.value = getBody();
+  }
+
+  // ---- 3. Word counter ----
   function wordCount(data) {
     var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
     var m = data.match(pattern);
     var count = 0;
-    if(m === null) return count;
-    for(var i = 0; i < m.length; i++) {
-      if(m[i].charCodeAt(0) >= 0x4E00) {
-        count += m[i].length;
-      } else {
-        count += 1;
-      }
+    if (m === null) { return count; }
+    for (var i = 0; i < m.length; i++) {
+      count += (m[i].charCodeAt(0) >= 0x4E00) ? m[i].length : 1;
     }
     return count;
   }
-  var counter = document.getElementById("counter");
-  var counter1 = document.getElementById("counter1");
 
-  var textArea = document.getElementById("editor");
-  const editor = new toastui.Editor({
-      el: textArea,
-      previewStyle: 'tab',
-      height: '500px',
-      initialValue: `{% if topic %}### Ref:{{ topic }}\n{% endif %}Dear {{ user }},\nThank you for...`
-  });
+  function onBodyChange() {
+    var text = getBody();
+    var n = wordCount(text);
+    counter.innerText = n;
+    counter1.innerText = n;
+    var color = (n > 42) ? 'green' : 'red';
+    counter.style.color = color;
+    counter1.style.color = color;
+    bodyField.value = text;   // keep the real field always current
+  }
 
-  var form = document.getElementById("thankyou-note-form");
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    var formData = new FormData(form);
-    formData.append('body', editor.getMarkdown());
+  onBodyChange();
 
-    // Add recorded audio if available
-    if (audioBlob) {
-        const audioFileName = audioBlob.name || (audioBlob.type && audioBlob.type.includes('mp4') ? 'voice_note.m4a' : 'voice_note.webm');
-        formData.append('audio', audioBlob, audioFileName);
-    } else if (audioFileInput.files.length > 0) {
-        const file = audioFileInput.files[0];
-        formData.append('audio', file, file.name || 'voice_note.webm');
+  // ---- 4. Suggestion buttons ----
+  Array.prototype.forEach.call(
+    document.querySelectorAll('.suggestion-btn'),
+    function (btn) {
+      btn.addEventListener('click', function () {
+        setBody(getBody() + '\n' + btn.getAttribute('data-message'));
+      });
     }
+  );
 
-    const request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-        window.location.href = '/thanks';
-    }
-    //request.open("POST", "./{{ user }}/submit&{{ topic}}");
-    request.open("POST", form.getAttribute('action'));
-    request.send(formData);
-});
-
-
-  editor.addHook('change', () => {
-    counter.innerText = wordCount(editor.getMarkdown());
-    counter1.innerText = wordCount(editor.getMarkdown());
-    if (wordCount(editor.getMarkdown()) > 42) {
-      counter.style.color = "green";
-      counter1.style.color = "green";
-    } else {
-      counter.style.color = "red";
-      counter1.style.color = "red";
-    }
-  });
-
-  document.querySelectorAll('.suggestion-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      const msg = btn.getAttribute('data-message');
-      // For Toast UI Editor:
-      //editor.setMarkdown(msg);
-      editor.setMarkdown(editor.getMarkdown() + '\n' + msg);
-    });
-  });
-
-
-  // Voice Recording Script
-  let recording = false;
-  let recorder;
-  let audioBlob;
-  let mediaStream;
-
-  const recordBtn = document.getElementById('recordBtn');
-  const audioPreview = document.getElementById('audioPreview');
-  const recordingStatus = document.getElementById('recordingStatus');
-  const audioFileInput = document.getElementById('audioFileInput');
-  const audioFilePickerLabel = document.getElementById('audioFilePickerLabel');
+  // ---- 5. Audio: recording + file picker ----
+  var recording = false;
+  var recorder = null;
+  var mediaStream = null;
 
   function showAudioPreview(file, fileName) {
-    const previewUrl = URL.createObjectURL(file);
-    audioPreview.src = previewUrl;
+    audioPreview.src = URL.createObjectURL(file);
     audioPreview.style.display = 'block';
-    recordingStatus.innerText = 'Voice note ready to submit.';
-    if (fileName) {
-      recordingStatus.innerText += ` Selected file: ${fileName}`;
+    recordingStatus.style.color = 'green';
+    recordingStatus.innerText = 'Voice note ready to submit.' +
+      (fileName ? ' Selected file: ' + fileName : '');
+  }
+
+  audioFileInput.addEventListener('change', function () {
+    if (audioFileInput.files.length === 0) { return; }
+    var f = audioFileInput.files[0];
+    showAudioPreview(f, f.name);
+  });
+
+  function stopStream() {
+    if (mediaStream) {
+      mediaStream.getTracks().forEach(function (t) { t.stop(); });
+      mediaStream = null;
     }
   }
 
-  audioFileInput.addEventListener('change', () => {
-    if (audioFileInput.files.length === 0) {
-      return;
+  // Probe support by construction — iOS reports isTypeSupported() optimistically.
+  function makeRecorder(stream) {
+    var candidates = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm'];
+    for (var i = 0; i < candidates.length; i++) {
+      var t = candidates[i];
+      if (window.MediaRecorder.isTypeSupported &&
+          !window.MediaRecorder.isTypeSupported(t)) { continue; }
+      try { return new MediaRecorder(stream, { mimeType: t }); }
+      catch (e) { /* keep probing */ }
     }
+    return new MediaRecorder(stream);   // Safari default (mp4/AAC)
+  }
 
-    const selectedFile = audioFileInput.files[0];
-    audioBlob = selectedFile;
-    showAudioPreview(selectedFile, selectedFile.name);
-  });
+  recordBtn.addEventListener('click', function () {
+    var supported = typeof window.MediaRecorder !== 'undefined' &&
+      navigator.mediaDevices &&
+      typeof navigator.mediaDevices.getUserMedia === 'function';
 
-  recordBtn.addEventListener('click', async () => {
-    const recorderSupported = typeof window.MediaRecorder !== 'undefined' &&
-      navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function';
-
-    if (!recorderSupported) {
-      recordingStatus.innerText = 'This device does not support in-browser recording. Please use the mobile audio picker instead.';
-      audioFilePickerLabel.style.display = 'inline-block';
+    if (!supported) {
+      recordingStatus.style.color = '#b36b00';
+      recordingStatus.innerText =
+        'In-browser recording is unavailable here. Please attach an audio file instead.';
       audioFileInput.click();
       return;
     }
 
     if (!recording) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
         mediaStream = stream;
+        recorder = makeRecorder(stream);
+        var chunks = [];
 
-        const preferredMimeType = [
-          'audio/mp4',
-          'audio/mp4;codecs=mp4a.40.2',
-          'audio/webm;codecs=opus',
-          'audio/webm'
-        ].find(type => typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported(type));
+        recorder.ondataavailable = function (e) {
+          if (e.data && e.data.size > 0) { chunks.push(e.data); }
+        };
 
-        const recorderOptions = preferredMimeType ? { mimeType: preferredMimeType } : {};
-        recorder = new MediaRecorder(stream, recorderOptions);
-        const chunks = [];
-
-        recorder.ondataavailable = e => chunks.push(e.data);
-        recorder.onstop = () => {
-          const mimeType = recorder.mimeType || 'audio/mp4';
-          const extension = mimeType.includes('mp4') ? 'm4a' : 'webm';
-          const audioFileName = `voice_note.${extension}`;
-          if (typeof File === 'function') {
-            audioBlob = new File(chunks, audioFileName, { type: mimeType });
-          } else {
-            audioBlob = new Blob(chunks, { type: mimeType });
-            audioBlob.name = audioFileName;
+        recorder.onstop = function () {
+          var mimeType = recorder.mimeType || 'audio/mp4';
+          var ext = (mimeType.indexOf('mp4') !== -1 ||
+                     mimeType.indexOf('aac') !== -1) ? 'm4a' : 'webm';
+          var name = 'voice_note.' + ext;
+          var file;
+          try {
+            file = new File(chunks, name, { type: mimeType });
+          } catch (e) {
+            file = new Blob(chunks, { type: mimeType });
           }
-          showAudioPreview(audioBlob, audioBlob.name || audioFileName);
-          if (mediaStream) {
-            mediaStream.getTracks().forEach(track => track.stop());
+
+          // Push the recording into the file input so the NATIVE submit carries it.
+          var attached = false;
+          try {
+            if (typeof DataTransfer === 'function' && file instanceof File) {
+              var dt = new DataTransfer();
+              dt.items.add(file);
+              audioFileInput.files = dt.files;
+              attached = (audioFileInput.files.length === 1);
+            }
+          } catch (e) { attached = false; }
+
+          showAudioPreview(file, name);
+          if (!attached) {
+            recordingStatus.style.color = '#b36b00';
+            recordingStatus.innerText =
+              'Your browser cannot attach recordings directly. ' +
+              'Tap "Use Mobile Mic / Audio File" to attach a saved recording, ' +
+              'or send the note without audio.';
           }
+          stopStream();
         };
 
         recorder.start();
         recording = true;
         recordBtn.innerText = '🛑 Stop Recording';
-        recordingStatus.innerText = 'Recording...';
-      } catch (err) {
-        alert('Microphone access denied or not supported on this device. Use the audio picker to attach a voice note instead.');
+        recordingStatus.style.color = 'green';
+        recordingStatus.innerText = 'Recording…';
+      }).catch(function (err) {
+        stopStream();
+        recordingStatus.style.color = 'red';
+        recordingStatus.innerText =
+          'Microphone unavailable (permission denied, or the site is not served over HTTPS). ' +
+          'Use the audio picker instead.';
         console.error(err);
-      }
+      });
     } else {
-      recorder.stop();
+      try { recorder.stop(); } catch (e) { stopStream(); }
       recording = false;
       recordBtn.innerText = '🗣️ Say Something!';
     }
   });
 
-
+  // ---- 6. Safety net: never leave the button stuck disabled ----
+  window.addEventListener('pageshow', function () {
+    submitBtn.disabled = false;
+    submitStatus.textContent = '';
+  });
+})();
 </script>
-
 
 {% endblock %}
