@@ -99,7 +99,7 @@
   <label for="audioFileInput" id="audioFilePickerLabel" style="margin-left: 0.5rem;">
     📁 Use Mobile Mic / Audio File
   </label>
-  <input id="audioFileInput" type="file" accept="audio/*" style="display: none;">
+  <input id="audioFileInput" type="file" accept="audio/*" capture="environment" style="display: none;">
   <audio id="audioPreview" controls style="display: none; margin-top: 10px;"></audio>
   <p id="recordingStatus" style="color: green; font-weight: bold;"></p>
 </div>
@@ -111,8 +111,7 @@
 <div class="form-group">
   <label class="col-md-4 control-label" for="byline">Sincerely, </label>
   <div class="col-md-4">
-  <input id="byline" name="byline" type="text" placeholder="{{ fake_name }}"
-       class="notebodyfont u-full-width form-control input-md">
+  <input class='notebodyfont' id="byline" class="u-full-width" name="byline" type="text" placeholder="{{ fake_name }}" class="form-control input-md">
   </div>
 </div>
 
@@ -155,65 +154,28 @@
   });
 
   var form = document.getElementById("thankyou-note-form");
-  var submitBtn = document.getElementById("submit");
-  var recordingStatus = document.getElementById("recordingStatus");
-
-  form.addEventListener('submit', function (event) {
+  form.addEventListener('submit', (event) => {
     event.preventDefault();
-
     var formData = new FormData(form);
+    formData.append('body', editor.getMarkdown());
 
-    // body comes from the Toast UI editor
-    var md = '';
-    try { md = editor.getMarkdown(); } catch (e) { md = ''; }
-    formData.append('body', md || '');
-
-    // ensure content-type is present even if the radio
-    // serialisation is skipped by the browser (iOS Safari)
-    if (!formData.has('content-type')) {
-      formData.append('content-type', 'markdown');
+    // Add recorded audio if available
+    if (audioBlob) {
+        const audioFileName = audioBlob.name || (audioBlob.type && audioBlob.type.includes('mp4') ? 'voice_note.m4a' : 'voice_note.webm');
+        formData.append('audio', audioBlob, audioFileName);
+    } else if (audioFileInput.files.length > 0) {
+        const file = audioFileInput.files[0];
+        formData.append('audio', file, file.name || 'voice_note.webm');
     }
 
-    // audio: prefer recorded blob, fall back to file picker
-    var file = (typeof audioBlob !== 'undefined' && audioBlob)
-               ? audioBlob
-               : (audioFileInput && audioFileInput.files.length
-                  ? audioFileInput.files[0]
-                  : null);
-
-    if (file) {
-      var name = file.name ||
-        ((file.type || '').indexOf('mp4') !== -1 ? 'voice_note.m4a' : 'voice_note.webm');
-      formData.append('audio', file, name);
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+        window.location.href = '/thanks';
     }
-
-    // --- UI feedback + keepalive (the iOS fix) ---
-    submitBtn.disabled = true;
-    if (recordingStatus) {
-      recordingStatus.style.color = '';
-      recordingStatus.textContent = 'Sending your note…';
-    }
-
-    fetch(form.getAttribute('action'), {
-      method: 'POST',
-      body: formData,
-      credentials: 'same-origin',
-      redirect: 'follow',
-      keepalive: true
-    })
-    .then(function (res) {
-      if (!res.ok) throw new Error('Server returned ' + res.status);
-      window.location.href = res.url || '/thanks';
-    })
-    .catch(function (err) {
-      submitBtn.disabled = false;
-      if (recordingStatus) {
-        recordingStatus.style.color = 'red';
-        recordingStatus.textContent = 'Could not send your note. Please try again.';
-      }
-      console.error(err);
-    });
-  });
+    //request.open("POST", "./{{ user }}/submit&{{ topic}}");
+    request.open("POST", form.getAttribute('action'));
+    request.send(formData);
+});
 
 
   editor.addHook('change', () => {
@@ -232,6 +194,7 @@
     btn.addEventListener('click', function() {
       const msg = btn.getAttribute('data-message');
       // For Toast UI Editor:
+      //editor.setMarkdown(msg);
       editor.setMarkdown(editor.getMarkdown() + '\n' + msg);
     });
   });
@@ -245,6 +208,7 @@
 
   const recordBtn = document.getElementById('recordBtn');
   const audioPreview = document.getElementById('audioPreview');
+  const recordingStatus = document.getElementById('recordingStatus');
   const audioFileInput = document.getElementById('audioFileInput');
   const audioFilePickerLabel = document.getElementById('audioFilePickerLabel');
 
@@ -254,7 +218,7 @@
     audioPreview.style.display = 'block';
     recordingStatus.innerText = 'Voice note ready to submit.';
     if (fileName) {
-      recordingStatus.innerText += ' Selected file: ' + fileName;
+      recordingStatus.innerText += ` Selected file: ${fileName}`;
     }
   }
 
@@ -284,28 +248,14 @@
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaStream = stream;
 
-        // iOS-safe MIME type probing.
-        // isTypeSupported can return true on iOS but the constructor
-        // still throws NotSupportedError — so we probe with try/catch.
-        var recorderOptions = {};
-        var candidateTypes = [
+        const preferredMimeType = [
           'audio/mp4',
+          'audio/mp4;codecs=mp4a.40.2',
           'audio/webm;codecs=opus',
           'audio/webm'
-        ];
-        for (var i = 0; i < candidateTypes.length; i++) {
-          if (typeof MediaRecorder.isTypeSupported === 'function' &&
-              MediaRecorder.isTypeSupported(candidateTypes[i])) {
-            try {
-              new MediaRecorder(stream, { mimeType: candidateTypes[i] });
-              recorderOptions = { mimeType: candidateTypes[i] };
-              break;
-            } catch (e) {
-              // iOS lied — keep probing
-            }
-          }
-        }
+        ].find(type => typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported(type));
 
+        const recorderOptions = preferredMimeType ? { mimeType: preferredMimeType } : {};
         recorder = new MediaRecorder(stream, recorderOptions);
         const chunks = [];
 
@@ -313,19 +263,16 @@
         recorder.onstop = () => {
           const mimeType = recorder.mimeType || 'audio/mp4';
           const extension = mimeType.includes('mp4') ? 'm4a' : 'webm';
-          const audioFileName = 'voice_note.' + extension;
-
-          try {
+          const audioFileName = `voice_note.${extension}`;
+          if (typeof File === 'function') {
             audioBlob = new File(chunks, audioFileName, { type: mimeType });
-          } catch (e) {
-            // File constructor not supported — use Blob;
-            // name is passed explicitly in append() instead.
+          } else {
             audioBlob = new Blob(chunks, { type: mimeType });
+            audioBlob.name = audioFileName;
           }
-
-          showAudioPreview(audioBlob, audioFileName);
+          showAudioPreview(audioBlob, audioBlob.name || audioFileName);
           if (mediaStream) {
-            mediaStream.getTracks().forEach(function (track) { track.stop(); });
+            mediaStream.getTracks().forEach(track => track.stop());
           }
         };
 
@@ -336,10 +283,6 @@
       } catch (err) {
         alert('Microphone access denied or not supported on this device. Use the audio picker to attach a voice note instead.');
         console.error(err);
-        if (mediaStream) {
-          mediaStream.getTracks().forEach(function (track) { track.stop(); });
-          mediaStream = null;
-        }
       }
     } else {
       recorder.stop();

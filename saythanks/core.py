@@ -415,10 +415,9 @@ def submit_note(inbox_id, topic):
             logging.exception("Failed to save audio file: %s", e)
             audio_filename = None
 
-    # FIX 2: use .get() so a partial POST doesn't 400
-    body = request.form.get('body', '')
-    content_type = request.form.get('content-type', 'markdown')
-    byline = Markup(request.form.get('byline', '')).striptags()
+    body = request.form['body']
+    content_type = request.form['content-type']
+    byline = Markup(request.form['byline']).striptags()
 
     # If the user chooses to send an HTML email,
     # the contents of the HTML document will be sent
