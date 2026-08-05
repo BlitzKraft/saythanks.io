@@ -93,6 +93,9 @@
   </div>
 </div>
 
+<!-- ADD THIS: real form field so request.form['body'] always exists -->
+<textarea id="body-field" name="body" style="display:none;" aria-hidden="true"></textarea>
+
 <!-- Voice Recording part -->
 <div style="margin: 1em 0;">
   <button type="button" id="recordBtn">🗣️ Say Something!</button>
@@ -188,6 +191,8 @@
       counter.style.color = "red";
       counter1.style.color = "red";
     }
+    document.getElementById("body-field").value = editor.getMarkdown();   // ADD THIS
+
   });
 
   document.querySelectorAll('.suggestion-btn').forEach(function(btn) {
