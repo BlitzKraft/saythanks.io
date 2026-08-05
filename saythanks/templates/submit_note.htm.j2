@@ -2,20 +2,27 @@
 
 {% block title %}Say Thank You{% endblock %}
 
-{% block extra_head %}
-    <script src="https://uicdn.toast.com/editor/3.2.2/toastui-editor-all.min.js"></script>
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/3.2.2/toastui-editor.min.css" />
+{% block extra_head %} 
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
     <style>
-      #counter, #counter1 { color: red; font-weight: bold; }
-      .toastui-editor-defaultUI .toastui-editor-contents,
-      .toastui-editor-defaultUI .toastui-editor-md-preview-content,
-      .toastui-editor-defaultUI .ProseMirror {
+      #counter {
+        color: red;
+        font-weight: bold;
+      }
+      #counter1 {
+        color: red;
+        font-weight: bold;
+      }
+      /* Set font size and fixed font family for Toast UI Editor content */
+     .toastui-editor-defaultUI .toastui-editor-contents,
+     .toastui-editor-defaultUI .toastui-editor-md-preview-content,
+     .toastui-editor-defaultUI .ProseMirror {
         font-size: 16px !important;
         font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', 'Liberation Mono', monospace !important;
       }
-      #submit-status { font-weight: bold; margin-top: 0.5rem; }
-      #plain-body { width: 100%; height: 300px; font-size: 16px; font-family: monospace; }
     </style>
+     
 {% endblock %}
 
 {% block content %}
