@@ -13,7 +13,7 @@ The author can then enjoy a nice inbox (ideally) filled with very small, thought
 ## Recent Improvements
 
 - **Email Delivery Provider Updated:** Migrated transactional email delivery from SendGrid to MailerSend for improved deliverability, modern API support, and more reliable service. This change addresses recent deliverability issues and leverages MailerSend’s robust features for transactional messaging.
-  - Further explore this [here](https://github.com/mailersend/mailersend-python?tab=readme-ov-file#send-a-template-based-email)
+- Learn more here (https://github.com/mailersend/mailersend-python?tab=readme-ov-file#send-a-template-based-email)
 - **Versatile Markdown Editor:** Added a powerful and user-friendly markdown editor (Toast UI Editor) for thank you note writing, featuring live preview and enhanced formatting options for users.
 - Codebase has been prettified and refactored for maintainability.
 - Improved CSRF protection and message inbox aggregation for users/projects.
@@ -26,14 +26,13 @@ The author can then enjoy a nice inbox (ideally) filled with very small, thought
 ## Implementation Concepts
 
 ### ☤ The Basics
-
-- Email when a new message of thankfulness is submitted ([csrf](https://en.wikipedia.org/wiki/Cross-site_request_forgery) enabled).
+- Send an email when a new message of thankfulness is submitted([CSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery) enabled).
 - Inbox page for each user/project with simple aggregation of messages (private).
 
 ### ☤ The Architecture
 
 - Flask for API and Frontend, single application
-- Auth0 for credential storage (done, Auth2 in progress)
+- Auth0 for credential storage (done, OAuth2 in progress)
 - Heroku for Hosting (done!)
   - now hosted at [KGiSL](https://www.kgisl.com)
 - CloudFlare for SSL termination (done!)
@@ -42,7 +41,7 @@ The author can then enjoy a nice inbox (ideally) filled with very small, thought
 ## Intended Collaborators
 
 - Erin "The X" O'Connell (Python)
-- Tom "The Pythonist" Baker (Javascript)
+- Tom "The Pythonist" Baker (JavaScript)
 - Tom "Sea of Clouds" Matthews (Logo and Graphic Design)
 - Kenneth "Your Name Here Instead, Idan?" Reitz (Frontend Design)
 
