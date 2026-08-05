@@ -386,97 +386,201 @@ def clean_topic(t):
     return t.replace(' about ', '')
 
 
+# Allowed audio extensions and a MIME fallback map for browsers (notably iOS
+# Safari) that send filename="blob" or an extensionless name.
+ALLOWED_AUDIO_EXT = {'.m4a', '.mp4', '.webm', '.ogg', '.oga', '.mp3', '.wav', '.aac', '.caf'}
+MIME_TO_EXT = {
+    'audio/mp4': '.m4a',
+    'video/mp4': '.m4a',
+    'audio/aac': '.m4a',
+    'audio/x-m4a': '.m4a',
+    'audio/webm': '.webm',
+    'audio/ogg': '.ogg',
+    'audio/mpeg': '.mp3',
+    'audio/wav': '.wav',
+    'audio/x-wav': '.wav',
+    'audio/x-caf': '.caf',
+}
+
+# Table/image styling injected ahead of rendered Markdown.
+TABLE_STYLE = """
+<style>
+table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+th, td { padding: 8px; border: 1px solid #ddd; word-break: break-word;
+         max-width: 300px; vertical-align: top; }
+td.message-cell { max-width: 500px; overflow-x: hidden; }
+td.message-cell img { max-width: 100% !important; height: auto !important;
+                      display: block; margin: 10px auto; }
+td.message-cell p { margin: 0; padding: 0; }
+.ellipsis { white-space: normal; overflow-wrap: break-word; }
+</style>
+"""
+
+
+def _save_audio_upload(inbox_id):
+    """Persist an uploaded voice note and return its stored filename.
+
+    Returns None when no usable audio was supplied or the save failed.
+    """
+    audio_file = request.files.get('audio')
+
+    # A file input that was never touched still sends an empty part in a
+    # native multipart POST, so an empty .filename must be treated as "no audio".
+    if not audio_file or not audio_file.filename:
+        logging.info("submit_note: no audio part in request")
+        return None
+
+    raw_name = secure_filename(audio_file.filename) or 'voice_note'
+    _root, ext = os.path.splitext(raw_name)
+    ext = ext.lower()
+
+    if ext not in ALLOWED_AUDIO_EXT:
+        mimetype = (audio_file.mimetype or '').split(';')[0].strip().lower()
+        ext = MIME_TO_EXT.get(mimetype, '.m4a')
+        logging.info(
+            "submit_note: normalising audio name %r (mime=%r) -> ext %s",
+            audio_file.filename, mimetype, ext,
+        )
+
+    upload_folder = os.path.join(app.static_folder, 'recordings')
+    os.makedirs(upload_folder, exist_ok=True)
+
+    audio_filename = f"{secure_filename(inbox_id) or 'inbox'}_{int(time.time())}{ext}"
+    save_path = os.path.join(upload_folder, audio_filename)
+
+    logging.info("submit_note: saving audio to %s", save_path)
+    try:
+        audio_file.save(save_path)
+    except Exception as e:
+        logging.exception("submit_note: failed to save audio file: %s", e)
+        return None
+
+    size = os.path.getsize(save_path) if os.path.exists(save_path) else 0
+    if size == 0:
+        logging.error("submit_note: audio file saved but is empty, discarding: %s", save_path)
+        try:
+            os.remove(save_path)
+        except OSError:
+            pass
+        return None
+
+    # NOTE: the original code logged an undefined name `filename` here, raising
+    # NameError which the surrounding except reset audio_filename to None.
+    # That is why saved recordings never reached the email (issue #287).
+    logging.info("Audio file saved successfully: %s (%d bytes)", audio_filename, size)
+    return audio_filename
+
+
+def _recipient_email(inbox_db):
+    """Resolve the notification address for an inbox.
+
+    `session` may be non-empty without holding a profile (for example when
+    `search_str` is set), so the profile is probed explicitly rather than
+    relying on the truthiness of `session`.
+    """
+    email_address = (session.get('profile') or {}).get('email')
+    if not email_address:
+        email_address = storage.Inbox.get_email(inbox_db.slug)
+    return email_address
+
 @app.route('/to/<inbox_id>/submit', methods=['POST'], defaults={"topic": None})
 @app.route('/to/<inbox_id>/submit/<topic>', methods=['POST'])
 def submit_note(inbox_id, topic):
     """Store note in database and send a copy to user's email."""
-    # Fetch the current inbox.
-    # print("topic", topic)
+    logging.info(
+        "submit_note ENTER inbox=%s topic=%r form_keys=%s file_keys=%s "
+        "content_length=%s ua=%s",
+        inbox_id, topic, list(request.form.keys()), list(request.files.keys()),
+        request.content_length, request.headers.get('User-Agent'),
+    )
+
+    # Reject unknown or disabled inboxes rather than failing later on auth_id lookup.
+    if not storage.Inbox.does_exist(inbox_id):
+        logging.error("submit_note: inbox does not exist: %s", inbox_id)
+        abort(404)
+    if not storage.Inbox.is_enabled(inbox_id):
+        logging.error("submit_note: inbox is disabled: %s", inbox_id)
+        abort(404)
+
     inbox_db = storage.Inbox(inbox_id)
 
     # ---- AUDIO UPLOAD HANDLING ----
-    audio_file = request.files.get('audio')
-    audio_filename = None
+    audio_filename = _save_audio_upload(inbox_id)
 
-    # Empty FileStorage is truthy, so guard on filename.
-    if audio_file and audio_file.filename:
-        upload_folder = os.path.join(app.static_folder, 'recordings')
-        os.makedirs(upload_folder, exist_ok=True)
-        # Add a timestamp to the filename to ensure uniqueness
-        timestamp = int(time.time())
-        safe_name = secure_filename(audio_file.filename) or 'recording.webm'
-        audio_filename = f"{secure_filename(inbox_id)}_{timestamp}_{safe_name}"
-        save_path = os.path.join(upload_folder, audio_filename)
-        logging.info("Saving audio file to %s", save_path)
-        try:
-            audio_file.save(save_path)
-            logging.info("Audio file saved successfully: %s", audio_filename)
-        except Exception as e:
-            logging.exception("Failed to save audio file: %s", e)
-            audio_filename = None
+    # ---- FORM FIELDS ----
+    # Use .get() throughout: a missing key on request.form raises a Werkzeug 400
+    # before any application logging runs, which makes the failure invisible in
+    # Logfile.log. This was the symptom reported for iOS Safari submissions.
+    raw_body = request.form.get('body', '')
+    content_type = (request.form.get('content-type') or 'markdown').lower()
+    byline = Markup(request.form.get('byline') or '').striptags().strip()
 
-    body = request.form['body']
-    content_type = request.form['content-type']
-    byline = Markup(request.form['byline']).striptags()
+    if not raw_body.strip():
+        logging.error(
+            "submit_note: EMPTY BODY, discarding submission. form=%s files=%s",
+            dict(request.form), list(request.files.keys()),
+        )
+        # Pretend that it was successful (matches historical behaviour).
+        return redirect(url_for('thanks'))
 
-    # If the user chooses to send an HTML email,
-    # the contents of the HTML document will be sent
-    # as an email but will not be stored due to the enormous size
-    # of professional email templates
+    if not byline:
+        byline = 'Anonymous'
 
     topic = clean_topic(topic)
 
+    # ---- BODY PREPARATION ----
     if content_type == 'html':
         # Sanitize attacker-controlled HTML before marking it safe.
-        # The submission endpoint is unauthenticated and the stored body
-        # is later rendered through {{ note.body|safe }} in
-        # inbox.htm.j2 and also embedded into the HTML email sent to
-        # the inbox owner (myemail.py). Without sanitization a POST
-        # with content-type=html and body=<script>...</script> stores
-        # an exploit that fires when the owner opens /inbox or the
-        # notification email — full session takeover via document.cookie
-        # since the Auth0 cookies are not HttpOnly.
-        # Use a local name so we do not shadow the module-level `cleaner`.
+        # The submission endpoint is unauthenticated and the stored body is
+        # later rendered through {{ note.body|safe }} in inbox.htm.j2 and also
+        # embedded into the HTML email sent to the inbox owner (myemail.py).
+        # Without sanitization a POST with content-type=html and
+        # body=<script>...</script> stores an exploit that fires when the owner
+        # opens /inbox or the notification email - full session takeover via
+        # document.cookie since the Auth0 cookies are not HttpOnly.
         html_cleaner = Cleaner(
             scripts=True, javascript=True, embedded=True, frames=True,
             forms=True, meta=True, links=False, page_structure=True,
             processing_instructions=True, style=True,
             safe_attrs_only=True, remove_unknown_tags=True,
         )
-        body = Markup(html_cleaner.clean_html(body))
-        # print("after markup", body)
-        # Store the note first, so it gets a UUID
+        body = Markup(html_cleaner.clean_html(raw_body))
+    else:
+        body = TABLE_STYLE + markdown(raw_body, extensions=['tables', 'fenced_code'])
+
+    # ---- STORE ----
+    try:
         submitted_note = inbox_db.submit_note(
             body=body, byline=byline, audio_path=audio_filename
         )
-        if storage.Inbox.is_email_enabled(inbox_db.slug):
-            if session:
-                email_address = session['profile']['email']
-            else:
-                email_address = storage.Inbox.get_email(inbox_db.slug)
-            # Now notify, so the note has a UUID for the public URL
-            submitted_note.notify(email_address, topic, audio_filename)
-        return redirect(url_for('thanks'))
-    # Strip any HTML away.
+    except Exception as e:
+        logging.exception("submit_note: failed to store note: %s", e)
+        abort(500)
 
-    body = markdown(body, extensions=['tables', 'fenced_code'])
-    byline = Markup(request.form['byline']).striptags()
-    # Assert that the body has length.
-    if not body:
-        # Pretend that it was successful.
-        return redirect(url_for('thanks'))
-
-    # Store the incoming note to the database.
-    submitted_note = inbox_db.submit_note(
-        body=body, byline=byline, audio_path=audio_filename
+    logging.info(
+        "submit_note: stored uuid=%s audio=%s", submitted_note.uuid, audio_filename
     )
-    # Email the user the new note.
-    if storage.Inbox.is_email_enabled(inbox_db.slug):
-        if session:
-            email_address = session['profile']['email']
+
+    # ---- NOTIFY ----
+    # A failed email must never lose an already-stored note.
+    try:
+        if storage.Inbox.is_email_enabled(inbox_db.slug):
+            email_address = _recipient_email(inbox_db)
+            if email_address:
+                submitted_note.notify(email_address, topic, audio_filename)
+                logging.info(
+                    "submit_note: notification dispatched to %s (audio=%s)",
+                    email_address, audio_filename,
+                )
+            else:
+                logging.error(
+                    "submit_note: no recipient address for inbox %s", inbox_db.slug
+                )
         else:
-            email_address = storage.Inbox.get_email(inbox_db.slug)
-        submitted_note.notify(email_address, topic, audio_filename)
+            logging.info("submit_note: email disabled for inbox %s", inbox_db.slug)
+    except Exception as e:
+        logging.exception("submit_note: notification failed for uuid=%s: %s",
+                          submitted_note.uuid, e)
 
     return redirect(url_for('thanks'))
 
