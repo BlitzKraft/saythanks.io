@@ -277,6 +277,19 @@ class Inbox:
         return bool(len(r))
 
     @classmethod
+    def get_slug(cls, auth_id):
+        q = sqlalchemy.text('SELECT * from inboxes where auth_id = :auth_id')
+        r = conn.execute(q, auth_id=auth_id).fetchall()
+        if len(r):
+            return r[0]['slug']
+        return None
+
+    @classmethod
+    def update_slug(cls, auth_id, slug):
+        q = sqlalchemy.text('UPDATE inboxes SET slug=:slug WHERE auth_id=:auth_id')
+        conn.execute(q, slug=slug, auth_id=auth_id)
+
+    @classmethod
     def store(cls, slug, auth_id, email):
         """Store a mapping between an inbox slug and an Auth0 user/email.
 
