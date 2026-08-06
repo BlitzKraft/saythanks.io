@@ -14,16 +14,7 @@ UniqueViolation = errors.lookup('23505')
 
 # importing module
 
-# Create and configure logger
-logging.basicConfig(
-    filename='Logfile.log',
-    filemode='a',
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%d-%b-%y %H:%M:%S',
-)
-
-# Creating an object
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 # Auth0 API Client
 auth0_domain = os.environ['AUTH0_DOMAIN']

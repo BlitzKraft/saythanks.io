@@ -108,8 +108,14 @@ logging.basicConfig(
     datefmt='%d-%b-%y %H:%M:%S',
 )
 
+class HealthCheckFilter(logging.Filter):
+    def filter(self, record):
+        return "GET / HTTP/" not in record.getMessage()
+
+logging.getLogger("werkzeug").addFilter(HealthCheckFilter())
+
 # Creating an object
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 # Application Basics
 # ------------------
