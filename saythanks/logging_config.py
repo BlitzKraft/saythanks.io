@@ -13,3 +13,6 @@ def configure_logging():
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         datefmt='%d-%b-%y %H:%M:%S',
     )
+
+    # Suppress the noisy Werkzeug access log without disabling app DEBUG logs.
+    logging.getLogger("werkzeug").setLevel(logging.INFO)
