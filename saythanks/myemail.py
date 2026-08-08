@@ -7,17 +7,11 @@ from flask import url_for, current_app
 
 # importing module
 import logging
+from .logging_config import configure_logging
 
-# Create and configure logger
-logging.basicConfig(
-    filename='Logfile.log',
-    filemode='a',
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%d-%b-%y %H:%M:%S',
-)
-
-# Creating an object
-logger = logging.getLogger()
+# Configure logging once for the application.
+configure_logging()
+logger = logging.getLogger(__name__)
 
 # Email Infrastructure
 # --------------------
