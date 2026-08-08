@@ -147,58 +147,42 @@ class Note:
             Exception: Propagates database errors after logging.
         """
         try:
-            # Check if audio_path exists in the notes table
-            check_column = sqlalchemy.text(
-                """
-                SELECT EXISTS (
-                    SELECT 1
-                    FROM information_schema.columns
-                    WHERE table_name='notes'
-                    AND column_name='audio_path'
-                );
-            """
-            )
-            has_audio_column = conn.execute(check_column).scalar()
+            params = {
+                'body': self.body,
+                'byline': self.byline,
+                'inbox': self.inbox.auth_id,
+            }
+            base_query = '''
+                INSERT INTO notes (body, byline, inboxes_auth_id)
+                VALUES (:body, :byline, :inbox)
+                RETURNING uuid
+            '''
+            q = base_query
 
-            # Prepare query based on column existence
-            if has_audio_column:
-                if self.audio_path:
+            if self.audio_path:
+                check_column = sqlalchemy.text(
+                    """
+                    SELECT EXISTS (
+                        SELECT 1
+                        FROM information_schema.columns
+                        WHERE table_name='notes'
+                        AND column_name='audio_path'
+                    );
+                """
+                )
+                has_audio_column = conn.execute(check_column).scalar()
+
+                if has_audio_column:
                     q = '''
                     INSERT INTO notes (body, byline, inboxes_auth_id, audio_path)
                     VALUES (:body, :byline, :inbox, :audio_path)
                     RETURNING uuid
                     '''
-                    params = {
-                        'body': self.body,
-                        'byline': self.byline,
-                        'inbox': self.inbox.auth_id,
-                        'audio_path': self.audio_path,
-                    }
+                    params['audio_path'] = self.audio_path
                 else:
-                    q = '''
-                    INSERT INTO notes (body, byline, inboxes_auth_id)
-                    VALUES (:body, :byline, :inbox)
-                    RETURNING uuid
-                    '''
-                    params = {
-                        'body': self.body,
-                        'byline': self.byline,
-                        'inbox': self.inbox.auth_id,
-                    }
-            else:
-                logger.error(
-                    "Audio path column not available - storing note without audio"
-                )
-                q = '''
-                INSERT INTO notes (body, byline, inboxes_auth_id)
-                VALUES (:body, :byline, :inbox)
-                RETURNING uuid
-                '''
-                params = {
-                    'body': self.body,
-                    'byline': self.byline,
-                    'inbox': self.inbox.auth_id,
-                }
+                    logger.error(
+                        "Audio path column not available - storing note without audio"
+                    )
 
             q = sqlalchemy.text(q)
             # Execute the query with parameters
