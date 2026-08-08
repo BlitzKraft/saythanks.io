@@ -401,12 +401,12 @@ def submit_note(inbox_id, topic):
         safe_name = secure_filename(audio_file.filename) or 'recording.webm'
         audio_filename = f"{secure_filename(inbox_id)}_{timestamp}_{safe_name}"
         save_path = os.path.join(upload_folder, audio_filename)
-        logging.info("Saving audio file to %s", save_path)
+        logger.info("Saving audio file to %s", save_path)
         try:
             audio_file.save(save_path)
-            logging.info("Audio file saved successfully: %s", audio_filename)
+            logger.info("Audio file saved successfully: %s", audio_filename)
         except Exception as e:
-            logging.exception("Failed to save audio file: %s", e)
+            logger.exception("Failed to save audio file: %s", e)
             audio_filename = None
 
     body = request.form['body']
