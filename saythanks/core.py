@@ -15,6 +15,7 @@ import time  # Added to handle timestamping for audio filenames
 # Import your get_version function
 from .version import get_version
 from .utils import strip_html
+from .logging_config import configure_logging
 
 from functools import wraps
 from flask import Flask, request, session, render_template, url_for
@@ -100,16 +101,9 @@ def remove_tags(html):
 
 # importing module
 
-# Create and configure logger
-logging.basicConfig(
-    filename='Logfile.log',
-    filemode='a',
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%d-%b-%y %H:%M:%S',
-)
-
-# Creating an object
-logger = logging.getLogger()
+# Configure logging once for the application.
+configure_logging()
+logger = logging.getLogger(__name__)
 
 # Application Basics
 # ------------------
