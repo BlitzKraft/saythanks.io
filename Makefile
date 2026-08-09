@@ -1,15 +1,28 @@
+.PHONY: init test lint run clean-pyc clean-build clean
 
-.PHONY: clean-pyc init lint test
+init:
+	pipenv install --dev
+
+test:
+	pipenv run pytest --verbose --color=yes tests/
 
 lint:
-	flake8 --exclude=.tox
+	pipenv run flake8 --exclude=.tox saythanks tests
 
-#init: 
-#	pip install -r requirements.txt 
+run:
+	pipenv run python saythanks/app.py
 
-test:	
-	pytest --verbose --color=yes $(TEST_PATH)
-	
 clean-pyc:
-	echo "Cleaning, TBD"
+	find . -name '*.pyc' -exec rm -f {} +
+	find . -name '*.pyo' -exec rm -f {} +
+	find . -name '*~' -exec rm -f {} +
+	find . -name '__pycache__' -exec rm -fr {} +
 
+clean-build:
+	rm -fr build/
+	rm -fr dist/
+	rm -fr .eggs/
+	find . -name '*.egg-info' -exec rm -fr {} +
+	find . -name '*.egg' -exec rm -f {} +
+
+clean: clean-pyc clean-build
