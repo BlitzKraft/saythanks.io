@@ -177,17 +177,26 @@ class Inbox:
         return bool(len(r))
 
     @classmethod
-    def get_slug(cls, auth_id):
-        q = sqlalchemy.text('SELECT * from inboxes where auth_id = :auth_id')
-        r = conn.execute(q, auth_id=auth_id).fetchall()
-        if len(r):
-            return r[0]['slug']
-        return None
-
-    @classmethod
-    def update_slug(cls, auth_id, slug):
-        q = sqlalchemy.text('UPDATE inboxes SET slug=:slug WHERE auth_id=:auth_id')
-        conn.execute(q, slug=slug, auth_id=auth_id)
+    def link_or_create(cls, auth_id, nickname, email):
+        q = sqlalchemy.text('SELECT slug, email FROM inboxes WHERE auth_id = :auth_id')
+        row = conn.execute(q, auth_id=auth_id).fetchone()
+        if row:
+            existing_slug = row['slug']
+            existing_email = row['email']
+            # If they changed their email on GitHub/Auth0, update it silently
+            if existing_email != email:
+                u = sqlalchemy.text('UPDATE inboxes SET email = :email WHERE auth_id = :auth_id')
+                conn.execute(u, email=email, auth_id=auth_id)
+            return existing_slug
+        base_slug = nickname
+        slug_to_try = base_slug
+        counter = 1
+        # Resolve nickname collisions by appending a counter
+        while cls.does_exist(slug_to_try):
+            slug_to_try = f"{base_slug}-{counter}"
+            counter += 1
+        cls.store(slug_to_try, auth_id, email)
+        return slug_to_try
 
     @classmethod
     def store(cls, slug, auth_id, email):
