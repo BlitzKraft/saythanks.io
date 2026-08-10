@@ -182,6 +182,7 @@
       if (e.lengthComputable) 
         recordingStatus.innerText = 'Uploading… ' + Math.round(e.loaded / e.total * 100) + '%';
     };
+    recordingStatus.innerText = 'Uploading… 0%';
     request.send(formData);  
   });
 
