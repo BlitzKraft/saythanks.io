@@ -111,6 +111,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 app.config['APP_VERSION'] = get_version()
 app.config['FB_APP_ID'] = os.environ.get('FB_APP_ID', '1390341129685401')
+app.config['PREFERRED_URL_SCHEME'] = 'https'
 
 # to encode a query
 app.jinja_env.filters['quote'] = quote
