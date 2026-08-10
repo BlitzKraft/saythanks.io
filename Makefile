@@ -7,7 +7,7 @@ test:
 	pipenv run pytest --verbose --color=yes tests/
 
 lint:
-	pipenv run flake8 --exclude=.tox saythanks tests
+	pipenv --python python run flake8 --exclude=.tox saythanks
 
 run:
 	pipenv run python saythanks/app.py
