@@ -169,12 +169,20 @@
     }
 
     const request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
-        window.location.href = '/thanks';
-    }
+
     //request.open("POST", "./{{ user }}/submit&{{ topic}}");
     request.open("POST", form.getAttribute('action'));
+    request.onload  = () => {
+      if (request.status >= 200 && request.status < 400) window.location.href = '/thanks';
+      else { submitBtn.disabled = false; recordingStatus.innerText = 'Send failed: ' + request.status; }
+    };
+    request.onerror = () => { submitBtn.disabled = false; recordingStatus.innerText = 'Network error.'; };
+    request.upload.onprogress = e => {
+      if (e.lengthComputable) recordingStatus.innerText =
+        'Uploading… ' + Math.round(e.loaded / e.total * 100) + '%';
+    };
     request.send(formData);
+
   });
 
 
