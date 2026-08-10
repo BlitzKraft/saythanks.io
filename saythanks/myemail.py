@@ -155,7 +155,7 @@ def _send_email(email_address, subject, html_content, plaintext_content):
     mailer.set_plaintext_content(plaintext_content, mail_body)
 
     response = mailer.send(mail_body)
-    logger.info(f"MailerSend SDK send response: {response}")
+    logger.info(f"MailerSend SDK send response: {response.strip()}")
 
     if not hasattr(response, 'status_code'):
         logger.info(f"Email request submitted successfully to {email_address}")
