@@ -30,6 +30,8 @@ from urllib.parse import quote, unquote
 from lxml_html_clean import Cleaner
 from markdown import markdown
 from werkzeug.utils import secure_filename
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 
 cleaner = Cleaner()
 cleaner.javascript = True
@@ -111,6 +113,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 app.config['APP_VERSION'] = get_version()
 app.config['FB_APP_ID'] = os.environ.get('FB_APP_ID', '1390341129685401')
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.config['PREFERRED_URL_SCHEME'] = 'https'
 
 # to encode a query
