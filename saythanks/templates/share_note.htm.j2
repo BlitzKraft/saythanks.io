@@ -2,39 +2,80 @@
 
 {% block title %}Thank You{% endblock %}
 
+{% block extra_head %}
+  <!-- Open Graph / Facebook -->
+  <meta property="fb:app_id" content="{{ config['FB_APP_ID'] }}">
+  <!-- <meta property="og:url" content="{{ request.url }}"> -->
+  <meta property="og:url" content="https://saythanks.io{{ request.path }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ note.body|strip_html|trim|truncate(90)|e }}">
+  <meta property="og:description" content="— {{ note.byline|e }}, via saythanks.io">
+  <meta property="og:site_name" content="saythanks.io">
+  <meta property="og:image" content="https://saythanks.io/static/images/inbox.png">
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="{{ request.url }}">
+  <meta name="twitter:title" content="A note of thanks, from {{ note.byline }}">
+  <meta name="twitter:description" content="{{ note.body|strip_html|truncate(200) }}">
+{% endblock %}
+
 {% block content %}
 
-<form action="../logout" method="POST">
-<button type="submit" class="logoutLblPos" >Log Out</button>
-</form>
-<div class="sharelinks">
-    <a class="twitter-share-button" target="_blank" href="https://twitter.com/intent/tweet?text={{ note_body|strip_html|quote + "%0A%0A- " + note.byline + "%0A%0A" + request.root_url + url_for('share_note', uuid=note.uuid)[1:] + "%0A" }}" data-url=" "></a> </br>
-    <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ request.root_url + url_for('share_note', uuid=note.uuid)[1:] }}&layout=button&size=small&width=67&height=20&appId" width="67" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe> 
+  <form action="../logout" method="POST">
+    <button type="submit" class="logoutLblPos" >Log Out</button>
+  </form>
+
+  <div class="sharelinks">
+    {# --- Sharing --------- #}
+    {% set share_url = 'https://saythanks.io'
+        ~ url_for('share_note', uuid=note.uuid) %}
+    {% set tweet_text = note.body|strip_html
+        ~ '\n\n- ' ~ note.byline
+        ~ '\n\n' ~ share_url %}
+
+  <a class="x-share" target="_blank" rel="noopener"
+     aria-label="Share on X" title="Share on X"
+     href="https://twitter.com/intent/tweet?text={{ tweet_text|urlencode }}">
+    <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"
+         aria-hidden="true">
+      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584
+               -6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61
+               20.644h2.039L6.486 3.24H4.298Z"/>
+    </svg>
+  </a>
+
+  <a class="fb-share" target="_blank" rel="noopener"
+     aria-label="Share on Facebook" title="Share on Facebook"
+     href="{{ share_url }}">
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"
+         aria-hidden="true">
+      <path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.6-1.6h1.6V4.2
+               c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.6H7.6V14h2.7v8h3.2z"/>
+    </svg>
+  </a>
+
 </div>
 <br>
-<form class="form-horizontal" action="./{{ user }}/submit" method="post">
 
+  <form class="form-horizontal" action="./{{ user }}/submit" method="post">  
+    <fieldset>  
+      <!-- Form Name -->  
+      <legend>❝ THANK YOU ❞</legend>  
 
-<fieldset>
+      <!-- Note body -->
+      <div class="form-group">
+        <div class="col-md-4">
+          <p class="note">{{ note.body }}</p>
+        </div>
+      </div>
 
-<!-- Form Name -->
-<legend>❝ THANK YOU ❞ </legend>
-
-<!-- Textarea -->
-<div class="form-group">
-  <div class="col-md-4">
-    <p class="note">{{ note.body }}</p>
-  </div>
-</div>
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="byline">Sincerely, </label>
-  <div class="col-md-4">
-  — {{ note.byline }}
-
-  </div>
-</div>
+      <!-- Byline -->
+      <div class="form-group">
+        <label class="col-md-4 control-label" for="byline">Sincerely,</label>
+        <div class="col-md-4">
+          — {{ note.byline }}
+        </div>
+      </div>
 
 <h2>🝐</h2>
 </fieldset>
@@ -48,7 +89,65 @@
   countType: 'words',
   countDirection: 'up'
 });
+
+var sdkFailed = false;
+
+window.fbAsyncInit = function () {
+  FB.init({
+    appId: '{{ config['FB_APP_ID'] }}',
+    version: 'v26.0'
+  });
+};
+
+(function (d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) { return; }
+  js = d.createElement(s); js.id = id;
+  js.onerror = function () { sdkFailed = true; };
+  js.src = 'https://connect.facebook.net/en_US/sdk.js';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+document.querySelectorAll('a.fb-share').forEach(function (a) {
+  a.addEventListener('click', function (e) {
+    e.preventDefault();
+    if (typeof FB === 'undefined' || sdkFailed) {
+      window.open(
+        'https://www.facebook.com/dialog/share?app_id={{ config['FB_APP_ID'] }}'
+        + '&display=popup&href=' + encodeURIComponent(a.href)
+        + '&redirect_uri=' + encodeURIComponent(a.href),
+        '_blank', 'noopener'
+      );
+      return;
+    }
+    FB.ui({
+      method: 'share',
+      href: a.href
+    }, function (response) {});
+  });
+});
 </script>
 
-
 {% endblock %}
+
+
+    <!-- TO BE REMOVED - All the options that were attempted and failed! 
+    <a class="twitter-share-button" target="_blank" href="https://twitter.com/intent/tweet?text={{ note_body|strip_html|quote + "%0A%0A- " + note.byline + "%0A%0A" + request.root_url + url_for('share_note', uuid=note.uuid)[1:] + "%0A" }}" data-url=" "></a> </br>
+      <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ request.root_url + url_for('share_note', uuid=note.uuid)[1:] }}&layout=button&size=small&width=67&height=20&appId" width="67" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+      <a href="https://www.facebook.com/sharer/sharer.php?u={{ note_url|urlencode }}"
+       target="_blank" rel="noopener">Share on Facebook</a>
+    {% set fb_url = request.url_root.rstrip('/') ~ url_for('share_note', uuid=note.uuid) %}
+    {% set fb_quote = (note.body|strip_html ~ ' — ' ~ note.byline)|urlencode %}
+    {% set share_href =
+      'https://www.facebook.com/dialog/share'
+      ~ '?app_id=' ~ config['FB_APP_ID']
+      ~ '&display=popup'
+      ~ '&href=' ~ fb_url|urlencode
+      ~ '&redirect_uri=' ~ fb_url|urlencode %}
+    <a  target="_blank" href="{{ share_href }}" class="fb-share" rel="noopener">
+        Share on Facebook
+    </a>
+   {% set note_url = 'https://saythanks.io' ~ url_for('share_note', uuid=note.uuid) %}
+   <a href="https://www.facebook.com/dialog/share?app_id={{config['FB_APP_ID']}}&href={{ note_url|urlencode }}&redirect_uri={{ note_url|urlencode }}"
+      target="_blank" rel="noopener"> Share on Facebook </a>
+    -->    

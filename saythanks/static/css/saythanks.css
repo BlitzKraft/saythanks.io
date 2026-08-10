@@ -111,13 +111,8 @@ a.share {
   animation: octocat-wave 560ms ease-in-out
 }
 
-#message {}
-
 #from {
   width: 15%;
-}
-
-#timestamp {
 }
 
 @keyframes octocat-wave {
@@ -150,4 +145,237 @@ a.share {
 
 .github-fork-ribbon:before {
   background-color: #333;
+}
+
+.fb-share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background-color: #1877f2;
+  color: #ffffff;
+  border-radius: 4px;
+  vertical-align: middle;   /* aligns with the X Post button */
+}
+
+.fb-share:hover,
+.fb-share:focus {
+  background-color: #1664d9;
+}
+
+.x-share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background-color: #000000;
+  color: #ffffff;
+  border-radius: 4px;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.x-share:hover,
+.x-share:focus {
+  background-color: #333333;
+}
+
+/* ============================================================
+ * Inbox page (extracted from inbox.htm.j2 <style> + inline styles)
+ * ============================================================ */
+
+/* --- Utilities ---------------------------------------------- */
+
+.is-hidden {
+  display: none;
+}
+
+.u-mt-sm {
+  margin-top: 0.5em;
+}
+
+.u-mt-xl {
+  margin-top: 6rem;
+}
+
+.hr-section {
+  margin: 4rem 0;
+}
+
+/* --- Header / avatar ---------------------------------------- */
+
+.avatar {
+  border-radius: 50%;
+}
+
+.qr-code {
+  text-align: right;
+  margin-top: -3em;
+}
+
+/* --- Search form --------------------------------------------- */
+
+.search-form input[type="text"] {
+  font-size: 14px;
+}
+
+.search-form .search-submit {
+  font-size: 10px;
+}
+
+/* --- Notes grid ---------------------------------------------- */
+
+.notes-grid {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.notes-header {
+  display: grid;
+  grid-template-columns: auto minmax(200px, 500px) auto auto auto;
+  gap: 1rem;
+  padding: 0.5rem;
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.note-item {
+  display: grid;
+  grid-template-columns: auto minmax(200px, 500px) auto auto auto;
+  gap: 1rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.note-cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message-cell {
+  position: relative;
+  white-space: normal;
+}
+
+.message-cell a {
+  display: block;
+  text-decoration: none;
+  color: #333; /* Dark gray text color */
+  cursor: pointer;
+}
+
+.message-cell a:hover {
+  color: #3ac025; /* Change text color on hover */
+  text-decoration: none; /* No underline on hover */
+}
+
+.share:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.message-cell span {
+  display: block;
+}
+
+.message-cell img {
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain;
+  margin: 10px auto;
+}
+
+.note table,
+.message-cell table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.note th,
+.note td,
+.message-cell th,
+.message-cell td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  word-break: break-word;
+  max-width: 300px;
+  vertical-align: top;
+}
+
+.note td.message-cell,
+.message-cell td.message-cell {
+  max-width: 500px;
+  overflow-x: hidden;
+}
+
+.note td.message-cell img,
+.message-cell td.message-cell img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: 10px auto;
+}
+
+.note td.message-cell p,
+.message-cell td.message-cell p {
+  margin: 0;
+  padding: 0;
+}
+
+.note .ellipsis,
+.message-cell .ellipsis {
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+/* --- View mode toggle (Load More / Pagination) --------------- */
+
+.view-mode {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.view-mode-option {
+  display: inline-block;
+  margin: 0 15px;
+}
+
+/* --- Load more / pagination ---------------------------------- */
+
+.load-more-section {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.pagination-section {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.pagination a {
+  text-decoration: none;
+}
+
+.btn-load-more {
+  padding: 0.15em 1.5em;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.btn-load-more:disabled {
+  cursor: default;
 }

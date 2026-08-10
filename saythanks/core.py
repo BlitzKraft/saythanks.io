@@ -15,10 +15,12 @@ import time  # Added to handle timestamping for audio filenames
 # Import your get_version function
 from .version import get_version
 from .utils import strip_html
+from .logging_config import configure_logging
 
 from functools import wraps
 from flask import Flask, request, session, render_template, url_for
 from flask import abort, redirect, Markup, make_response
+from flask import send_from_directory
 from flask_common import Common
 from names import get_full_name
 from raven.contrib.flask import Sentry
@@ -27,6 +29,7 @@ from . import storage
 from urllib.parse import quote, unquote
 from lxml_html_clean import Cleaner
 from markdown import markdown
+from werkzeug.utils import secure_filename
 
 cleaner = Cleaner()
 cleaner.javascript = True
@@ -98,22 +101,16 @@ def remove_tags(html):
 
 # importing module
 
-# Create and configure logger
-logging.basicConfig(
-    filename='Logfile.log',
-    filemode='a',
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%d-%b-%y %H:%M:%S',
-)
-
-# Creating an object
-logger = logging.getLogger()
+# Configure logging once for the application.
+configure_logging()
+logger = logging.getLogger(__name__)
 
 # Application Basics
 # ------------------
 
 app = Flask(__name__)
 app.config['APP_VERSION'] = get_version()
+app.config['FB_APP_ID'] = os.environ.get('FB_APP_ID', '1390341129685401')
 
 # to encode a query
 app.jinja_env.filters['quote'] = quote
@@ -154,6 +151,15 @@ def requires_auth(f):
 
 # Application Routes
 # ------------------
+
+@app.route("/robots.txt")
+def robots():
+    return send_from_directory("static", "robots.txt")
+
+
+@app.route('/privacy')
+def privacy():
+    return render_template("privacy.htm.j2")
 
 
 @app.route('/')
@@ -321,7 +327,7 @@ def display_submit_note(inbox_id, topic):
     elif not storage.Inbox.is_enabled(inbox_id):
         abort(404)
 
-    print("topic received:", topic)
+    print("topic received:", topic if topic else "No topic provided")
 
     fake_name = get_full_name()
     raw_topic = topic
@@ -386,19 +392,21 @@ def submit_note(inbox_id, topic):
     audio_file = request.files.get('audio')
     audio_filename = None
 
-    if audio_file:
+    # Empty FileStorage is truthy, so guard on filename.
+    if audio_file and audio_file.filename:
         upload_folder = os.path.join(app.static_folder, 'recordings')
         os.makedirs(upload_folder, exist_ok=True)
         # Add a timestamp to the filename to ensure uniqueness
         timestamp = int(time.time())
-        audio_filename = f"{inbox_id}_{timestamp}_{audio_file.filename}"
+        safe_name = secure_filename(audio_file.filename) or 'recording.webm'
+        audio_filename = f"{secure_filename(inbox_id)}_{timestamp}_{safe_name}"
         save_path = os.path.join(upload_folder, audio_filename)
-        logging.info("Saving audio file to %s", save_path)
+        logger.info("Saving audio file to %s", save_path)
         try:
             audio_file.save(save_path)
-            logging.info("Audio file saved successfully: %s", filename)
+            logger.info("Audio file saved successfully: %s", audio_filename)
         except Exception as e:
-            logging.error("Failed to save audio file: %s", str(e))
+            logger.exception("Failed to save audio file: %s", e)
             audio_filename = None
 
     body = request.form['body']
@@ -422,14 +430,14 @@ def submit_note(inbox_id, topic):
         # an exploit that fires when the owner opens /inbox or the
         # notification email — full session takeover via document.cookie
         # since the Auth0 cookies are not HttpOnly.
-        from lxml_html_clean import Cleaner
-        cleaner = Cleaner(
+        # Use a local name so we do not shadow the module-level `cleaner`.
+        html_cleaner = Cleaner(
             scripts=True, javascript=True, embedded=True, frames=True,
             forms=True, meta=True, links=False, page_structure=True,
             processing_instructions=True, style=True,
             safe_attrs_only=True, remove_unknown_tags=True,
         )
-        body = Markup(cleaner.clean_html(body))
+        body = Markup(html_cleaner.clean_html(body))
         # print("after markup", body)
         # Store the note first, so it gets a UUID
         submitted_note = inbox_db.submit_note(
@@ -446,42 +454,6 @@ def submit_note(inbox_id, topic):
     # Strip any HTML away.
 
     body = markdown(body, extensions=['tables', 'fenced_code'])
-    # Update the table_style to include image constraints
-    table_style = """
-<style>
-table {
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
-}
-th, td {
-    padding: 8px;
-    border: 1px solid #ddd;
-    word-break: break-word;
-    max-width: 300px;
-    vertical-align: top;
-}
-td.message-cell {
-    max-width: 500px;
-    overflow-x: hidden;
-}
-td.message-cell img {
-    max-width: 100% !important;
-    height: auto !important;
-    display: block;
-    margin: 10px auto;
-}
-td.message-cell p {
-    margin: 0;
-    padding: 0;
-}
-.ellipsis {
-    white-space: normal;
-    overflow-wrap: break-word;
-}
-</style>
-"""
-    body = table_style + body
     byline = Markup(request.form['byline']).striptags()
     # Assert that the body has length.
     if not body:
