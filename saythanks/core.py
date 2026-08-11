@@ -32,6 +32,7 @@ from markdown import markdown
 from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+
 cleaner = Cleaner()
 cleaner.javascript = True
 cleaner.style = True
@@ -114,6 +115,8 @@ app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1)
 app.config['APP_VERSION'] = get_version()
 app.config['FB_APP_ID'] = os.environ.get('FB_APP_ID', '1390341129685401')
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+app.config['PREFERRED_URL_SCHEME'] = 'https'
 
 # to encode a query
 app.jinja_env.filters['quote'] = quote
@@ -539,7 +542,6 @@ def callback_handling():
     session['profile']['nickname'] = nickname
     session['profile']['picture'] = picture
     session['profile']['name'] = name
-    if not storage.Inbox.does_exist(nickname):
-        # Using nickname by default, can be changed manually later if needed.
-        storage.Inbox.store(nickname, userid, email)
+    final_slug = storage.Inbox.link_or_create(userid, nickname, email)
+    session['profile']['nickname'] = final_slug
     return redirect(url_for('inbox'))
