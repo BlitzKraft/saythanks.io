@@ -42,5 +42,5 @@ def test_submit_button_does_not_shadow_native_form_submit():
 
     assert 'id="submit"' not in template
     assert 'name="submit"' not in template
-    assert 'id="submit-note"' in template
-    assert 'document.getElementById("submit-note")' in template
+    assert 'id="send-note-btn"' in template
+    assert 'document.getElementById("send-note-btn")' in template
