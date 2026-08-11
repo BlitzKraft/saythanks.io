@@ -14,7 +14,7 @@ WORKDIR /saythanks
 
 # Installing requirements
 COPY ./requirements.txt .
-RUN python3 -m pip install -r requirements.txt
+RUN python3 -m pip install --default-timeout=100 -r requirements.txt
 
 # Copying the app
 COPY . .

@@ -5,16 +5,15 @@
 {% block extra_head %}
   <!-- Open Graph / Facebook -->
   <meta property="fb:app_id" content="{{ config['FB_APP_ID'] }}">
-  <!-- <meta property="og:url" content="{{ request.url }}"> -->
-  <meta property="og:url" content="https://saythanks.io{{ request.path }}">
+  <meta property="og:url" content="{{ url_for('share_note', uuid=note.uuid, _external=True) }}">
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{ note.body|strip_html|trim|truncate(90)|e }}">
   <meta property="og:description" content="— {{ note.byline|e }}, via saythanks.io">
   <meta property="og:site_name" content="saythanks.io">
-  <meta property="og:image" content="https://saythanks.io/static/images/inbox.png">
+  <meta property="og:image" content="{{ url_for('static', filename='images/inbox.png', _external=True) }}">
   <!-- Twitter -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:url" content="{{ request.url }}">
+  <meta name="twitter:url" content="{{ url_for('share_note', uuid=note.uuid, _external=True) }}">
   <meta name="twitter:title" content="A note of thanks, from {{ note.byline }}">
   <meta name="twitter:description" content="{{ note.body|strip_html|truncate(200) }}">
 {% endblock %}
@@ -27,8 +26,7 @@
 
   <div class="sharelinks">
     {# --- Sharing --------- #}
-    {% set share_url = 'https://saythanks.io'
-        ~ url_for('share_note', uuid=note.uuid) %}
+    {% set share_url = url_for('share_note', uuid=note.uuid, _external=True) %}
     {% set tweet_text = note.body|strip_html
         ~ '\n\n- ' ~ note.byline
         ~ '\n\n' ~ share_url %}
