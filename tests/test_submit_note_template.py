@@ -5,6 +5,7 @@ import os
 
 
 def test_upload_progress_starts_at_zero_before_request_is_sent():
+    """Ensure the upload indicator begins at 0% before the form request is sent."""
     repository_root = os.path.dirname(os.path.dirname(__file__))
     template_path = os.path.join(
         repository_root, 'saythanks', 'templates', 'submit_note.htm.j2'
