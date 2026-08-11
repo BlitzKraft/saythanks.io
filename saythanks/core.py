@@ -25,7 +25,6 @@ from flask_common import Common
 from names import get_full_name
 from raven.contrib.flask import Sentry
 from flask_qrcode import QRcode
-from . import myemail
 from . import storage
 from urllib.parse import quote, unquote
 from lxml_html_clean import Cleaner
@@ -384,6 +383,17 @@ def clean_topic(t):
         return None
     return t.replace(' about ', '')
 
+def render_audio_html(audio_filename):
+    """HTML snippet linking to a stored recording. Empty string when no audio."""
+    if not audio_filename:
+        return ''
+    audio_url = url_for(
+        'static', filename='recordings/' + audio_filename, _external=True
+    )
+    return (
+        f'<div style="margin:10px 0 0"><strong>🎧 Voice Note:</strong> '
+        f'<a clicktracking=off href="{audio_url}" target="_blank">Click to listen</a></div>'
+    )
 
 @app.route('/to/<inbox_id>/submit', methods=['POST'], defaults={"topic": None})
 @app.route('/to/<inbox_id>/submit/<topic>', methods=['POST'])
@@ -414,7 +424,7 @@ def submit_note(inbox_id, topic):
             logger.exception("Failed to save audio file: %s", e)
             audio_filename = None
 
-    audio_html = myemail.render_audio_html(audio_filename)
+    audio_html = render_audio_html(audio_filename)
     body = request.form['body']
     content_type = request.form['content-type']
     byline = Markup(request.form['byline']).striptags()
