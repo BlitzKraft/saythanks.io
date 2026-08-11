@@ -117,9 +117,9 @@
 
 <!-- Button -->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="submit"></label>
+  <label class="col-md-4 control-label" for="submit-note"></label>
   <div class="col-md-4">
-    <button id="submit" name="submit" class="btn button-primary" type="submit">Send Note <img id="eve-send" src="{{ url_for('static', filename='images/owly.svg') }}" alt="Eve the Owl"> </button>
+    <button id="submit-note" class="btn button-primary" type="submit">Send Note <img id="eve-send" src="{{ url_for('static', filename='images/owly.svg') }}" alt="Eve the Owl"> </button>
   </div>
 </div>
 <h2>🝐</h2>
@@ -154,7 +154,7 @@
   });
 
   var form = document.getElementById("thankyou-note-form");
-  var submitBtn = document.getElementById("submit");  
+  var submitBtn = document.getElementById("submit-note");
   
   form.addEventListener('submit', (event) => {
     event.preventDefault();
