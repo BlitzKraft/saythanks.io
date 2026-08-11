@@ -66,20 +66,6 @@ def _get_note_url(note):
         return url_for('share_note', uuid=note.uuid, _external=True)
 
 
-def render_audio_html(audio_path):
-    """Return an HTML snippet linking to a stored audio recording."""
-    if not audio_path:
-        return ''
-    with current_app.app_context():
-        audio_url = url_for(
-            "static", filename="recordings/" + audio_path, _external=True
-        )
-    return (
-        f'<br><br><strong>🎧 Voice Note:</strong> '
-        f'<a href="{audio_url}" target="_blank">Click to listen</a>'
-    )
-
-
 def _build_email_content(note, note_url, audio_html='', audio_text=''):
     """Assemble HTML and plaintext email bodies.
 
