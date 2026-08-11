@@ -160,6 +160,9 @@
   
   form.addEventListener('submit', (event) => {
     event.preventDefault();
+    if (submitBtn.disabled) return;     // ← guard re-entry
+    submitBtn.disabled = true;
+
     var formData = new FormData(form);
     formData.append('body', editor.getMarkdown());
 
