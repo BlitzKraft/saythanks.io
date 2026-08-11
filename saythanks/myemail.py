@@ -24,24 +24,17 @@ if not mailersend_api_key:
 else:
     mailer = emails.NewEmail(mailersend_api_key)
 
-TEMPLATE = """<div>{}
-<br>
-<br>
---{}
-<br>
-<br>
-The public URL for this note is <a clicktracking=off href="{}">here</a> <br>
-<br>
-<br>
-=========
-<br>
-<br>
-This note of gratitude was brought to you by SayThanks.io.
-<br>
-<br>
-A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
+TEMPLATE = """<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#222;max-width:600px">
+<div style="margin:0 0 12px">{}</div>
+<div style="margin:0 0 12px;color:#555">--{}</div>
+<div style="margin:0 0 16px">The public URL for this note is <a clicktracking=off href="{}">here</a></div>
+<hr style="border:0;border-top:1px solid #ddd;margin:16px 0">
+<div style="font-size:13px;color:#777;line-height:1.4">
+This note of gratitude was brought to you by SayThanks.io.<br>
+A KennethReitz project, now maintained by KGiSL Edu (<a clicktracking=off href="https://edu.kgisl.com">https://edu.kgisl.com</a>).
 </div>
-"""
+</div>
+""" 
 
 
 def _get_note_url(note):
@@ -197,3 +190,26 @@ def notify(note, email_address, topic=None, audio_path=None):
         print(e)
 
     return False
+
+
+# Deprecated TEMPLATE for reference, kept for backward compatibility
+'''
+TEMPLATE = """<div>{}
+<br>
+<br>
+--{}
+<br>
+<br>
+The public URL for this note is <a clicktracking=off href="{}">here</a> <br>
+<br>
+<br>
+=========
+<br>
+<br>
+This note of gratitude was brought to you by SayThanks.io.
+<br>
+<br>
+A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
+</div>
+"""
+'''
