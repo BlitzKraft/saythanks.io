@@ -77,3 +77,34 @@ def test_submit_button_does_not_shadow_native_form_submit():
 
     assert 'id="send-note-btn"' in template
     assert 'document.getElementById("send-note-btn")' in template
+
+def test_no_stale_submit_id_selector_in_static_assets():
+    """No CSS/JS asset may still target the removed #submit id.
+    Equivalent of running run a 
+       grep -rn '#submit' saythanks/static/ to be sure no 
+       CSS still targets the old #submit id
+    """
+    repository_root = os.path.dirname(os.path.dirname(__file__))
+    static_root = os.path.join(repository_root, 'saythanks', 'static')
+
+    # Matches #submit as a complete CSS id selector: followed by end,
+    # whitespace, or any selector-terminating punctuation ({ , : > + ~ ; ) ).
+    # The negative lookahead stops it matching #submit-btn / #submitReason.
+    selector = re.compile(r'#submit(?![\w-])')
+
+    offenders = []
+    for dirpath, _dirnames, filenames in os.walk(static_root):
+        for filename in filenames:
+            if not filename.endswith(('.css', '.scss', '.js')):
+                continue
+            path = os.path.join(dirpath, filename)
+            with open(path, encoding='utf-8') as asset:
+                for lineno, line in enumerate(asset, start=1):
+                    if selector.search(line):
+                        rel = os.path.relpath(path, repository_root)
+                        offenders.append('%s:%d: %s' % (rel, lineno, line.strip()))
+
+    assert not offenders, (
+        'stale #submit selector(s) found after button rename:\n' +
+        '\n'.join(offenders)
+    )
