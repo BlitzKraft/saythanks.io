@@ -1,190 +1,178 @@
 {% extends "base.htm.j2" %}
-
 {% block title %}Say Thank You{% endblock %}
-
 {% block content %}
-
-{% set submit_url = url_for('display_submit_note', inbox_id=user['nickname']) %}
-{% set submit_url_abs = url_for('display_submit_note', inbox_id=user['nickname'], _external=True) %}
-
-<form action="./logout" method="POST">
-<button type="submit" class="logoutLblPos" >Log Out</button>
-</form>
-
-<input type="hidden" id="username" value="{{ user['nickname'] }}">
-
-<div id="badge-modal" class="is-hidden">
-    <h4>The <strong>‘</strong><a>Say Thanks</a><strong>’</strong> badge<span class="green"><strong>.</strong></span></h4>
-    <select class="u-full-width" id="badge-format">
-        <option value="imageurl">Image URL</option>
-        <option value="markdown">Markdown</option>
-        <option value="rst">RST</option>
-    </select>
-    <textarea onclick="this.select()" class="u-full-width" id="badgeCode">https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg</textarea>
-</div>
-
-<img class="avatar" src="{{ user['picture'] }}" width="100" alt="Avatar">
-<h2>Welcome, {{ user['name'] }}!</h2>
-
-<p>
-    You may now direct your users (in a README or documentation, for example)
-    to <a href="{{ submit_url }}">this URL</a>, where they can submit a note of thankfulness:
-</p>
-<hr>
-
-<div class="sixteen columns">
-
-  <div class="two columns u-mt-sm">
-  <p><strong>Buttons & Links:</strong></p>
-  </div>
-
-  <div class="three columns">
-  <a href="{{ submit_url }}">
-      <button class="button">
-          Say Thanks!
-      </button>
-  </a>
-  </div>
-
-  <div class="three columns u-mt-sm">
-  <a href="#badge-modal" rel="modal:open">
-      <img src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg" />
-  </a>
-  </div>
-
-  <div class="u-mt-sm">
-  <a href="{{ submit_url }}">
-      Say Thanks!
-  </a>
-  </div>
-
-  <div class="qr-code">
-     <img src="{{ qrcode(submit_url_abs) }}" width="100">
-  </div>
-
-</div>
-
-<hr class="hr-section">
-
-<h3 class="u-textcenter">Notes of Thankfulness:</h3>
-
-<form class="search-form" action="{{ url_for('inbox_search') }}" method="POST">
-  <input type="text" size="30" placeholder="{{ search_str }}" name="search_str">
-    <button class="search-submit" type="submit">Search</button>
-    <button type="submit" name="clear" value="true">Clear</button>
-</form>
-
-<section class="notes-grid">
-  <header class="notes-header">
-    <div class="header-cell" id="share">Share URL</div>
-    <div class="header-cell" id="message">Message</div>
-    <div class="header-cell" id="from">From</div>
-    <div class="header-cell" id="timestamp">Timestamp</div>
-    <div class="header-cell"></div>
-  </header>
-
-  <div class="notes-list">
-  {% for note in notes %}
-    {% set share_url_abs = url_for('share_note', uuid=note.uuid, _external=True) %}
-    <article class="note-item">
-      <div class="note-cell">
-        <a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a><br>
-
-        <a class="x-share"
-           target="_blank" rel="noopener"
-           aria-label="Share on X" title="Share on X"
-           href="https://twitter.com/intent/tweet?text={{
+    {% set submit_url = url_for('display_submit_note', inbox_id=user['nickname']) %}
+    {% set submit_url_abs = url_for('display_submit_note', inbox_id=user['nickname'], _external=True) %}
+    <form action="./logout" method="POST">
+        <button type="submit" class="logoutLblPos">Log Out</button>
+    </form>
+    <input type="hidden" id="username" value="{{ user['nickname'] }}">
+    <div id="badge-modal" class="is-hidden">
+        <h4>The <strong>‘</strong><a>Say Thanks</a><strong>’</strong> badge<span class="green"><strong>.</strong></span></h4>
+        <select class="u-full-width" id="badge-format">
+            <option value="imageurl">Image URL</option>
+            <option value="markdown">Markdown</option>
+            <option value="rst">RST</option>
+        </select>
+        <textarea onclick="this.select()" class="u-full-width" id="badgeCode">https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg</textarea>
+    </div>
+    <img class="avatar" src="{{ user['picture'] }}" width="100" alt="Avatar">
+    <h2>Welcome, {{ user['name'] }}!</h2>
+    <p>
+        You may now direct your users (in a README or documentation, for example)
+        to <a href="{{ submit_url }}">this URL</a>, where they can submit a note of thankfulness:
+    </p>
+    <hr>
+    <div class="sixteen columns">
+        <div class="two columns u-mt-sm">
+            <p><strong>Buttons & Links:</strong></p>
+        </div>
+        <div class="three columns">
+            <a href="{{ submit_url }}">
+                <button class="button">Say Thanks!</button>
+            </a>
+        </div>
+        <div class="three columns u-mt-sm">
+            <a href="#badge-modal" rel="modal:open">
+                <img src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg" />
+            </a>
+        </div>
+        <div class="u-mt-sm">
+            <a href="{{ submit_url }}">Say Thanks!</a>
+        </div>
+        <div class="qr-code">
+            <img src="{{ qrcode(submit_url_abs) }}" width="100">
+        </div>
+    </div>
+    <hr class="hr-section">
+    <h3 class="u-textcenter">Notes of Thankfulness:</h3>
+    <form class="search-form"
+          action="{{ url_for('inbox_search') }}"
+          method="POST">
+        <input type="text"
+               size="30"
+               placeholder="{{ search_str }}"
+               name="search_str">
+        <button class="search-submit" type="submit">Search</button>
+        <button type="submit" name="clear" value="true">Clear</button>
+    </form>
+    <section class="notes-grid">
+        <header class="notes-header">
+            <div class="header-cell" id="share">Share URL</div>
+            <div class="header-cell" id="message">Message</div>
+            <div class="header-cell" id="from">From</div>
+            <div class="header-cell" id="timestamp">Timestamp</div>
+            <div class="header-cell"></div>
+        </header>
+        <div class="notes-list">
+            {% for note in notes %}
+                {% set share_url_abs = url_for('share_note', uuid=note.uuid, _external=True) %}
+                <article class="note-item">
+                    <div class="note-cell">
+                        <a class="share" href="{{ url_for('share_note', uuid=note.uuid) }}">🔗</a>
+                        <br>
+                        <a class="x-share"
+                           target="_blank"
+                           rel="noopener"
+                           aria-label="Share on X"
+                           title="Share on X"
+                           href="https://twitter.com/intent/tweet?text={{
              (note.body|strip_html + '\n- ' + note.byline + '\n' + share_url_abs)
              |urlencode
            }}&hashtags=SayThanks">
-          <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true">
-            <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584
+                            <svg viewBox="0 0 24 24"
+                                 width="12"
+                                 height="12"
+                                 fill="currentColor"
+                                 aria-hidden="true">
+                                <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584
                      -6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61
-                     20.644h2.039L6.486 3.24H4.298Z"/>
-          </svg>
-        </a><br>
-
-        <a class="fb-share"
-           target="_blank" rel="noopener"
-           aria-label="Share on Facebook" title="Share on Facebook"
-           href="{{ share_url_abs }}"
-           data-quote="{{ note.body|strip_html ~ ' — ' ~ note.byline }}">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
-            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99
+                     20.644h2.039L6.486 3.24H4.298Z" />
+                            </svg>
+                        </a>
+                        <br>
+                        <a class="fb-share"
+                           target="_blank"
+                           rel="noopener"
+                           aria-label="Share on Facebook"
+                           title="Share on Facebook"
+                           href="{{ share_url_abs }}"
+                           data-quote="{{ note.body|strip_html ~ ' — ' ~ note.byline }}">
+                            <svg viewBox="0 0 24 24"
+                                 width="14"
+                                 height="14"
+                                 fill="currentColor"
+                                 aria-hidden="true">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99
                      4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007
                      1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491
                      0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612
-                     23.027 24 18.062 24 12.073z"/>
-          </svg>
-        </a>
-      </div>
-      <div class="note-cell message-cell">
-          <a href="{{ url_for('share_note', uuid=note.uuid)}}">
-              <span>{{ note.body|safe }}</span>
-          </a>
-      </div>
-      <div class="note-cell"><span>— {{ note.byline }}</span></div>
-      <div class="note-cell">{{ note.timestamp.strftime('%d-%h-%Y %H:%M:%S') }}</div>
-      <div class="note-cell"><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid)}}">♻</a></strong></div>
-    </article>
-  {% endfor %}
-
-  {% if (page==total_pages or total_pages==0) and search_str=="Search by message body or byline" %}
-    <article class="note-item">
-      <div class="note-cell"></div>
-      <div class="note-cell">Thanks for using SayThanks.io! :)</div>
-      <div class="note-cell">Kenneth Reitz & Team</div>
-      <div class="note-cell"></div>
-      <div class="note-cell"></div>
-    </article>
-  {% endif %}
-  </div>
-</section>
-
-<!-- Navigation Options -->
-<div class="view-mode">
-  <div class="view-mode-option">
-    <input type="radio" id="loadMoreOption" name="viewMode" value="loadMore">
-    <label for="loadMoreOption">Load More</label>
-  </div>
-  <div class="view-mode-option">
-    <input type="radio" id="paginationOption" name="viewMode" value="pagination">
-    <label for="paginationOption">Pagination</label>
-  </div>
-</div>
-
-<!-- Load More Section -->
-<div id="loadMoreSection" class="load-more-section">
-  <button id="load-more" class="button btn-load-more"
-          data-page="{{ page }}" data-total="{{ total_pages }}">
-    LOAD MORE
-  </button>
-</div>
-
-<!-- Pagination Section -->
-<div id="paginationSection" class="pagination-section is-hidden">
-  <div class="pagination">
-    {% if total_pages!=0 %}
-      <a href="{{ url_for('inbox', page=1) }}"><<</a>
-      {% if page > 1 %}
-      <a href="{{ url_for('inbox', page=page-1) }}">Previous</a>
-      {% else %}
-      <span>Previous</span>
-      {% endif %}
-      <span> {{ page }} of {{ total_pages }}</span>
-      {% if page < total_pages %}
-      <a href="{{ url_for('inbox', page=page+1) }}">Next</a>
-      {% else %}
-      <span>Next</span>
-      {% endif %}
-      <a href="{{ url_for('inbox', page=total_pages) }}">>></a>
-    {% elif search_str!="Search by message body or byline" %}
-      <span> No matches found!</span>
-    {% endif %}
-  </div>
-</div>
-
-<script>
+                     23.027 24 18.062 24 12.073z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="note-cell message-cell">
+                        <a href="{{ url_for('share_note', uuid=note.uuid) }}">
+                            <span>{{ note.body|safe }}</span>
+                        </a>
+                    </div>
+                    <div class="note-cell"><span>— {{ note.byline }}</span></div>
+                    <div class="note-cell">{{ note.timestamp.strftime("%d-%h-%Y %H:%M:%S") }}</div>
+                    <div class="note-cell"><strong><a class="share" href="{{ url_for('archive_note', uuid=note.uuid) }}">♻</a></strong></div>
+                </article>
+            {% endfor %}
+            {% if (page==total_pages or total_pages==0) and search_str=="Search by message body or byline" %}
+                <article class="note-item">
+                    <div class="note-cell"></div>
+                    <div class="note-cell">Thanks for using SayThanks.io! :)</div>
+                    <div class="note-cell">Kenneth Reitz & Team</div>
+                    <div class="note-cell"></div>
+                    <div class="note-cell"></div>
+                </article>
+            {% endif %}
+        </div>
+    </section>
+    <!-- Navigation Options -->
+    <div class="view-mode">
+        <div class="view-mode-option">
+            <input type="radio" id="loadMoreOption" name="viewMode" value="loadMore">
+            <label for="loadMoreOption">Load More</label>
+        </div>
+        <div class="view-mode-option">
+            <input type="radio" id="paginationOption" name="viewMode" value="pagination">
+            <label for="paginationOption">Pagination</label>
+        </div>
+    </div>
+    <!-- Load More Section -->
+    <div id="loadMoreSection" class="load-more-section">
+        <button id="load-more"
+                class="button btn-load-more"
+                data-page="{{ page }}"
+                data-total="{{ total_pages }}">LOAD MORE</button>
+    </div>
+    <!-- Pagination Section -->
+    <div id="paginationSection" class="pagination-section is-hidden">
+        <div class="pagination">
+            {% if total_pages!=0 %}
+                <a href="{{ url_for('inbox', page=1) }}"><<</a>
+                {% if page > 1 %}
+                    <a href="{{ url_for('inbox', page=page-1) }}">Previous</a>
+                {% else %}
+                    <span>Previous</span>
+                {% endif %}
+                <span>{{ page }} of {{ total_pages }}</span>
+                {% if page < total_pages %}
+                    <a href="{{ url_for('inbox', page=page+1) }}">Next</a>
+                {% else %}
+                    <span>Next</span>
+                {% endif %}
+                <a href="{{ url_for('inbox', page=total_pages) }}">>></a>
+            {% elif search_str!="Search by message body or byline" %}
+                <span>No matches found!</span>
+            {% endif %}
+        </div>
+    </div>
+    <script>
 // Persistent toggle state across page loads
 document.addEventListener('DOMContentLoaded', function () {
   const loadMoreOption = document.getElementById('loadMoreOption');
@@ -239,9 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
     newNotes.forEach(note => notesList.appendChild(note));
 
     if (p >= t) {
-      this.outerHTML = `<button
-        disabled
-        class="btn-load-more">
+      this.outerHTML = `<button disabled class="btn-load-more">
         All messages loaded
       </button>`;
     } else {
@@ -286,33 +272,30 @@ document.querySelectorAll('a.fb-share').forEach(function (a) {
   });
 });
 
-</script>
-
-<h4 class="u-mt-xl">Manage your Inbox:</h4>
-
-<p>Below are some rudimentary account management tools, available, to you, today, for free!</p>
-<ul>
-  <li><a href="{{ url_for('archived_inbox') }}">Archived notes</a>.</li>
-  <li>Export your inbox!
-    <a href="{{ url_for('inbox_export', export_format='csv') }}">CSV</a>
-    .</li>
-  <li>
-    {% if is_email_enabled == True %}
-      To disable e-mail please click <a href="{{ url_for('disable_email') }}">here</a>.
-    {% elif  is_email_enabled != True %}
-      To enable e-mail please click <a href="{{ url_for('enable_email') }}">here</a>.
-    {%endif%}
-  </li>
-
-  <li>
-    {% if is_enabled == True %}
-      To disable your account please click <a href="{{ url_for('disable_inbox') }}">here</a>.
-    {% elif  is_enabled != True %}
-      To enable your account please click <a href="{{ url_for('enable_inbox') }}">here</a>.
-    {%endif%}
-  </li>
-</ul>
-
-<p><strong>Note:</strong> this website is a work in progress, and these settings will be moved to a separate settings page in the near future. If you'd like to help, send a pull request! :)</p>
-
+    </script>
+    <h4 class="u-mt-xl">Manage your Inbox:</h4>
+    <p>Below are some rudimentary account management tools, available, to you, today, for free!</p>
+    <ul>
+        <li><a href="{{ url_for('archived_inbox') }}">Archived notes</a>.</li>
+        <li>
+            Export your inbox!
+            <a href="{{ url_for('inbox_export', export_format='csv') }}">CSV</a>
+            .
+        </li>
+        <li>
+            {% if is_email_enabled == True %}
+                To disable e-mail please click <a href="{{ url_for('disable_email') }}">here</a>.
+            {% elif is_email_enabled != True %}
+                To enable e-mail please click <a href="{{ url_for('enable_email') }}">here</a>.
+            {% endif %}
+        </li>
+        <li>
+            {% if is_enabled == True %}
+                To disable your account please click <a href="{{ url_for('disable_inbox') }}">here</a>.
+            {% elif is_enabled != True %}
+                To enable your account please click <a href="{{ url_for('enable_inbox') }}">here</a>.
+            {% endif %}
+        </li>
+    </ul>
+    <p><strong>Note:</strong> this website is a work in progress, and these settings will be moved to a separate settings page in the near future. If you'd like to help, send a pull request! :)</p>
 {% endblock %}
