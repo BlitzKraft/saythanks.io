@@ -2,17 +2,17 @@
 
 1. Go to run (Windows + R) and type **appwiz.cpl**
 
-   > ![C:\Users\dinesh.p\Pictures\My Screen Shots\Screen Shot 04-16-21 at 12.39 PM.PNG](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.001.png)
+   > ![C:\Users\dinesh.p\Pictures\My Screen Shots\Screen Shot 04-16-21 at 12.39 PM.PNG](images/Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.001.png)
 
 2. Click Turn windows features on or off in the left hand side menu
 
 3. Check “Windows subsystem for Linux” and click OK. After the successful installation restart your PC.
 
-   > ![C:\Users\dinesh.p\Pictures\My Screen Shots\Screen Shot 04-16-21 at 12.39 PM 001.PNG](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.002.png)
+   > ![C:\Users\dinesh.p\Pictures\My Screen Shots\Screen Shot 04-16-21 at 12.39 PM 001.PNG](images/Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.002.png)
 
 4. Go to windows store and search for **Ubuntu 18** and install
 
-   > ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.003.jpeg)
+   > ![](images/Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.003.jpeg)
 
 5. During first run on Ubuntu, configure the user name and password
 
@@ -38,23 +38,23 @@
 
 8. Go to Auth0 login website - https://auth0.com/docs/login
 
-> ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.004.png)
+> ![](images/Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.004.png)
 
 9.  ` `Click Applications in the left hand side menu - > Applications - > Create Application - > Regular Web Applications -> Create
 
-    > ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.005.png)
+    > ![](images/Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.005.png)
 
 10. Open “Saythanks” application (Regular web applications) to get the below keys:
 
-    > ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.006.png)
+    > ![](images/Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.006.png)
 
 11. And add Call back URL as below (in the same page) and click “**Save**”:
 
-> ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.007.png)
+> ![](images/Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.007.png)
 
 12. Click APIs in Applications (Refer below image )and Create API
 
-    > ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.008.png)
+    > ![](images/Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.008.png)
 
 13. Click Auth0 Management API - > API Explorer - > Copy Token (AUTH0_JWT_V2_TOKEN)
 
@@ -64,7 +64,7 @@
 
 15. Generate a MailerSend API key with email sending permissions.
 
-> ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.009.jpeg)
+> ![](images/Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.009.jpeg)
 
 16. Make a copy of `sample.env` and save it as `.env`. Then update environmental variables values related to project in `.env` file.
 
@@ -77,7 +77,7 @@ MAILERSEND_API_KEY=your_api_key_here
 18. Go inside “postgres” installation path
 19. Configure password and create database in “Postgres” (Refer below image):
 
-    > ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.010.jpeg)
+    > ![](images/Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.010.jpeg)
 
 20. Download the schema.sql file from the link : “<https://github.com/BlitzKraft/saythanks.io/tree/master/saythanks/sqls>” and paste it in required local drive
 
@@ -88,7 +88,7 @@ MAILERSEND_API_KEY=your_api_key_here
 - Go to saythanks folder (Refer below image) -> and then Type
 - > `code .`
 
-  > ![](Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.011.jpeg)
+  > ![](images/Aspose.Words.a8e7dec5-037d-4b33-9c46-a86e9c3e100a.011.jpeg)
 
 - It will automatically open the project in Visual Source Code (VSC)
 
