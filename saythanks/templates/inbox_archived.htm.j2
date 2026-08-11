@@ -19,7 +19,10 @@
         <button type="submit" class="logoutLblPos">Log Out</button>
     </form>
     <img class="avatar" src="{{ user['picture'] }}" alt="User avatar">
-    <p><a href="{{ url_for("inbox") }}">Go to regular inbox</a>.</p>
+    <p>
+        <a href="{{ url_for("inbox") }}">Go to regular inbox</a>
+        .
+    </p>
     <hr>
     <p class="centered">
         <h3>Archived Notes:</h3>
@@ -48,7 +51,10 @@
             {% endfor %}
         </tbody>
     </table>
-    <p><a href="{{ url_for("inbox") }}">Go to regular inbox</a>.</p>
+    <p>
+        <a href="{{ url_for("inbox") }}">Go to regular inbox</a>
+        .
+    </p>
     <p>
         <strong>Note:</strong> this website is a work in progress, and these
         settings will be moved to a separate settings page in the near
