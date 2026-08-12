@@ -535,21 +535,15 @@ def callback_handling():
     user_info_url = f'https://{auth_domain}/api/v2/users/{user_info["sub"]}'
 
     user_detail_info = requests.get(user_info_url, headers=json_header).json()
-    if not isinstance(user_detail_info, dict):
-        user_detail_info = {}
 
     # Add the 'user_info' to Flask session.
-    session['profile'] = user_info if isinstance(user_info, dict) else {}
-    nickname = (
-        user_detail_info.get('nickname')
-        or user_info.get('nickname')
-        or (user_info.get('email') or '').split('@')[0]
-        or 'user'
-    )
-    email = user_detail_info.get('email') or user_info.get('email') or ''
-    userid = user_info.get('sub') or user_detail_info.get('user_id') or ''
-    picture = user_detail_info.get('picture') or user_info.get('picture') or ''
-    name = user_detail_info.get('name') or user_info.get('name') or nickname
+    session['profile'] = user_info
+
+    nickname = user_detail_info['nickname']
+    email = user_detail_info['email']
+    userid = user_info['sub']
+    picture = user_detail_info['picture']
+    name = user_detail_info['name']
     session['profile']['nickname'] = nickname
     session['profile']['picture'] = picture
     session['profile']['name'] = name
