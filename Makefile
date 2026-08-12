@@ -1,7 +1,7 @@
 .PHONY: init test lint run clean-pyc clean-build clean
 
-init:
-	pipenv install --dev
+#init:
+#	pipenv install --dev
 
 test:
 	pipenv run pytest --verbose --color=yes tests/
@@ -9,8 +9,8 @@ test:
 lint:
 	pipenv --python python run flake8 --exclude=.tox saythanks
 
-run:
-	pipenv run python saythanks/app.py
+#run:
+#	pipenv run python saythanks/app.py
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +

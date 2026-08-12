@@ -392,6 +392,17 @@ def clean_topic(t):
         return None
     return t.replace(' about ', '')
 
+def render_audio_html(audio_filename):
+    """HTML snippet linking to a stored recording. Empty string when no audio."""
+    if not audio_filename:
+        return ''
+    audio_url = url_for(
+        'static', filename='recordings/' + audio_filename, _external=True
+    )
+    return (
+        f'<div style="margin:10px 0 0"><strong>🎧 Voice Note:</strong> '
+        f'<a clicktracking=off href="{audio_url}" target="_blank">Click to listen</a></div>'
+    )
 
 @app.route('/to/<inbox_id>/submit', methods=['POST'], defaults={"topic": None})
 @app.route('/to/<inbox_id>/submit/<topic>', methods=['POST'])
@@ -422,9 +433,15 @@ def submit_note(inbox_id, topic):
             logger.exception("Failed to save audio file: %s", e)
             audio_filename = None
 
+    audio_html = render_audio_html(audio_filename)
     body = request.form['body']
     content_type = request.form['content-type']
     byline = Markup(request.form['byline']).striptags()
+    if session:
+        email_address = session['profile']['email']
+    else:
+        email_address = storage.Inbox.get_email(inbox_db.slug)
+
 
     # If the user chooses to send an HTML email,
     # the contents of the HTML document will be sent
@@ -451,39 +468,35 @@ def submit_note(inbox_id, topic):
             safe_attrs_only=True, remove_unknown_tags=True,
         )
         body = Markup(html_cleaner.clean_html(body))
+        body = Markup(body + Markup(audio_html)) # ← now part of the stored body
         # print("after markup", body)
         # Store the note first, so it gets a UUID
         submitted_note = inbox_db.submit_note(
             body=body, byline=byline, audio_path=audio_filename
         )
         if storage.Inbox.is_email_enabled(inbox_db.slug):
-            if session:
-                email_address = session['profile']['email']
-            else:
-                email_address = storage.Inbox.get_email(inbox_db.slug)
             # Now notify, so the note has a UUID for the public URL
-            submitted_note.notify(email_address, topic, audio_filename)
+            submitted_note.notify(email_address, topic)   # ← no audio_path
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
     body = markdown(body, extensions=['tables', 'fenced_code'])
     byline = Markup(request.form['byline']).striptags()
     # Assert that the body has length.
-    if not body:
-        # Pretend that it was successful.
+
+    # Emptiness check runs on the REAL body, before the audio snippet,
+    # otherwise an audio-only note with no text would slip past as "non-empty"
+    if not body and not audio_html:
         return redirect(url_for('thanks'))
 
-    # Store the incoming note to the database.
+    body = body + audio_html
+
     submitted_note = inbox_db.submit_note(
         body=body, byline=byline, audio_path=audio_filename
     )
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox_db.slug):
-        if session:
-            email_address = session['profile']['email']
-        else:
-            email_address = storage.Inbox.get_email(inbox_db.slug)
-        submitted_note.notify(email_address, topic, audio_filename)
+        submitted_note.notify(email_address, topic)
 
     return redirect(url_for('thanks'))
 

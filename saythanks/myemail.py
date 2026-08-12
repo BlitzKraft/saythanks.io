@@ -24,24 +24,17 @@ if not mailersend_api_key:
 else:
     mailer = emails.NewEmail(mailersend_api_key)
 
-TEMPLATE = """<div>{}
-<br>
-<br>
---{}
-<br>
-<br>
-The public URL for this note is <a clicktracking=off href="{}">here</a> <br>
-<br>
-<br>
-=========
-<br>
-<br>
-This note of gratitude was brought to you by SayThanks.io.
-<br>
-<br>
-A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
+TEMPLATE = """<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#222;max-width:600px">
+<div style="margin:0 0 12px">{}</div>
+<div style="margin:0 0 12px;color:#555">--{}</div>
+<div style="margin:0 0 16px">The public URL for this note is <a clicktracking=off href="{}">here</a></div>
+<hr style="border:0;border-top:1px solid #ddd;margin:16px 0">
+<div style="font-size:13px;color:#777;line-height:1.4">
+This note of gratitude was brought to you by SayThanks.io.<br>
+A KennethReitz project, now maintained by KGiSL Edu (<a clicktracking=off href="https://edu.kgisl.com">https://edu.kgisl.com</a>).
 </div>
-"""
+</div>
+""" 
 
 
 def _get_note_url(note):
@@ -66,45 +59,7 @@ def _get_note_url(note):
         return url_for('share_note', uuid=note.uuid, _external=True)
 
 
-def _get_audio_text(audio_path):
-    if not audio_path:
-        return ''
-    with current_app.app_context():
-        audio_url = url_for(
-            "static", filename="recordings/" + audio_path, _external=True
-        )
-    return f"\n\nVoice note: {audio_url}"
-
-
-def _get_audio_html(audio_path):
-    """Return an HTML snippet linking to a stored audio recording.
-
-    Parameters
-    - audio_path: filename of the audio in the 'static/recordings' folder,
-      or None if no audio is attached.
-
-    Returns
-    - str: HTML anchor snippet pointing to the recording, or an empty string
-      when no audio_path is provided.
-
-    Notes
-    - Uses Flask's url_for with _external=True to build an absolute URL.
-    """
-    if audio_path is None:
-        return ''
-    with current_app.app_context():
-        audio_url = url_for(
-            "static",
-            filename="recordings/" + audio_path,
-            _external=True
-        )
-    return (
-        f'<br><br><strong>🎧 Voice Note:</strong> '
-        f'<a href="{audio_url}" target="_blank">Click to listen</a>'
-    )
-
-
-def _build_email_content(note, note_url, audio_html, audio_text=''):
+def _build_email_content(note, note_url, audio_html='', audio_text=''):
     """Assemble HTML and plaintext email bodies.
 
     Parameters
@@ -119,7 +74,7 @@ def _build_email_content(note, note_url, audio_html, audio_text=''):
       - plaintext_content: plain text representation for fallback
     """
     who = note.byline or 'someone'
-    html_content = TEMPLATE.format(note.body + audio_html, note.byline, note_url)
+    html_content = TEMPLATE.format(note.body, note.byline, note_url)
     plaintext_content = (
         f"{note.body}\n\n--{note.byline or ''}{audio_text}\n\n{note_url}"
     )
@@ -202,11 +157,7 @@ def notify(note, email_address, topic=None, audio_path=None):
 
     try:
         note_url = _get_note_url(note)
-        audio_html = _get_audio_html(audio_path)
-        audio_text = _get_audio_text(audio_path)
-        who, html_content, plaintext_content = _build_email_content(
-            note, note_url, audio_html, audio_text
-        )
+        who, html_content, plaintext_content = _build_email_content(note, note_url)
 
         subject = (
             f'saythanks.io: {who} sent a note!'
@@ -239,3 +190,26 @@ def notify(note, email_address, topic=None, audio_path=None):
         print(e)
 
     return False
+
+
+# Deprecated TEMPLATE for reference, kept for backward compatibility
+'''
+TEMPLATE = """<div>{}
+<br>
+<br>
+--{}
+<br>
+<br>
+The public URL for this note is <a clicktracking=off href="{}">here</a> <br>
+<br>
+<br>
+=========
+<br>
+<br>
+This note of gratitude was brought to you by SayThanks.io.
+<br>
+<br>
+A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
+</div>
+"""
+'''

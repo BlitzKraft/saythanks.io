@@ -180,8 +180,8 @@ class Note:
                     '''
                     params['audio_path'] = self.audio_path
                 else:
-                    logger.error(
-                        "Audio path column not available - storing note without audio"
+                    logger.info(
+                        "Audio_path column absent; voice-note link is embedded in body"
                     )
 
             q = sqlalchemy.text(q)
