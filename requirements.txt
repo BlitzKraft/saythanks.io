@@ -37,7 +37,7 @@ requests
 ruamel.yaml
 mailersend
 six
-sqlalchemy<2.0.0
+sqlalchemy
 tablib
 tzlocal
 werkzeug

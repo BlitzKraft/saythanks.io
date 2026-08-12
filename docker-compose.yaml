@@ -11,11 +11,9 @@ services:
       - ./:/saythanks
     depends_on:
       - db
-    networks:
-      - saythanks
 
   db:
-    image: postgres:13
+    image: postgres
     container_name: local_pgdb
     restart: always
     ports:

@@ -111,8 +111,6 @@ logger = logging.getLogger(__name__)
 # ------------------
 
 app = Flask(__name__)
-# Enable ProxyFix to correctly handle X-Forwarded-* headers from tunneling services like ngrok
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1)
 app.config['APP_VERSION'] = get_version()
 app.config['FB_APP_ID'] = os.environ.get('FB_APP_ID', '1390341129685401')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
