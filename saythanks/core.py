@@ -149,7 +149,6 @@ def get_callback_url():
         return url_for('callback_handling', _external=True)
     return auth_callback_url or url_for('callback_handling', _external=True)
 
-
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):

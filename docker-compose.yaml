@@ -13,7 +13,7 @@ services:
       - db
 
   db:
-    image: postgres
+    image: postgres:13
     container_name: local_pgdb
     restart: always
     ports:
