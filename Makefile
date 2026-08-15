@@ -1,4 +1,4 @@
-.PHONY: init test lint run clean-pyc clean-build clean
+.PHONY: init test lint run clean-pyc clean-build clean djlint-reformat reformat djlint-reformat-win reformat2
 
 #init:
 #	pipenv install --dev
@@ -8,6 +8,16 @@ test:
 
 lint:
 	pipenv --python python run flake8 --exclude=.tox saythanks
+
+djlint-reformat:
+	find saythanks/templates -type f -name '*.htm.j2' -exec .venv/bin/djlint --reformat {} +
+
+djlint-reformat-win:
+	find saythanks/templates -type f -name '*.htm.j2' -exec djlint --reformat {} +
+
+reformat: djlint-reformat
+
+reformat2: djlint-reformat-win
 
 #run:
 #	pipenv run python saythanks/app.py
