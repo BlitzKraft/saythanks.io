@@ -153,6 +153,12 @@ auth_domain = os.environ['AUTH0_DOMAIN']
 auth_jwt_v2 = os.environ['AUTH0_JWT_V2_TOKEN']
 
 
+def get_callback_url():
+    """Return callback URL dynamically based on request host or env setting."""
+    if request and hasattr(request, 'host') and ('ngrok' in request.host or 'localhost' not in request.host):
+        return url_for('callback_handling', _external=True)
+    return auth_callback_url or url_for('callback_handling', _external=True)
+
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -183,7 +189,7 @@ def index():
 
     return render_template(
         'index.htm.j2',
-        callback_url=auth_callback_url,
+        callback_url=get_callback_url(),
         auth_id=auth_id,
         auth_domain=auth_domain,
     )
@@ -521,7 +527,7 @@ def callback_handling():
     token_payload = {
         'client_id': auth_id,
         'client_secret': auth_secret,
-        'redirect_uri': auth_callback_url,
+        'redirect_uri': get_callback_url(),
         'code': code,
         'grant_type': 'authorization_code',
     }
