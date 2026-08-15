@@ -112,7 +112,17 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.config['APP_VERSION'] = get_version()
-app.config['FB_APP_ID'] = os.environ.get('FB_APP_ID', '1390341129685401')
+
+PROD_FB_APP_ID = "1390341129685401"
+LOCAL_FB_APP_ID = "1784233182857453"
+
+is_production = os.environ.get("APP_ENV", "development") == "production"
+
+app.config["FB_APP_ID"] = os.environ.get(
+    "FB_APP_ID",
+    PROD_FB_APP_ID if is_production else LOCAL_FB_APP_ID,
+)
+
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.config['PREFERRED_URL_SCHEME'] = 'https'
 
