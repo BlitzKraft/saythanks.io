@@ -14,13 +14,19 @@
 <input type="hidden" id="username" value="{{ user['nickname'] }}">
 
 <div id="badge-modal" class="is-hidden">
-    <h4>The <strong>‘</strong><a>Say Thanks</a><strong>’</strong> badge<span class="green"><strong>.</strong></span></h4>
-    <select class="u-full-width" id="badge-format">
+    <h4>
+    The <strong>‘</strong><a>Say Thanks</a><strong>’</strong>
+    badge<span class="green"><strong>.</strong></span>
+</h4>
+<select class="u-full-width" id="badge-format">
         <option value="imageurl">Image URL</option>
         <option value="markdown">Markdown</option>
         <option value="rst">RST</option>
     </select>
-    <textarea onclick="this.select()" class="u-full-width" id="badgeCode">https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg</textarea>
+    <textarea onclick="this.select()" class="u-full-width"
+        id="badgeCode">
+      https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
+    </textarea>
 </div>
 
 <img class="avatar" src="{{ user['picture'] }}" width="100" alt="Avatar">
@@ -272,10 +278,11 @@ document.querySelectorAll('a.fb-share').forEach(function (a) {
   a.addEventListener('click', function (e) {
     e.preventDefault();
     if (typeof FB === 'undefined' || sdkFailed) {
-      window.open(
-        'https://www.facebook.com/dialog/share?app_id={{ config['FB_APP_ID'] }}&display=popup&href=' + encodeURIComponent(a.href) + '&redirect_uri=' + encodeURIComponent(a.href),
-        '_blank', 'noopener'
-      );
+      var url = 'https://www.facebook.com/dialog/share?' +
+        'app_id={{ config["FB_APP_ID"] }}&display=popup&href=' +
+        encodeURIComponent(a.href) + '&redirect_uri=' +
+        encodeURIComponent(a.href);
+      window.open(url, '_blank', 'noopener');
       return;
     }
     var options = { method: 'share', href: a.href };
@@ -313,6 +320,8 @@ document.querySelectorAll('a.fb-share').forEach(function (a) {
   </li>
 </ul>
 
-<p><strong>Note:</strong> this website is a work in progress, and these settings will be moved to a separate settings page in the near future. If you'd like to help, send a pull request! :)</p>
+<p><strong>Note:</strong> this website is a work in progress, and
+these settings will be moved to a separate settings page in the near
+future. If you'd like to help, send a pull request! :)</p>
 
 {% endblock %}
