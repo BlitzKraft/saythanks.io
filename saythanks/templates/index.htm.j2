@@ -3,97 +3,107 @@
 {% block title %}Spreading Thankfulness in Open Source{% endblock %}
 
 {% block content %}
-    <p align="center">
-     <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESI52Q7&placement=saythanksio" id="_carbonads_js"></script>
-     </p>
+  <p style="text-align: center;">
+    <script async
+            type="text/javascript"
+            src="//cdn.carbonads.com/carbon.js?serve=CESI52Q7&placement=saythanksio"
+            id="_carbonads_js"></script>
+  </p>
+
   <hr>
-    <h2>Spreading Thankfulness in Open Source&trade;</h2>
-    
-    <p>
-        <strong>SayThanks.io</strong> provides a handy URL for you to share
-        with your open source projects&mdash; it encourages users to send a simple thank you note to you, the creator of that project.
 
-    <p>
-        This simple link can be added to READMEs and project documentation.
+  <h2>Spreading Thankfulness in Open Source&trade;</h2>
+
+  <p>
+    <strong>SayThanks.io</strong> provides a handy URL for you to share
+    with your open source projects&mdash; it encourages users to send a simple
+    thank you note to you, the creator of that project.
+  </p>
+
+  <p>
+    This simple link can be added to READMEs and project documentation.
+  </p>
+
+  <p>
+    Then, you can enjoy a nice inbox of very small but thoughtful messages
+    from the happy users of the software that you've toiled over. :)
+  </p>
+
+  <hr>
+
+  <div class="row">
+    <p style="text-align: center;">
+      <img style="height: 25rem; margin-left: auto; margin-right: auto; margin-bottom: -3.5em;"
+           src="{{ url_for('static', filename='images/inbox.png') }}"
+           alt="Thankfulness Inbox of Love">
     </p>
 
-    <p>
-        Then, you can enjoy a nice inbox of very small but thoughtful messages
-        from the happy users of the software that you've toiled over. :)
-    </p>
-
-    <hr />
-
-    <div class="row">
-    <p style="text-align:center;">
-    <img style="height: 25rem; margin-left: auto; margin-right: auto; margin-bottom: -3.5em;" src="{{ url_for('static', filename='images/inbox.png') }}" alt="Thankfulness Inbox of Love">
-    </p>
     <div class="twelve u-textcenter">
-        <h3>Register Your Inbox of Thankfulness</h3>
+      <h3>Register Your Inbox of Thankfulness</h3>
 
-        <p>
-            Create an account to receive emails when users of your open source project say thanks!
-        </p>
-      
-        {# GitHub Auth button #}
+      <p>
+        Create an account to receive emails when users of your open source
+        project say thanks!
+      </p>
 
-        <script src="https://cdn.auth0.com/js/lock/11.33/lock.min.js"></script>
-        <script>
-            var options_signup = {
-              theme: {
-                logo: '{{ url_for('static', filename='images/owly.svg') }}',
-                primaryColor: '#3ac025',
-              },
-              allowSignUp: true,
-              allowLogin: false,
-              auth: {
-                redirectUrl: '{{ callback_url }}',
-                params: {
-                  scope: 'openid email name picture'
-                },
-              }
+      {# GitHub Auth button #}
+      <script src="https://cdn.auth0.com/js/lock/11.33/lock.min.js"></script>
+      <script>
+        var options_signup = {
+          theme: {
+            logo: '{{ url_for('static', filename='images/owly.svg') }}',
+            primaryColor: '#3ac025'
+          },
+          allowSignUp: true,
+          allowLogin: false,
+          auth: {
+            redirectUrl: '{{ callback_url }}',
+            params: {
+              scope: 'openid email name picture'
             }
+          }
+        };
 
-            var options_signin = {
-              theme: {
-                logo: '{{ url_for('static', filename='images/owly.svg') }}',
-                primaryColor: '#3ac025'
-              },
-              allowSignUp: false,
-              allowLogin: true,
-              auth: {
-                redirectUrl: '{{ callback_url }}',
-                params: {
-                  scope: 'openid email name picture'
-                }
-              }
+        var options_signin = {
+          theme: {
+            logo: '{{ url_for('static', filename='images/owly.svg') }}',
+            primaryColor: '#3ac025'
+          },
+          allowSignUp: false,
+          allowLogin: true,
+          auth: {
+            redirectUrl: '{{ callback_url }}',
+            params: {
+              scope: 'openid email name picture'
             }
-            var lock1 = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options_signup);
-            var lock2 = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options_signin);
-        </script>
+          }
+        };
 
+        var lock1 = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options_signup);
+        var lock2 = new Auth0Lock('{{ auth_id }}', '{{ auth_domain }}', options_signin);
+      </script>
 
+      <button class="button button-primary" type="button" onClick="lock1.show();">
+        Create Your Thankfulness Inbox
+      </button>
 
-        <button class="button button-primary" type="submit" onClick="lock1.show();">Create Your Thankfulness Inbox</button>
+      <span>or...</span>
 
-        <span>or...</span>
-
-        <button class="button" type="submit" onClick="lock2.show();">Access Your Thankfulness Inbox</button>
-
+      <button class="button" type="button" onClick="lock2.show();">
+        Access Your Thankfulness Inbox
+      </button>
     </div>
-    </div>
+  </div>
 
-    <hr>
+  <hr>
 
-    <p>
-        This is an open source project, and its code is being actively
-        developed in the open <a href="https://github.com/BlitzKraft/saythanks.io">on GitHub</a>.
-        <br>
-        Oh, and if you like this project, try <a href="https://saythanks.io/to/lifebalance&saythanks">saying thanks</a> to its maintainer!
-        <br>
-    </p>
-
-    </hr>
-
-
+  <p>
+    This is an open source project, and its code is being actively
+    developed in the open
+    <a href="https://github.com/BlitzKraft/saythanks.io">on GitHub</a>.
+    <br>
+    Oh, and if you like this project, try
+    <a href="https://saythanks.io/to/lifebalance&saythanks">saying thanks</a>
+    to its maintainer!
+  </p>
 {% endblock %}
