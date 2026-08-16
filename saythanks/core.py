@@ -112,7 +112,17 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.config['APP_VERSION'] = get_version()
-app.config['FB_APP_ID'] = os.environ.get('FB_APP_ID', '1390341129685401')
+
+PROD_FB_APP_ID = "1390341129685401"
+LOCAL_FB_APP_ID = "1784233182857453"
+
+is_production = os.environ.get("APP_ENV", "development") == "production"
+
+app.config["FB_APP_ID"] = os.environ.get(
+    "FB_APP_ID",
+    PROD_FB_APP_ID if is_production else LOCAL_FB_APP_ID,
+)
+
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.config['PREFERRED_URL_SCHEME'] = 'https'
 
@@ -142,6 +152,12 @@ auth_callback_url = os.environ['AUTH0_CALLBACK_URL']
 auth_domain = os.environ['AUTH0_DOMAIN']
 auth_jwt_v2 = os.environ['AUTH0_JWT_V2_TOKEN']
 
+
+def get_callback_url():
+    """Return callback URL dynamically based on request host or env setting."""
+    if request and hasattr(request, 'host') and ('ngrok' in request.host or 'localhost' not in request.host):
+        return url_for('callback_handling', _external=True)
+    return auth_callback_url or url_for('callback_handling', _external=True)
 
 def requires_auth(f):
     @wraps(f)
@@ -173,7 +189,7 @@ def index():
 
     return render_template(
         'index.htm.j2',
-        callback_url=auth_callback_url,
+        callback_url=get_callback_url(),
         auth_id=auth_id,
         auth_domain=auth_domain,
     )
@@ -511,7 +527,7 @@ def callback_handling():
     token_payload = {
         'client_id': auth_id,
         'client_secret': auth_secret,
-        'redirect_uri': auth_callback_url,
+        'redirect_uri': get_callback_url(),
         'code': code,
         'grant_type': 'authorization_code',
     }

@@ -1,82 +1,103 @@
 {% extends "base.htm.j2" %}
 {% block title %}Say Thank You{% endblock %}
 {% block content %}
-    {% set submit_url = url_for('display_submit_note', inbox_id=user['nickname']) %}
-    {% set submit_url_abs = url_for('display_submit_note', inbox_id=user['nickname'], _external=True) %}
-    <form action="./logout" method="POST">
-        <button type="submit" class="logoutLblPos">Log Out</button>
-    </form>
-    <input type="hidden" id="username" value="{{ user['nickname'] }}">
-    <div id="badge-modal" class="is-hidden">
-        <h4>The <strong>‘</strong><a>Say Thanks</a><strong>’</strong> badge<span class="green"><strong>.</strong></span></h4>
-        <select class="u-full-width" id="badge-format">
-            <option value="imageurl">Image URL</option>
-            <option value="markdown">Markdown</option>
-            <option value="rst">RST</option>
-        </select>
-        <textarea onclick="this.select()" class="u-full-width" id="badgeCode">https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg</textarea>
-    </div>
-    <img class="avatar" src="{{ user['picture'] }}" width="100" alt="Avatar">
-    <h2>Welcome, {{ user['name'] }}!</h2>
-    <p>
-        You may now direct your users (in a README or documentation, for example)
-        to <a href="{{ submit_url }}">this URL</a>, where they can submit a note of thankfulness:
-    </p>
-    <hr>
-    <div class="sixteen columns">
-        <div class="two columns u-mt-sm">
-            <p><strong>Buttons & Links:</strong></p>
-        </div>
-        <div class="three columns">
-            <a href="{{ submit_url }}">
-                <button class="button">Say Thanks!</button>
-            </a>
-        </div>
-        <div class="three columns u-mt-sm">
-            <a href="#badge-modal" rel="modal:open">
-                <img src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg" />
-            </a>
-        </div>
-        <div class="u-mt-sm">
-            <a href="{{ submit_url }}">Say Thanks!</a>
-        </div>
-        <div class="qr-code">
-            <img src="{{ qrcode(submit_url_abs) }}" width="100">
-        </div>
-    </div>
-    <hr class="hr-section">
-    <h3 class="u-textcenter">Notes of Thankfulness:</h3>
-    <form class="search-form"
-          action="{{ url_for('inbox_search') }}"
-          method="POST">
-        <input type="text"
-               size="30"
-               placeholder="{{ search_str }}"
-               name="search_str">
-        <button class="search-submit" type="submit">Search</button>
-        <button type="submit" name="clear" value="true">Clear</button>
-    </form>
-    <section class="notes-grid">
-        <header class="notes-header">
-            <div class="header-cell" id="share">Share URL</div>
-            <div class="header-cell" id="message">Message</div>
-            <div class="header-cell" id="from">From</div>
-            <div class="header-cell" id="timestamp">Timestamp</div>
-            <div class="header-cell"></div>
-        </header>
-        <div class="notes-list">
-            {% for note in notes %}
-                {% set share_url_abs = url_for('share_note', uuid=note.uuid, _external=True) %}
-                <article class="note-item">
-                    <div class="note-cell">
-                        <a class="share" href="{{ url_for('share_note', uuid=note.uuid) }}">🔗</a>
-                        <br>
-                        <a class="x-share"
-                           target="_blank"
-                           rel="noopener"
-                           aria-label="Share on X"
-                           title="Share on X"
-                           href="https://twitter.com/intent/tweet?text={{
+
+{% set submit_url = url_for('display_submit_note', inbox_id=user['nickname']) %}
+{% set submit_url_abs = url_for('display_submit_note', inbox_id=user['nickname'], _external=True) %}
+
+<form action="./logout" method="POST">
+<button type="submit" class="logoutLblPos" >Log Out</button>
+</form>
+
+<input type="hidden" id="username" value="{{ user['nickname'] }}">
+
+<div id="badge-modal" class="is-hidden">
+    <h4>
+    The <strong>‘</strong><a>Say Thanks</a><strong>’</strong>
+    badge<span class="green"><strong>.</strong></span>
+</h4>
+<select class="u-full-width" id="badge-format">
+        <option value="imageurl">Image URL</option>
+        <option value="markdown">Markdown</option>
+        <option value="rst">RST</option>
+    </select>
+    <textarea onclick="this.select()" class="u-full-width"
+        id="badgeCode">
+      https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
+    </textarea>
+</div>
+
+<img class="avatar" src="{{ user['picture'] }}" width="100" alt="Avatar">
+<h2>Welcome, {{ user['name'] }}!</h2>
+
+<p>
+    You may now direct your users (in a README or documentation, for example)
+    to <a href="{{ submit_url }}">this URL</a>, where they can submit a note of thankfulness:
+</p>
+<hr>
+
+<div class="sixteen columns">
+
+  <div class="two columns u-mt-sm">
+  <p><strong>Buttons & Links:</strong></p>
+  </div>
+
+  <div class="three columns">
+  <a href="{{ submit_url }}">
+      <button class="button">
+          Say Thanks!
+      </button>
+  </a>
+  </div>
+
+  <div class="three columns u-mt-sm">
+  <a href="#badge-modal" rel="modal:open">
+      <img src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg" />
+  </a>
+  </div>
+
+  <div class="u-mt-sm">
+  <a href="{{ submit_url }}">
+      Say Thanks!
+  </a>
+  </div>
+
+  <div class="qr-code">
+     <img src="{{ qrcode(submit_url_abs) }}" width="100">
+  </div>
+
+</div>
+
+<hr class="hr-section">
+
+<h3 class="u-textcenter">Notes of Thankfulness:</h3>
+
+<form class="search-form" action="{{ url_for('inbox_search') }}" method="POST">
+  <input type="text" size="30" placeholder="{{ search_str }}" name="search_str">
+    <button class="search-submit" type="submit">Search</button>
+    <button type="submit" name="clear" value="true">Clear</button>
+</form>
+
+<section class="notes-grid">
+  <header class="notes-header">
+    <div class="header-cell" id="share">Share URL</div>
+    <div class="header-cell" id="message">Message</div>
+    <div class="header-cell" id="from">From</div>
+    <div class="header-cell" id="timestamp">Timestamp</div>
+    <div class="header-cell"></div>
+  </header>
+
+  <div class="notes-list">
+  {% for note in notes %}
+    {% set share_url_abs = url_for('share_note', uuid=note.uuid, _external=True) %}
+    <article class="note-item">
+      <div class="note-cell">
+        <a class="share" href="{{ url_for('share_note', uuid=note.uuid)}}">🔗</a><br>
+
+        <a class="x-share"
+           target="_blank" rel="noopener"
+           aria-label="Share on X" title="Share on X"
+           href="https://twitter.com/intent/tweet?text={{
              (note.body|strip_html + '\n- ' + note.byline + '\n' + share_url_abs)
              |urlencode
            }}&hashtags=SayThanks">
@@ -258,10 +279,11 @@ document.querySelectorAll('a.fb-share').forEach(function (a) {
   a.addEventListener('click', function (e) {
     e.preventDefault();
     if (typeof FB === 'undefined' || sdkFailed) {
-      window.open(
-        'https://www.facebook.com/dialog/share?app_id={{ config['FB_APP_ID'] }}&display=popup&href=' + encodeURIComponent(a.href) + '&redirect_uri=' + encodeURIComponent(a.href),
-        '_blank', 'noopener'
-      );
+      var url = 'https://www.facebook.com/dialog/share?' +
+        'app_id={{ config["FB_APP_ID"] }}&display=popup&href=' +
+        encodeURIComponent(a.href) + '&redirect_uri=' +
+        encodeURIComponent(a.href);
+      window.open(url, '_blank', 'noopener');
       return;
     }
     var options = { method: 'share', href: a.href };
@@ -272,30 +294,35 @@ document.querySelectorAll('a.fb-share').forEach(function (a) {
   });
 });
 
-    </script>
-    <h4 class="u-mt-xl">Manage your Inbox:</h4>
-    <p>Below are some rudimentary account management tools, available, to you, today, for free!</p>
-    <ul>
-        <li><a href="{{ url_for('archived_inbox') }}">Archived notes</a>.</li>
-        <li>
-            Export your inbox!
-            <a href="{{ url_for('inbox_export', export_format='csv') }}">CSV</a>
-            .
-        </li>
-        <li>
-            {% if is_email_enabled == True %}
-                To disable e-mail please click <a href="{{ url_for('disable_email') }}">here</a>.
-            {% elif is_email_enabled != True %}
-                To enable e-mail please click <a href="{{ url_for('enable_email') }}">here</a>.
-            {% endif %}
-        </li>
-        <li>
-            {% if is_enabled == True %}
-                To disable your account please click <a href="{{ url_for('disable_inbox') }}">here</a>.
-            {% elif is_enabled != True %}
-                To enable your account please click <a href="{{ url_for('enable_inbox') }}">here</a>.
-            {% endif %}
-        </li>
-    </ul>
-    <p><strong>Note:</strong> this website is a work in progress, and these settings will be moved to a separate settings page in the near future. If you'd like to help, send a pull request! :)</p>
+</script>
+
+<h4 class="u-mt-xl">Manage your Inbox:</h4>
+
+<p>Below are some rudimentary account management tools, available, to you, today, for free!</p>
+<ul>
+  <li><a href="{{ url_for('archived_inbox') }}">Archived notes</a>.</li>
+  <li>Export your inbox!
+    <a href="{{ url_for('inbox_export', export_format='csv') }}">CSV</a>
+    .</li>
+  <li>
+    {% if is_email_enabled == True %}
+      To disable e-mail please click <a href="{{ url_for('disable_email') }}">here</a>.
+    {% elif  is_email_enabled != True %}
+      To enable e-mail please click <a href="{{ url_for('enable_email') }}">here</a>.
+    {%endif%}
+  </li>
+
+  <li>
+    {% if is_enabled == True %}
+      To disable your account please click <a href="{{ url_for('disable_inbox') }}">here</a>.
+    {% elif  is_enabled != True %}
+      To enable your account please click <a href="{{ url_for('enable_inbox') }}">here</a>.
+    {%endif%}
+  </li>
+</ul>
+
+<p><strong>Note:</strong> this website is a work in progress, and
+these settings will be moved to a separate settings page in the near
+future. If you'd like to help, send a pull request! :)</p>
+
 {% endblock %}

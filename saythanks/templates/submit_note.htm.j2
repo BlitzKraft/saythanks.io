@@ -3,7 +3,7 @@
 {% block extra_head %}
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
     <link rel="stylesheet"
-          href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+          href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
     <style>
       #counter {
         color: red;
@@ -23,132 +23,120 @@
     </style>
 {% endblock %}
 {% block content %}
-    <form action="../logout" method="POST">
-        <button type="submit" class="logoutLblPos">Log Out</button>
-    </form>
-    <h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong>{{ topic }}!</h4>
-    <form id="thankyou-note-form"
-          class="form-horizontal"
-          action="./{{ user|urlencode }}/submit{{ '/' ~ topic if topic else '' }}"
-          method="post">
-        <div class="form-row"
-             style="display:flex;
-                    align-items:center;
-                    gap:1rem;
-                    flex-wrap:nowrap">
-            <label for="fontstyle" style="white-space:nowrap;">Font Style:</label>
-            <select name="font_style" id="fontstyle" onchange="fontforinbox(this);">
-                <option value="0">Regular</option>
-                <option value="1">Times New Roman</option>
-                <option value="2">Verdana</option>
-                <option value="3">Tahoma</option>
-                <option value="4">Georgia</option>
-                <option value="5">Trebuchet MS</option>
-            </select>
-            <fieldset aria-label="Content Type"
-                      style="border:0;
-                             padding:0;
-                             margin:0;
-                             display:flex;
-                             align-items:center;
-                             gap:0.75rem">
-                <legend style="font-size:0.95rem;margin:0 0.5rem 0 0; white-space:nowrap;">Content Type:</legend>
-                <label for="option1"
-                       style="display:inline-flex;
-                              align-items:center;
-                              gap:0.4rem;
-                              white-space:nowrap">
-                    <input type="radio"
-                           name="content-type"
-                           id="option1"
-                           value="markdown"
-                           checked>
-                    Plain Text / Markdown
-                </label>
-                <label for="option2"
-                       style="display:inline-flex;
-                              align-items:center;
-                              gap:0.4rem;
-                              white-space:nowrap">
-                    <input type="radio" name="content-type" id="option2" value="html">
-                    HTML
-                </label>
-            </fieldset>
-        </div>
-        <fieldset>
-            <!-- Form Name -->
-            <legend>❝ THANK YOU ❞</legend>
-            <h6>You have written <strong><span id=counter>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
-            <div id="suggestion-templates" style="margin-bottom: 1em;">
-                <strong>Need inspiration?</strong>
-                <button type="button"
-                        class="suggestion-btn"
-                        data-message="Thank you for always being so helpful!">Thankful</button>
-                <button type="button"
-                        class="suggestion-btn"
-                        data-message="Your support means a lot to me.">Gratitude</button>
-                <button type="button"
-                        class="suggestion-btn"
-                        data-message="I appreciate your hard work and dedication.">Admiration</button>
-                <button type="button"
-                        class="suggestion-btn"
-                        data-message="Some things were not clear and left me confused.">Confusing</button>
-                <button type="button"
-                        class="suggestion-btn"
-                        data-message="It would help if you did the following:">Actionable</button>
-            </div>
-            <!-- Textarea -->
-            <div class="form-group">
-                <div class="col-md-4">
-                    <div id="editor"></div>
-                </div>
-            </div>
-            <!-- Voice Recording part -->
-            <div style="margin: 1em 0;">
-                <button type="button" id="recordBtn">🗣️ Say Something!</button>
-                <label for="audioFileInput"
-                       id="audioFilePickerLabel"
-                       style="margin-left: 0.5rem">📁 Use Mobile Mic / Audio File</label>
-                <input id="audioFileInput"
-                       type="file"
-                       accept="audio/*"
-                       capture="environment"
-                       style="display: none">
-                <audio id="audioPreview" controls style="display: none; margin-top: 10px;"></audio>
-                <p id="recordingStatus" style="color: green; font-weight: bold;"></p>
-            </div>
-            <h6>You have written <strong><span id=counter1>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
-            <!-- Text input-->
-            <div class="form-group">
-                <label class="col-md-4 control-label" for="byline">Sincerely,</label>
-                <div class="col-md-4">
-                    <input class='notebodyfont'
-                           id="byline"
-                           class="u-full-width"
-                           name="byline"
-                           type="text"
-                           placeholder="{{ fake_name }}"
-                           class="form-control input-md">
-                </div>
-            </div>
-            <!-- Button -->
-            <div class="form-group">
-                <label class="col-md-4 control-label" for="send-note-btn"></label>
-                <div class="col-md-4">
-                    <button id="send-note-btn" class="btn button-primary" type="submit">
-                        Send Note
-                        <img id="eve-send"
-                             src="{{ url_for('static', filename='images/owly.svg') }}"
-                             alt="Eve the Owl">
-                    </button>
-                </div>
-            </div>
-            <h2>🝐</h2>
-        </fieldset>
-    </form>
-    <script>
+
+
+<form action="../logout" method="POST">
+<button type="submit" class="logoutLblPos" >Log Out</button>
+</form>
+
+<h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong>{{ topic }}!</h4>
+
+
+<form id="thankyou-note-form" class="form-horizontal"
+      action="./{{ user|urlencode }}/submit{{ '/' ~ topic if topic else '' }}"
+      method="post">
+<div class="form-row" style="display:flex; align-items:center; gap:1rem; flex-wrap:nowrap;">
+  <label for="fontstyle" style="white-space:nowrap;">Font Style:</label>
+  <select name="font_style" id="fontstyle" onchange="fontforinbox(this);">
+    <option value="0">Regular</option>
+    <option value="1">Times New Roman</option>
+    <option value="2">Verdana</option>
+    <option value="3">Tahoma</option>
+    <option value="4">Georgia</option>
+    <option value="5">Trebuchet MS</option>
+  </select>
+
+  <fieldset aria-label="Content Type" style="border:0;padding:0;margin:0; display:flex; align-items:center; gap:0.75rem;">
+    <legend style="font-size:0.95rem;margin:0 0.5rem 0 0; white-space:nowrap;">Content Type:</legend>
+    <label for="option1" style="display:inline-flex;align-items:center;gap:0.4rem; white-space:nowrap;">
+      <input type="radio" name="content-type" id="option1" value="markdown" checked>
+      Plain Text / Markdown
+    </label>
+    <label for="option2" style="display:inline-flex;align-items:center;gap:0.4rem; white-space:nowrap;">
+      <input type="radio" name="content-type" id="option2" value="html">
+      HTML
+    </label>
+  </fieldset>
+</div>
+
+
+<fieldset>
+
+<!-- Form Name -->
+<legend>❝ THANK YOU ❞ </legend>
+
+<h6>You have written <strong><span id=counter>0</span></strong>
+thoughtful words, so far… (shoot for 42!)</h6>
+
+<div id="suggestion-templates" style="margin-bottom: 1em;">
+  <strong>Need inspiration?</strong>
+  <button type="button" class="suggestion-btn" 
+    data-message="Thank you for always being so helpful!">Thankful</button>
+  <button type="button" class="suggestion-btn" 
+    data-message="Your support means a lot to me.">Gratitude</button>
+  <button type="button" class="suggestion-btn" 
+    data-message="I appreciate your hard work and dedication.">Admiration</button>
+  <button type="button" class="suggestion-btn" 
+    data-message="Some things were not clear and left me confused.">Confusing</button>
+  <button type="button" class="suggestion-btn" 
+    data-message="It would help if you did the following:">Actionable</button>
+  
+</div>
+
+
+<!-- Textarea -->
+<div class="form-group">
+  <div class="col-md-4">
+    <div id="editor"></div>
+  </div>
+</div>
+
+<!-- Voice Recording part -->
+<div style="margin: 1em 0;">
+  <button type="button" id="recordBtn">🗣️ Say Something!</button>
+  <label for="audioFileInput" id="audioFilePickerLabel" style="margin-left: 0.5rem;">
+    📁 Use Mobile Mic / Audio File
+  </label>
+  <input id="audioFileInput" type="file" accept="audio/*" capture="environment" style="display: none;">
+  <audio id="audioPreview" controls style="display: none; margin-top: 10px;"></audio>
+  <p id="recordingStatus" style="color: green; font-weight: bold;"></p>
+</div>
+
+
+
+<h6>You have written <strong><span id=counter>0</span></strong>
+thoughtful words, so far… (shoot for 42!)</h6>
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="byline">
+    Sincerely,
+  </label>
+  <div class="col-md-4">
+    <input class='notebodyfont' id="byline"
+           class="u-full-width" name="byline" type="text"
+           placeholder="{{ fake_name }}"
+           class="form-control input-md">
+  </div>
+</div>
+
+<!-- Button -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="send-note-btn"></label>
+  <div class="col-md-4">
+    <button id="send-note-btn" class="btn button-primary" type="submit">Send Note
+      <img id="eve-send" src="{{ url_for('static', filename='images/owly.svg') }}" alt="Eve the Owl">
+    </button>
+  </div>
+</div>
+<h2>🝐</h2>
+</fieldset>
+</form>
+
+
+<script>
   function wordCount(data) {
-    var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
+    var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|/g +
+      /[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
     var m = data.match(pattern);
     var count = 0;
     if(m === null) return count;
@@ -185,7 +173,9 @@
 
     // Add recorded audio if available
     if (audioBlob) {
-        const audioFileName = audioBlob.name || (audioBlob.type && audioBlob.type.includes('mp4') ? 'voice_note.m4a' : 'voice_note.webm');
+        const isMP4 = audioBlob.type && audioBlob.type.includes('mp4');
+        const audioFileName = audioBlob.name || 
+                              (isMP4 ? 'voice_note.m4a' : 'voice_note.webm');
         formData.append('audio', audioBlob, audioFileName);
     } else if (audioFileInput.files.length > 0) {
         const file = audioFileInput.files[0];
