@@ -4,7 +4,8 @@
 
 {% block extra_head %} 
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <link rel="stylesheet"
+          href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
     <style>
       #counter {
         color: red;
@@ -68,7 +69,8 @@
 <!-- Form Name -->
 <legend>❝ THANK YOU ❞ </legend>
 
-<h6>You have written <strong><span id=counter>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
+<h6>You have written <strong><span id=counter>0</span></strong>
+thoughtful words, so far… (shoot for 42!)</h6>
 
 <div id="suggestion-templates" style="margin-bottom: 1em;">
   <strong>Need inspiration?</strong>
@@ -106,12 +108,18 @@
 
 
 
-<h6>You have written <strong><span id=counter1>0</span></strong> thoughtful words, so far… (shoot for 42!)</h6>
+<h6>You have written <strong><span id=counter>0</span></strong>
+thoughtful words, so far… (shoot for 42!)</h6>
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="byline">Sincerely, </label>
+  <label class="col-md-4 control-label" for="byline">
+    Sincerely,
+  </label>
   <div class="col-md-4">
-  <input class='notebodyfont' id="byline" class="u-full-width" name="byline" type="text" placeholder="{{ fake_name }}" class="form-control input-md">
+    <input class='notebodyfont' id="byline"
+           class="u-full-width" name="byline" type="text"
+           placeholder="{{ fake_name }}"
+           class="form-control input-md">
   </div>
 </div>
 
@@ -131,7 +139,8 @@
 
 <script>
   function wordCount(data) {
-    var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
+    var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|/g +
+      /[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
     var m = data.match(pattern);
     var count = 0;
     if(m === null) return count;
@@ -168,7 +177,9 @@
 
     // Add recorded audio if available
     if (audioBlob) {
-        const audioFileName = audioBlob.name || (audioBlob.type && audioBlob.type.includes('mp4') ? 'voice_note.m4a' : 'voice_note.webm');
+        const isMP4 = audioBlob.type && audioBlob.type.includes('mp4');
+        const audioFileName = audioBlob.name || 
+                              (isMP4 ? 'voice_note.m4a' : 'voice_note.webm');
         formData.append('audio', audioBlob, audioFileName);
     } else if (audioFileInput.files.length > 0) {
         const file = audioFileInput.files[0];
