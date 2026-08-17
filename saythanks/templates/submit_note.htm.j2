@@ -230,6 +230,8 @@ thoughtful words, so far… (shoot for 42!)</h6>
   let recorder;
   let audioBlob;
   let mediaStream;
+  let recordingTimeout;
+  const maxRecordingTime = {{ max_recording_time | default(30) }} * 1000;
 
   const recordBtn = document.getElementById('recordBtn');
   const audioPreview = document.getElementById('audioPreview');
@@ -253,8 +255,24 @@ thoughtful words, so far… (shoot for 42!)</h6>
     }
 
     const selectedFile = audioFileInput.files[0];
-    audioBlob = selectedFile;
-    showAudioPreview(selectedFile, selectedFile.name);
+    
+    // Create an audio element to measure the duration of the uploaded file
+    const audioObj = new Audio(URL.createObjectURL(selectedFile));
+    audioObj.onloadedmetadata = () => {
+      const durationSecs = audioObj.duration;
+      if (durationSecs > (maxRecordingTime / 1000)) {
+        recordingStatus.innerText = `Warning: Voice note is ${Math.round(durationSecs)}s long. It exceeds the ${maxRecordingTime / 1000}s limit. Unable to submit.`;
+        recordingStatus.style.color = "red";
+        document.getElementById("send-note-btn").disabled = true;
+        audioPreview.style.display = 'none';
+        audioBlob = null;
+      } else {
+        recordingStatus.style.color = "";
+        document.getElementById("send-note-btn").disabled = false;
+        audioBlob = selectedFile;
+        showAudioPreview(selectedFile, selectedFile.name);
+      }
+    };
   });
 
   recordBtn.addEventListener('click', async () => {
@@ -303,8 +321,21 @@ thoughtful words, so far… (shoot for 42!)</h6>
 
         recorder.start();
         recording = true;
+        
+        // Re-enable submit button in case it was disabled by a bad file upload earlier
+        document.getElementById("send-note-btn").disabled = false;
+        recordingStatus.style.color = "";
         recordBtn.innerText = '🛑 Stop Recording';
-        recordingStatus.innerText = 'Recording...';
+        recordingStatus.innerText = `Recording... (Max ${maxRecordingTime / 1000}s)`;
+        
+        recordingTimeout = setTimeout(() => {
+          if (recording) {
+            recorder.stop();
+            recording = false;
+            recordBtn.innerText = '🗣️ Say Something!';
+            recordingStatus.innerText = 'Time limit reached. Voice note ready to submit.';
+          }
+        }, maxRecordingTime + 500); // Add 500ms buffer so UI preview rounds to exactly 30s
       } catch (err) {
         alert('Microphone access denied or not supported on this device. Use the audio picker to attach a voice note instead.');
         console.error(err);
@@ -313,6 +344,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
       recorder.stop();
       recording = false;
       recordBtn.innerText = '🗣️ Say Something!';
+      clearTimeout(recordingTimeout);
     }
   });
 
