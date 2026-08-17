@@ -11,6 +11,7 @@ This simple button/link can be added to READMEs and project documentation.
 The author can then enjoy a nice inbox (ideally) filled with very small, thoughtful messages from the happy users of the software they enjoy to toil over.
 
 ## Recent Improvements
+- **Live Email Preview + Templates:** Added pre-defined templates for users to send. Users can now view their email as a live preview of what will be sent to the recipient before sending the actual email. This change addresses UX demands and adds quality-of-life functionality for the user.
 
 - **Email Delivery Provider Updated:** Migrated transactional email delivery from SendGrid to MailerSend for improved deliverability, modern API support, and more reliable service. This change addresses recent deliverability issues and leverages MailerSend’s robust features for transactional messaging.
 - Learn more here (https://github.com/mailersend/mailersend-python?tab=readme-ov-file#send-a-template-based-email)
