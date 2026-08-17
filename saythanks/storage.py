@@ -64,7 +64,7 @@ class Note:
             if self.body
             else "<Note is (empty)>".strip()
         )
-    
+
     @classmethod
     def fetch(cls, uuid):
         """Retrieve a Note from the database by UUID.
