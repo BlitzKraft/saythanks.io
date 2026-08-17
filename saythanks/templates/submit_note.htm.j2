@@ -18,10 +18,54 @@
       /* Set font size and fixed font family for Toast UI Editor content */
      .toastui-editor-defaultUI .toastui-editor-contents,
      .toastui-editor-defaultUI .toastui-editor-md-preview-content,
-     .toastui-editor-defaultUI .ProseMirror {
+      .toastui-editor-defaultUI .ProseMirror {
         font-size: 16px !important;
         font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', 'Liberation Mono', monospace !important;
       }
+      .email-preview-label {
+        font-size: 0.9rem;
+        color: #555;
+        margin: 0.75rem 0 0.35rem;
+      }
+      .email-preview-frame {
+        max-width: 600px;
+        padding: 12px 14px;
+        background: #fff;
+        color: #222;
+        font-size: 15px;
+        line-height: 1.5;
+        border: 1px solid #ddd;
+      }
+      .email-preview--classic .email-preview-kicker { display: none; }
+      .email-preview--classic .email-preview-equals { display: block; margin: 16px 0; }
+      .email-preview--classic .email-preview-hr { display: none; }
+      .email-preview--compact .email-preview-frame {
+        font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      }
+      .email-preview--compact .email-preview-kicker { display: none; }
+      .email-preview--compact .email-preview-equals { display: none; }
+      .email-preview--compact .email-preview-hr {
+        display: block;
+        border: 0;
+        border-top: 1px solid #ddd;
+        margin: 16px 0;
+      }
+      .email-preview--letter .email-preview-card {
+        border: 1px solid #e5e5e5;
+        border-left: 4px solid #1EAEDB;
+        padding: 16px 20px;
+      }
+      .email-preview--letter .email-preview-kicker {
+        display: block;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #1EAEDB;
+        margin: 0 0 12px;
+      }
+      .email-preview--letter .email-preview-equals { display: none; }
+      .email-preview--letter .email-preview-hr { display: none; }
+      .email-preview-footer { font-size: 13px; color: #777; line-height: 1.4; }
     </style>
      
 {% endblock %}
@@ -39,7 +83,7 @@
 <form id="thankyou-note-form" class="form-horizontal"
       action="./{{ user|urlencode }}/submit{{ '/' ~ topic if topic else '' }}"
       method="post">
-<div class="form-row" style="display:flex; align-items:center; gap:1rem; flex-wrap:nowrap;">
+<div class="form-row" style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
   <label for="fontstyle" style="white-space:nowrap;">Font Style:</label>
   <select name="font_style" id="fontstyle" onchange="fontforinbox(this);">
     <option value="0">Regular</option>
@@ -48,6 +92,13 @@
     <option value="3">Tahoma</option>
     <option value="4">Georgia</option>
     <option value="5">Trebuchet MS</option>
+  </select>
+
+  <label for="email-template" style="white-space:nowrap;">Email layout:</label>
+  <select name="email_template" id="email-template">
+    <option value="classic" selected>Classic</option>
+    <option value="compact">Compact</option>
+    <option value="letter">Letter</option>
   </select>
 
   <fieldset aria-label="Content Type" style="border:0;padding:0;margin:0; display:flex; align-items:center; gap:0.75rem;">
@@ -108,7 +159,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
 
 
 
-<h6>You have written <strong><span id=counter>0</span></strong>
+<h6>You have written <strong><span id=counter1>0</span></strong>
 thoughtful words, so far… (shoot for 42!)</h6>
 <!-- Text input-->
 <div class="form-group">
@@ -120,6 +171,30 @@ thoughtful words, so far… (shoot for 42!)</h6>
            class="u-full-width" name="byline" type="text"
            placeholder="{{ fake_name }}"
            class="form-control input-md">
+  </div>
+</div>
+
+<div class="email-preview-label">Email preview</div>
+<div id="email-preview" class="email-preview email-preview--classic">
+  <div class="email-preview-frame">
+    <div class="email-preview-card">
+      <div class="email-preview-kicker">A note of gratitude</div>
+      {% if topic %}
+      <div id="email-preview-ref"><strong>Ref:</strong>{{ topic }}</div>
+      {% endif %}
+      <div id="email-preview-body" style="white-space:pre-wrap;margin:0 0 12px"></div>
+      <div id="email-preview-audio" style="display:none;margin:0 0 12px">
+        <strong>🎧 Voice Note:</strong> Click to listen
+      </div>
+      <div id="email-preview-byline" style="color:#555;margin:0 0 12px">--</div>
+      <div>The public URL for this note is here</div>
+    </div>
+    <div class="email-preview-equals">=========</div>
+    <hr class="email-preview-hr">
+    <div class="email-preview-footer">
+      This note of gratitude was brought to you by SayThanks.io.<br>
+      A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
+    </div>
   </div>
 </div>
 
@@ -161,7 +236,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
       el: textArea,
       previewStyle: 'tab',
       height: '500px',
-      initialValue: `{% if topic %}### Ref:{{ topic }}\n{% endif %}Dear {{ user }},\nThank you for...`
+      initialValue: `Dear {{ user }},\nThank you for...`
   });
 
   var form = document.getElementById("thankyou-note-form");
@@ -213,6 +288,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
       counter.style.color = "red";
       counter1.style.color = "red";
     }
+    updateEmailPreviewContent();
   });
 
   document.querySelectorAll('.suggestion-btn').forEach(function(btn) {
@@ -245,6 +321,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
     if (fileName) {
       recordingStatus.innerText += ` Selected file: ${fileName}`;
     }
+    updateEmailPreviewContent();
   }
 
   audioFileInput.addEventListener('change', () => {
@@ -315,6 +392,37 @@ thoughtful words, so far… (shoot for 42!)</h6>
       recordBtn.innerText = '🗣️ Say Something!';
     }
   });
+
+
+  var layoutSelect = document.getElementById('email-template');
+  var preview = document.getElementById('email-preview');
+  var bylineInput = document.getElementById('byline');
+
+  function applyEmailPreviewLayout() {
+    var id = layoutSelect.value;
+    if (id !== 'compact' && id !== 'letter') {
+      id = 'classic';
+    }
+    preview.className = 'email-preview email-preview--' + id;
+  }
+
+  function updateEmailPreviewContent() {
+    var bodyEl = document.getElementById('email-preview-body');
+    var bylineEl = document.getElementById('email-preview-byline');
+    var audioEl = document.getElementById('email-preview-audio');
+    if (!bodyEl || !bylineEl || !audioEl) {
+      return;
+    }
+    bodyEl.textContent = editor.getMarkdown();
+    bylineEl.textContent = '--' + (bylineInput.value || '');
+    var hasAudio = !!(audioBlob || (audioFileInput && audioFileInput.files.length));
+    audioEl.style.display = hasAudio ? 'block' : 'none';
+  }
+
+  layoutSelect.addEventListener('change', applyEmailPreviewLayout);
+  bylineInput.addEventListener('input', updateEmailPreviewContent);
+  applyEmailPreviewLayout();
+  updateEmailPreviewContent();
 
 
 </script>

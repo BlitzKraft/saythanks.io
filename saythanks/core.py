@@ -16,6 +16,7 @@ import time  # Added to handle timestamping for audio filenames
 from .version import get_version
 from .utils import strip_html
 from .logging_config import configure_logging
+from .myemail import resolve_template_id
 
 from functools import wraps
 from flask import Flask, request, session, render_template, url_for
@@ -443,6 +444,7 @@ def submit_note(inbox_id, topic):
     audio_html = render_audio_html(audio_filename)
     body = request.form['body']
     content_type = request.form['content-type']
+    template_id = resolve_template_id(request.form.get('email_template'))
     byline = Markup(request.form['byline']).striptags()
     if session:
         email_address = session['profile']['email']
@@ -475,7 +477,8 @@ def submit_note(inbox_id, topic):
             safe_attrs_only=True, remove_unknown_tags=True,
         )
         body = Markup(html_cleaner.clean_html(body))
-        body = Markup(body + Markup(audio_html)) # ← now part of the stored body
+        email_body = body
+        body = Markup(body + Markup(audio_html))  # stored body includes audio
         # print("after markup", body)
         # Store the note first, so it gets a UUID
         submitted_note = inbox_db.submit_note(
@@ -483,7 +486,13 @@ def submit_note(inbox_id, topic):
         )
         if storage.Inbox.is_email_enabled(inbox_db.slug):
             # Now notify, so the note has a UUID for the public URL
-            submitted_note.notify(email_address, topic)   # ← no audio_path
+            submitted_note.notify(
+                email_address,
+                topic,
+                template_id=template_id,
+                audio_html=audio_html,
+                body=email_body,
+            )
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
@@ -496,6 +505,7 @@ def submit_note(inbox_id, topic):
     if not body and not audio_html:
         return redirect(url_for('thanks'))
 
+    email_body = body
     body = body + audio_html
 
     submitted_note = inbox_db.submit_note(
@@ -503,7 +513,13 @@ def submit_note(inbox_id, topic):
     )
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox_db.slug):
-        submitted_note.notify(email_address, topic)
+        submitted_note.notify(
+            email_address,
+            topic,
+            template_id=template_id,
+            audio_html=audio_html,
+            body=email_body,
+        )
 
     return redirect(url_for('thanks'))
 

@@ -199,7 +199,15 @@ class Note:
         q = sqlalchemy.text("UPDATE notes SET archived = 't' WHERE uuid = :uuid")
         conn.execute(q, uuid=self.uuid)
 
-    def notify(self, email_address, topic=None, audio_path=None):
+    def notify(
+        self,
+        email_address,
+        topic=None,
+        audio_path=None,
+        template_id=None,
+        audio_html=None,
+        body=None,
+    ):
         """Send an email notification for this note.
 
         Delegates to myemail.notify.
@@ -208,8 +216,19 @@ class Note:
             email_address (str): Recipient email address.
             topic (str|None): Optional topic for subject line.
             audio_path (str|None): Optional audio filename to include.
+            template_id (str|None): Predefined email layout id.
+            audio_html (str|None): Voice-note HTML for a separate email slot.
+            body (str|None): Pre-audio HTML body; defaults to this note's body.
         """
-        myemail.notify(self, email_address, topic, audio_path)
+        myemail.notify(
+            self,
+            email_address,
+            topic,
+            audio_path,
+            template_id=template_id,
+            audio_html=audio_html,
+            body=body,
+        )
 
 
 class Inbox:
