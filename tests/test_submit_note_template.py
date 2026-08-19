@@ -78,6 +78,42 @@ def test_submit_button_does_not_shadow_native_form_submit():
     assert 'id="send-note-btn"' in template
     assert 'document.getElementById("send-note-btn")' in template
 
+
+def test_email_template_select_defaults_to_classic():
+    """Senders pick a predefined email layout; Classic is the default."""
+    template = _read_template()
+
+    assert 'name="email_template"' in template
+    assert 'id="email-template"' in template
+    assert 'value="classic" selected' in template
+    assert 'value="compact"' in template
+    assert 'value="letter"' in template
+    assert 'value="compact" selected' not in template
+    assert 'value="letter" selected' not in template
+
+
+def test_email_layout_preview_follows_the_select():
+    """Email chrome is in the Toast UI Preview tab."""
+    template = _read_template()
+
+    assert 'id="email-preview-template"' in template
+    assert 'id="email-preview"' in template
+    assert (
+        "document.querySelector('#editor .toastui-editor-md-preview')"
+        in template
+    )
+    assert "mdPreview.querySelector('.toastui-editor-contents')" in template
+    assert 'card.insertBefore(contents, audioSlot)' in template
+    assert 'email-preview--classic' in template
+    assert 'email-preview--' in template
+    assert "preview.className = 'email-preview email-preview--' + id" in template
+    assert 'id="email-preview-ref"' in template
+    assert '### Ref:' not in template
+    assert 'id="email-preview-body"' not in template
+    assert 'bodyEl.textContent = editor.getMarkdown()' not in template
+    assert 'class="email-preview-label"' not in template
+
+
 def test_no_stale_submit_id_selector_in_static_assets():
     """No CSS/JS asset may still target the removed #submit id.
     Equivalent of running run a 
