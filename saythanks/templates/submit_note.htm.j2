@@ -22,10 +22,20 @@
         font-size: 16px !important;
         font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', 'Liberation Mono', monospace !important;
       }
-      .email-preview-label {
-        font-size: 0.9rem;
-        color: #555;
-        margin: 0.75rem 0 0.35rem;
+      #editor .toastui-editor-md-preview {
+        overflow: auto;
+        padding: 12px 14px;
+      }
+      #editor .toastui-editor-md-preview:has(.email-preview--letter) {
+        padding: 8px;
+      }
+      .email-preview-card .toastui-editor-contents {
+        margin: 0 0 12px;
+      }
+      .toastui-editor-defaultUI .email-preview--compact .toastui-editor-contents,
+      .toastui-editor-defaultUI .email-preview--letter .toastui-editor-contents {
+        font-size: 15px !important;
+        font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif !important;
       }
       .email-preview-frame {
         max-width: 600px;
@@ -94,7 +104,7 @@
     <option value="5">Trebuchet MS</option>
   </select>
 
-  <label for="email-template" style="white-space:nowrap;">Email layout:</label>
+  <label for="email-template" style="white-space:nowrap;">Layout:</label>
   <select name="email_template" id="email-template">
     <option value="classic" selected>Classic</option>
     <option value="compact">Compact</option>
@@ -174,7 +184,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
   </div>
 </div>
 
-<div class="email-preview-label">Email preview</div>
+<template id="email-preview-template">
 <div id="email-preview" class="email-preview email-preview--classic">
   <div class="email-preview-frame">
     <div class="email-preview-card">
@@ -182,7 +192,6 @@ thoughtful words, so far… (shoot for 42!)</h6>
       {% if topic %}
       <div id="email-preview-ref"><strong>Ref:</strong>{{ topic }}</div>
       {% endif %}
-      <div id="email-preview-body" style="white-space:pre-wrap;margin:0 0 12px"></div>
       <div id="email-preview-audio" style="display:none;margin:0 0 12px">
         <strong>🎧 Voice Note:</strong> Click to listen
       </div>
@@ -197,6 +206,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
     </div>
   </div>
 </div>
+</template>
 
 <!-- Button -->
 <div class="form-group">
@@ -238,6 +248,19 @@ thoughtful words, so far… (shoot for 42!)</h6>
       height: '500px',
       initialValue: `Dear {{ user }},\nThank you for...`
   });
+
+  var mdPreview = document.querySelector('#editor .toastui-editor-md-preview');
+  var contents = mdPreview && mdPreview.querySelector('.toastui-editor-contents');
+  var previewTemplate = document.getElementById('email-preview-template');
+  if (mdPreview && contents && previewTemplate) {
+    var chrome = previewTemplate.content.cloneNode(true);
+    var card = chrome.querySelector('.email-preview-card');
+    var audioSlot = chrome.querySelector('#email-preview-audio');
+    if (card && audioSlot) {
+      card.insertBefore(contents, audioSlot);
+      mdPreview.appendChild(chrome);
+    }
+  }
 
   var form = document.getElementById("thankyou-note-form");
   var submitBtn = document.getElementById("send-note-btn");
@@ -399,6 +422,9 @@ thoughtful words, so far… (shoot for 42!)</h6>
   var bylineInput = document.getElementById('byline');
 
   function applyEmailPreviewLayout() {
+    if (!preview) {
+      return;
+    }
     var id = layoutSelect.value;
     if (id !== 'compact' && id !== 'letter') {
       id = 'classic';
@@ -407,13 +433,11 @@ thoughtful words, so far… (shoot for 42!)</h6>
   }
 
   function updateEmailPreviewContent() {
-    var bodyEl = document.getElementById('email-preview-body');
     var bylineEl = document.getElementById('email-preview-byline');
     var audioEl = document.getElementById('email-preview-audio');
-    if (!bodyEl || !bylineEl || !audioEl) {
+    if (!bylineEl || !audioEl) {
       return;
     }
-    bodyEl.textContent = editor.getMarkdown();
     bylineEl.textContent = '--' + (bylineInput.value || '');
     var hasAudio = !!(audioBlob || (audioFileInput && audioFileInput.files.length));
     audioEl.style.display = hasAudio ? 'block' : 'none';

@@ -93,15 +93,25 @@ def test_email_template_select_defaults_to_classic():
 
 
 def test_email_layout_preview_follows_the_select():
-    """The form preview must restyle when Email layout changes."""
+    """Email chrome is in the Toast UI Preview tab."""
     template = _read_template()
 
+    assert 'id="email-preview-template"' in template
     assert 'id="email-preview"' in template
+    assert (
+        "document.querySelector('#editor .toastui-editor-md-preview')"
+        in template
+    )
+    assert "mdPreview.querySelector('.toastui-editor-contents')" in template
+    assert 'card.insertBefore(contents, audioSlot)' in template
     assert 'email-preview--classic' in template
     assert 'email-preview--' in template
     assert "preview.className = 'email-preview email-preview--' + id" in template
     assert 'id="email-preview-ref"' in template
     assert '### Ref:' not in template
+    assert 'id="email-preview-body"' not in template
+    assert 'bodyEl.textContent = editor.getMarkdown()' not in template
+    assert 'class="email-preview-label"' not in template
 
 
 def test_no_stale_submit_id_selector_in_static_assets():
