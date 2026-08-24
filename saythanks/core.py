@@ -444,10 +444,8 @@ def submit_note(inbox_id, topic):
     body = request.form['body']
     content_type = request.form['content-type']
     byline = Markup(request.form['byline']).striptags()
-    if session:
-        email_address = session['profile']['email']
-    else:
-        email_address = storage.Inbox.get_email(inbox_db.slug)
+    # Always send the email to the owner of the inbox, not the logged-in user
+    email_address = storage.Inbox.get_email(inbox_db.slug)
 
 
     # If the user chooses to send an HTML email,
