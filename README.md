@@ -22,6 +22,7 @@ The author can then enjoy a nice inbox (ideally) filled with very small, thought
 - UI and UX improvements, including updated button colors.
 - Enhanced documentation and developer setup instructions.
 - Ongoing improvements to authentication (Auth0, OAuth2).
+- **Expanded Social Login Options:** Added X (formerly Twitter) and LinkedIn as additional Auth0 social login providers, alongside the existing Google, GitHub, and Facebook options.
 
 ## Implementation Concepts
 
