@@ -14,7 +14,7 @@ import time  # Added to handle timestamping for audio filenames
 
 # Import your get_version function
 from .version import get_version
-from .utils import strip_html, resolve_nickname
+from .utils import strip_html
 from .logging_config import configure_logging
 
 from functools import wraps
@@ -134,6 +134,7 @@ app.jinja_env.filters['strip_html'] = strip_html
 
 QRcode(app)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
+app.config['MAX_RECORDING_TIME'] = int(os.environ.get('MAX_RECORDING_TIME', 30))
 app.debug = True
 
 # Flask-Common.
@@ -357,11 +358,15 @@ def display_submit_note(inbox_id, topic):
     display_topic = ""
     if raw_topic:
         display_topic = " about " + raw_topic
+        
+    max_recording_time = app.config.get('MAX_RECORDING_TIME', 30)
+    
     return render_template(
         'submit_note.htm.j2',
         user=inbox_id,
         topic=display_topic,
-        fake_name=fake_name)
+        fake_name=fake_name,
+        max_recording_time=max_recording_time)
 
 
 @app.route('/note/<uuid>', methods=['GET'])
@@ -514,16 +519,6 @@ def user_logout():
 
 @app.route('/callback')
 def callback_handling():
-    # The identity provider (or Auth0 itself) can redirect back here with an
-    # error instead of a code - e.g. a misconfigured social connection.
-    error = request.args.get('error')
-    if error:
-        logger.error(
-            'Auth0 callback returned an error: %s - %s',
-            error, request.args.get('error_description', ''),
-        )
-        return redirect(url_for('index'))
-
     code = request.args.get('code')
 
     json_header = {
@@ -544,17 +539,10 @@ def callback_handling():
     token_info = requests.post(
         token_url, data=json.dumps(token_payload), headers=json_header
     ).json()
-    if 'access_token' not in token_info:
-        logger.error('Auth0 token exchange failed: %s', token_info)
-        return redirect(url_for('index'))
-
     user_url = (
         f'https://{auth_domain}/userinfo?access_token={token_info["access_token"]}'
     )
     user_info = requests.get(user_url).json()
-    if 'sub' not in user_info:
-        logger.error('Auth0 userinfo fetch failed: %s', user_info)
-        return redirect(url_for('index'))
 
     user_info_url = f'https://{auth_domain}/api/v2/users/{user_info["sub"]}'
 
@@ -563,11 +551,11 @@ def callback_handling():
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
+    nickname = user_detail_info['nickname']
+    email = user_detail_info['email']
     userid = user_info['sub']
-    email = user_detail_info.get('email')
-    picture = user_detail_info.get('picture')
-    name = user_detail_info.get('name')
-    nickname = resolve_nickname(user_detail_info, email, userid)
+    picture = user_detail_info['picture']
+    name = user_detail_info['name']
     session['profile']['nickname'] = nickname
     session['profile']['picture'] = picture
     session['profile']['name'] = name

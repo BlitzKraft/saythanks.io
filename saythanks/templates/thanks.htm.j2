@@ -21,8 +21,6 @@
             </p>
             <script src="https://cdn.auth0.com/js/lock/11.33/lock.min.js"></script>
             <script>
-            var allowedConnections = ['google-oauth2', 'github', 'facebook', 'twitter', 'linkedin'];
-
             var options_signup = {
               theme: {
                 logo: '{{ url_for('static', filename='images/owly.svg') }}',
@@ -30,7 +28,6 @@
               },
               allowSignUp: true,
               allowLogin: false,
-              allowedConnections: allowedConnections,
               auth: {
                 redirectUrl: '{{ callback_url }}',
                 params: {
@@ -46,7 +43,6 @@
               },
               allowSignUp: false,
               allowLogin: true,
-              allowedConnections: allowedConnections,
               auth: {
                 redirectUrl: '{{ callback_url }}',
                 params: {
