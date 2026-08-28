@@ -134,6 +134,7 @@ app.jinja_env.filters['strip_html'] = strip_html
 
 QRcode(app)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
+app.config['MAX_RECORDING_TIME'] = int(os.environ.get('MAX_RECORDING_TIME', 30))
 app.debug = True
 
 # Flask-Common.
@@ -357,11 +358,15 @@ def display_submit_note(inbox_id, topic):
     display_topic = ""
     if raw_topic:
         display_topic = " about " + raw_topic
+        
+    max_recording_time = app.config.get('MAX_RECORDING_TIME', 30)
+    
     return render_template(
         'submit_note.htm.j2',
         user=inbox_id,
         topic=display_topic,
-        fake_name=fake_name)
+        fake_name=fake_name,
+        max_recording_time=max_recording_time)
 
 
 @app.route('/note/<uuid>', methods=['GET'])
