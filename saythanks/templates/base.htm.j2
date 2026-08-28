@@ -35,7 +35,6 @@
     <!-- iOS Home Screen Icon -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
 
-
      <!-- FONT
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
     <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
@@ -55,8 +54,6 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/favicon-96x96.png') }}">
     <link rel="alternate icon" type="image/x-icon" href="{{ url_for('static', filename='icons/favicon.ico') }}">
     <link rel="mask-icon" href="{{ url_for('static', filename='images/owly.svg') }}" color="green">
-
-
 
      <!-- jQuery!
      –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -86,7 +83,7 @@
 
 <div id="footer">
       {% block footer %}
-      &copy; 2025-2026. To create a new github issue, click <a href="https://github.com/BlitzKraft/saythanks.io/issues/new" target="_blank" rel="noopener noreferrer">here</a>.
+      {{ '&copy;' | safe }}; 2025-2026. To create a new github issue, click <a href="https://github.com/BlitzKraft/saythanks.io/issues/new" target="_blank" rel="noopener noreferrer">here</a>.
  A <a href="https://kennethreitz.org/">Kenneth Reitz</a> Project.
       {% endblock %}
     </div>
