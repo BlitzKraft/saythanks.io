@@ -7,7 +7,7 @@
 {% set submit_url = url_for('display_submit_note', inbox_id=user['nickname']) %}
 {% set submit_url_abs = url_for('display_submit_note', inbox_id=user['nickname'], _external=True) %}
 
-<form action="./logout" method="POST">
+<form action="./logout" method="post">
 <button type="submit" class="logoutLblPos" >Log Out</button>
 </form>
 
@@ -74,7 +74,7 @@
 
 <h3 class="u-textcenter">Notes of Thankfulness:</h3>
 
-<form class="search-form" action="{{ url_for('inbox_search') }}" method="POST">
+<form class="search-form" action="{{ url_for('inbox_search') }}" method="post">
   <input type="text" size="30" placeholder="{{ search_str }}" name="search_str">
     <button class="search-submit" type="submit">Search</button>
     <button type="submit" name="clear" value="true">Clear</button>
