@@ -1,4 +1,11 @@
-.PHONY: init test lint run clean-pyc clean-build clean djlint-reformat reformat djlint-reformat-win reformat2
+TEMPLATE_TARGETS := $(patsubst %.htm.j2,%,$(notdir $(wildcard saythanks/templates/*.htm.j2)))
+
+.PHONY: init test lint run clean-pyc clean-build clean \
+	djlint-reformat reformat djlint-reformat-win reformat2 \
+	$(TEMPLATE_TARGETS)
+
+$(TEMPLATE_TARGETS):
+	pipenv run djlint saythanks/templates/$@.htm.j2 --lint
 
 #init:
 #	pipenv install --dev
