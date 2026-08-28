@@ -570,6 +570,8 @@ def callback_handling():
 
     userid = user_info['sub']
     email = user_detail_info.get('email')
+    if not email:
+        logger.error('Auth0 userinfo email fetch failed: %s', user_detail_info)
     nickname = resolve_nickname(user_detail_info, email, userid)
     picture = user_detail_info.get('picture')
     name = user_detail_info.get('name')
