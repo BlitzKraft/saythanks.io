@@ -568,11 +568,11 @@ def callback_handling():
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
-    nickname = user_detail_info['nickname']
-    email = user_detail_info['email']
     userid = user_info['sub']
-    picture = user_detail_info['picture']
-    name = user_detail_info['name']
+    email = user_detail_info.get('email')
+    nickname = resolve_nickname(user_detail_info, email, userid)
+    picture = user_detail_info.get('picture')
+    name = user_detail_info.get('name')
     session['profile']['nickname'] = nickname
     session['profile']['picture'] = picture
     session['profile']['name'] = name
