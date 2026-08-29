@@ -1,11 +1,25 @@
 TEMPLATE_TARGETS := $(patsubst %.htm.j2,%,$(notdir $(wildcard saythanks/templates/*.htm.j2)))
+PYTHON_SAYTHANKS_TARGETS := $(patsubst %.py,%,$(notdir $(wildcard saythanks/*.py)))
+PYTHON_ROOT_TARGETS := $(patsubst %.py,%,$(notdir $(wildcard t.py)))
+
+# Group the python targets together for the .PHONY declaration
+PYTHON_TARGETS := $(PYTHON_SAYTHANKS_TARGETS) $(PYTHON_ROOT_TARGETS)
 
 .PHONY: init test lint run clean-pyc clean-build clean \
 	djlint-reformat reformat djlint-reformat-win reformat2 \
-	$(TEMPLATE_TARGETS)
+	$(TEMPLATE_TARGETS) $(PYTHON_TARGETS)
 
+# Target for Jinja Templates
 $(TEMPLATE_TARGETS):
 	pipenv run djlint saythanks/templates/$@.htm.j2 --lint
+
+# Target for Python files in the saythanks/ directory
+$(PYTHON_SAYTHANKS_TARGETS):
+	pipenv run flake8 saythanks/$@.py
+
+# Target for the root t.py file
+$(PYTHON_ROOT_TARGETS):
+	pipenv run flake8 $@.py
 
 #init:
 #	pipenv install --dev
@@ -13,6 +27,7 @@ $(TEMPLATE_TARGETS):
 test:
 	pipenv run pytest --verbose --color=yes tests/
 
+# Lints the entire project
 lint:
 	pipenv --python python run flake8 --exclude=.tox saythanks
 
