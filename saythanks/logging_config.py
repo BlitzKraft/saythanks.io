@@ -4,7 +4,8 @@ import logging
 class IgnoreReloaderPollFilter(logging.Filter):
     def filter(self, record):
         msg = record.getMessage()
-        # Ignore only the Flask/Werkzeug reloader heartbeat, not normal app traffic.
+        # Ignore only the Flask/Werkzeug reloader heartbeat,
+        # not normal app traffic.
         if 'GET / HTTP/1.1' in msg:
             return False
         return True

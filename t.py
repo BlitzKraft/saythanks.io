@@ -18,9 +18,9 @@ if __name__ == '__main__' and not is_test_run:
     # s.bind(('127.0.0.1', 31137)) # Binding to local host
     # saythanks.app.run(host='127.0.0.1', port=5000)
 
-    # This is the cleanest way to keep normal app logging 
+    # This is the cleanest way to keep normal app logging
     # while removing repeated GET / HTTP/1.1 entries.
-    # Instead, went with the other approach of setting the werkzeug logger 
+    # Instead, went with the other approach of setting the werkzeug logger
     # to INFO level in logging_config.py.
     # saythanks.app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
     saythanks.app.run(host='0.0.0.0', port=5000)
