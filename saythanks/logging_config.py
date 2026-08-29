@@ -3,21 +3,21 @@ import logging
 
 class IgnoreReloaderPollFilter(logging.Filter):
     """
-    A custom logging filter to suppress Flask/Werkzeug development server polling.
-    
-    This prevents the log file from being flooded with routine heartbeat 
+    A custom logging filter to suppress Flask/Werkzeug development
+    server polling.
+    This prevents the log file from being flooded with routine heartbeat
     or health-check requests when running the app in development mode.
     """
+
     def filter(self, record):
         """
         Determine if the specified log record should be processed.
-        
         Args:
             record (logging.LogRecord): The log record being evaluated.
-            
         Returns:
-            bool: False if the log message contains a standard root GET request 
-                  (indicating a reloader poll), True to allow all other traffic.
+            bool: False if the log message contains a standard
+                  root GET request (indicating a reloader poll),
+                  True to allow all other traffic.
         """
         msg = record.getMessage()
         # Ignore only the Flask/Werkzeug reloader heartbeat,
