@@ -30,11 +30,11 @@ class IgnoreReloaderPollFilter(logging.Filter):
 def configure_logging():
     """
     Initialize and configure the application's root logger.
-    
-    Sets up file-based logging (appending to `Logfile.log`) with a specific 
-    message and date format. It checks for existing handlers to ensure the 
-    logger is only configured once, avoiding duplicate log entries. Finally, 
-    it attaches `IgnoreReloaderPollFilter` to the Werkzeug logger to keep 
+
+    Sets up file-based logging (appending to `Logfile.log`) with a specific
+    message and date format. It checks for existing handlers to ensure the
+    logger is only configured once, avoiding duplicate log entries. Finally,
+    it attaches `IgnoreReloaderPollFilter` to the Werkzeug logger to keep
     development logs clean.
     """
     root_logger = logging.getLogger()
