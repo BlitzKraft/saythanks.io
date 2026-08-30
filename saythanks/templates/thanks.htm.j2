@@ -1,5 +1,5 @@
 {% extends "base.htm.j2" %}
-{% block title %}Say Thank You{% endblock %}
+{% block title %}Say Thank You{% endblock title %}
 {% block content %}
     <div class="sixteen columns">
     
@@ -13,11 +13,9 @@
                 or clicking below!
             </p>
             <p style="text-align:center;">
-                <img style="height: 25rem;
-                            margin-left: auto;
-                            margin-right: auto"
-                     src="{{ url_for('static', filename='images/inbox.png') }}"
-                     alt="Thankfulness Inbox of Love">
+                <img style="height: 25rem; margin-left: auto; margin-right: auto"
+                    src="{{ url_for('static', filename='images/inbox.png') }}"
+                    alt="Thankfulness Inbox of Love"/>
             </p>
             <script src="https://cdn.auth0.com/js/lock/11.33/lock.min.js"></script>
             <script>
@@ -63,4 +61,4 @@
             </p>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}
