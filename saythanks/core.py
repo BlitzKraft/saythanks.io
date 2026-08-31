@@ -307,7 +307,7 @@ def thanks():
 @requires_auth
 def disable_email():
     # Auth0 stored account information.
-    slug = session['profile']['email']
+    slug = session['profile']['nickname']
     storage.Inbox.disable_email(slug)
     return redirect(url_for('inbox'))
 
@@ -316,7 +316,7 @@ def disable_email():
 @requires_auth
 def enable_email():
     # Auth0 stored account information.
-    slug = session['profile']['email']
+    slug = session['profile']['nickname']
     storage.Inbox.enable_email(slug)
     return redirect(url_for('inbox'))
 
@@ -325,7 +325,7 @@ def enable_email():
 @requires_auth
 def disable_inbox():
     # Auth0 stored account information.
-    slug = session['profile']['email']
+    slug = session['profile']['nickname']
     storage.Inbox.disable_account(slug)
     return redirect(url_for('inbox'))
 
@@ -334,7 +334,7 @@ def disable_inbox():
 @requires_auth
 def enable_inbox():
     # Auth0 stored account information.
-    slug = session['profile']['email']
+    slug = session['profile']['nickname']
     storage.Inbox.enable_account(slug)
     return redirect(url_for('inbox'))
 
