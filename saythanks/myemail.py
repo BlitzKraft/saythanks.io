@@ -24,31 +24,33 @@ if not mailersend_api_key:
 else:
     mailer = emails.NewEmail(mailersend_api_key)
 
-TEMPLATE = """<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#222;max-width:600px">
-<div style="margin:0 0 12px">{}</div>
-<div style="margin:0 0 12px;color:#555">--{}</div>
-<div style="margin:0 0 16px">The public URL for this note is <a clicktracking=off href="{}">here</a></div>
-<hr style="border:0;border-top:1px solid #ddd;margin:16px 0">
-<div style="font-size:13px;color:#777;line-height:1.4">
-This note of gratitude was brought to you by SayThanks.io.<br>
-A KennethReitz project, now maintained by KGiSL Edu (<a clicktracking=off href="https://edu.kgisl.com">https://edu.kgisl.com</a>).
-</div>
-</div>
-""" 
+TEMPLATE = (
+    "<div style=\"font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,"
+    "sans-serif;font-size:15px;line-height:1.5;color:#222;max-width:600px\">\n"
+    '<div style="margin:0 0 12px">{}</div>\n'
+    '<div style="margin:0 0 12px;color:#555">--{}</div>\n'
+    '<div style="margin:0 0 16px">The public URL for this note is '
+    '<a clicktracking=off href="{}">here</a></div>\n'
+    '<hr style="border:0;border-top:1px solid #ddd;margin:16px 0">\n'
+    '<div style="font-size:13px;color:#777;line-height:1.4">\n'
+    "This note of gratitude was brought to you by SayThanks.io.<br>\n"
+    "A KennethReitz project, now maintained by KGiSL Edu "
+    '(<a clicktracking=off href="https://edu.kgisl.com">'
+    "https://edu.kgisl.com</a>).\n"
+    "</div>\n"
+    "</div>\n"
+)
 
 
 def _get_note_url(note):
     """Generate the public URL for a note.
-
     Uses Flask's url_for with _external=True to produce an absolute URL
     for the 'share_note' endpoint using note.uuid.
-
     Parameters
     - note: object with attribute `uuid`.
-
     Returns
-    - str: Absolute URL for the note if uuid is present, otherwise an empty string.
-
+    - str: Absolute URL for the note if uuid is present,
+           otherwise an empty string.
     Side effects
     - Logs an error if note.uuid is missing.
     """
@@ -113,17 +115,22 @@ def _send_email(email_address, subject, html_content, plaintext_content):
     logger.info(f"MailerSend SDK send response: {response.strip()}")
 
     if not hasattr(response, 'status_code'):
-        logger.info(f"Email request submitted successfully to {email_address}")
+        logger.info(
+            f"Email request submitted successfully to {email_address}"
+        )
         return True
 
     if response.status_code == 202:
-        logger.error(f"Email queued successfully for delivery to {email_address}")
+        logger.error(
+            f"Email queued successfully for delivery to {email_address}"
+        )
         return True
     if response.status_code == 200:
         logger.info(f"Email sent successfully to {email_address}")
         return True
     if response.status_code >= 400:
-        error_text = response.text if hasattr(response, 'text') else 'Unknown error'
+        error_text = response.text if hasattr(response, 'text') \
+            else 'Unknown error'
         error_msg = f"MailerSend API error {response.status_code}: {error_text}"
         logger.error(error_msg)
 
@@ -132,7 +139,6 @@ def _send_email(email_address, subject, html_content, plaintext_content):
 
 def notify(note, email_address, topic=None, audio_path=None):
     """Send an email notification for a thank-you note.
-
     Orchestrates URL generation, optional audio handling, content assembly,
     subject formatting and the final send attempt. Catches and logs common
     network and HTTP-related exceptions.
@@ -144,9 +150,8 @@ def notify(note, email_address, topic=None, audio_path=None):
     - audio_path: optional filename for an attached voice note
 
     Returns
-    - bool: True if the email was successfully submitted/queued, False on failure
-      or when MailerSend is not configured.
-
+    - bool: True if the email was successfully submitted/queued,
+            False on failure or when MailerSend is not configured.
     Error handling
     - Logs and returns False when mailer is not configured.
     - Catches requests and urllib errors and logs details for diagnosis.
@@ -157,7 +162,8 @@ def notify(note, email_address, topic=None, audio_path=None):
 
     try:
         note_url = _get_note_url(note)
-        who, html_content, plaintext_content = _build_email_content(note, note_url)
+        who, html_content, plaintext_content = \
+            _build_email_content(note, note_url)
 
         subject = (
             f'saythanks.io: {who} sent a note!'
@@ -172,7 +178,7 @@ def notify(note, email_address, topic=None, audio_path=None):
     except requests.exceptions.ConnectionError as e:
         logger.error(f"Network connection error when sending email: {str(e)}")
         logger.error(
-            "Check your internet connection and MAILERSEND_API_KEY configuration"
+          "Check your internet connection and MAILERSEND_API_KEY configuration"
         )
     except requests.exceptions.Timeout as e:
         logger.error(f"Timeout error when sending email: {str(e)}")

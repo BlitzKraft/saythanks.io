@@ -263,7 +263,9 @@ class Inbox:
             existing_email = row['email']
             # If they changed their email on GitHub/Auth0, update it silently
             if existing_email != email:
-                u = sqlalchemy.text('UPDATE inboxes SET email = :email WHERE auth_id = :auth_id')
+                u = sqlalchemy.text(
+                    'UPDATE inboxes SET email = :email WHERE auth_id = :auth_id'
+                )
                 conn.execute(u, email=email, auth_id=auth_id)
             return existing_slug
         base_slug = nickname
