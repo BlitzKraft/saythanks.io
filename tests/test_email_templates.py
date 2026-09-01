@@ -58,50 +58,53 @@ class Note:
     byline = 'Ada'
 
 
-def test_original_flag_selects_the_layout():
+def test_template_objects_select_the_expected_layout():
     url = 'https://saythanks.io/note/abc'
-    _, current, _ = myemail._build_email_content(Note(), url)
-    _, original, _ = myemail._build_email_content(
-        Note(), url, original=True
+    _, default_html, _ = myemail._build_email_content(
+        Note(), url, template=myemail.DEFAULT_TEMPLATE
+    )
+    _, compressed_html, _ = myemail._build_email_content(
+        Note(), url, template=myemail.COMPRESSED_TEMPLATE
     )
 
-    assert Note.body in current and Note.body in original
-    assert 'max-width:600px' in current
-    assert '=========' not in current
-    assert '=========' in original
-    assert 'max-width:600px' not in original
+    assert Note.body in default_html and Note.body in compressed_html
+    assert 'max-width:600px' in compressed_html
+    assert '=========' not in compressed_html
+    assert '=========' in default_html
+    assert 'max-width:600px' not in default_html
 
 
-def test_notify_sends_html_for_the_original_flag():
+def test_notify_uses_template_name_to_select_layout():
     sent = []
     get_url = myemail._get_note_url
     send = myemail._send_email
     myemail._get_note_url = lambda note: 'https://saythanks.io/note/abc'
     myemail._send_email = lambda *args: sent.append(args) or True
     try:
-        myemail.notify(Note(), 'owner@example.com')
-        myemail.notify(Note(), 'owner@example.com', original=True)
+        myemail.notify(Note(), 'owner@example.com', template_name='default')
+        myemail.notify(Note(), 'owner@example.com', template_name='compressed')
     finally:
         myemail._get_note_url = get_url
         myemail._send_email = send
     assert sent[0][0] == sent[1][0] == 'owner@example.com'
-    assert 'max-width:600px' in sent[0][2]
-    assert '=========' in sent[1][2]
+    assert '=========' in sent[0][2]
+    assert 'max-width:600px' in sent[1][2]
+    assert '=========' not in sent[1][2]
 
 
 def test_inbox_toggle_follows_saved_choice():
     path = os.path.join(ROOT, 'saythanks', 'templates', 'inbox.htm.j2')
     with open(path, encoding='utf-8') as handle:
         source = handle.read()
-    start = source.index("{% if is_original_template")
+    start = source.index('{% if email_template_name == "default" %}')
     end = source.index('</li>', start) + len('</li>')
     env = Environment()
     env.globals['url_for'] = lambda name, **k: '/' + name.replace('_', '-')
     tpl = env.from_string(source[start:end])
-    on = tpl.render(is_original_template=True)
-    off = tpl.render(is_original_template=False)
-    assert '/toggle-template' in on and '/toggle-template' in off
-    assert 'current e-mail layout' in on
-    assert 'original layout' in off
-    assert 'original layout' not in on
-    assert 'current e-mail layout' not in off
+    default_state = tpl.render(email_template_name='default')
+    compressed_state = tpl.render(email_template_name='compressed')
+    assert '/toggle-template' in default_state and '/toggle-template' in compressed_state
+    assert 'compressed email layout' in default_state
+    assert 'default email layout' in compressed_state
+    assert 'default email layout' not in default_state
+    assert 'compressed email layout' not in compressed_state
