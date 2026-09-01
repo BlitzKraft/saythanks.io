@@ -189,8 +189,10 @@ def notify(note, email_address, topic=None, audio_path=None, template_name="defa
 
     try:
         note_url = _get_note_url(note)
-        template = DEFAULT_TEMPLATE if template_name == 'default' \
-        else COMPRESSED_TEMPLATE
+        template = (
+            DEFAULT_TEMPLATE if template_name == 'default'
+            else COMPRESSED_TEMPLATE
+        )
         who, html_content, plaintext_content = \
             _build_email_content(note, note_url, template=template)
 

@@ -156,8 +156,11 @@ auth_jwt_v2 = os.environ['AUTH0_JWT_V2_TOKEN']
 
 def get_callback_url():
     """Return callback URL dynamically based on request host or env setting."""
-    if request and hasattr(request, 'host') and ('ngrok' in request.host or 'localhost' not in request.host):
-        return url_for('callback_handling', _external=True)
+    if request and hasattr(request, 'host'):
+        host = request.host
+        if 'ngrok' in host or 'localhost' not in host:
+            return url_for('callback_handling', _external=True)
+
     return auth_callback_url or url_for('callback_handling', _external=True)
 
 def requires_auth(f):
