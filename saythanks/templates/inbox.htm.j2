@@ -312,10 +312,10 @@ document.querySelectorAll('a.fb-share').forEach(function (a) {
   </li>
 
   <li>
-    {% if is_original_template == True %}
-      To get back the current e-mail layout please click <a href="{{ url_for('toggle_template') }}">here</a>.
-    {% elif  is_original_template != True %}
-      To receive e-mail in the original layout please click <a href="{{ url_for('toggle_template') }}">here</a>.
+    {% if email_template_name == "default" %}
+      To use the compressed email layout please click <a href="{{ url_for('toggle_template') }}">here</a>.
+    {% elif  email_template_name != "default" %}
+      To use the default email layout please click <a href="{{ url_for('toggle_template') }}">here</a>.
     {%endif%}
   </li>
 
