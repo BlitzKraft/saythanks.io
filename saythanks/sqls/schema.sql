@@ -70,7 +70,8 @@ CREATE TABLE public.inboxes (
     enabled boolean DEFAULT true,
     email_enabled boolean DEFAULT true,
     "timestamp" timestamp without time zone DEFAULT now(),
-    email text
+    email text,
+    email_template_name text DEFAULT 'default'
 );
 
 --
