@@ -199,7 +199,8 @@ class Note:
         q = sqlalchemy.text("UPDATE notes SET archived = 't' WHERE uuid = :uuid")
         conn.execute(q, uuid=self.uuid)
 
-    def notify(self, email_address, topic=None, audio_path=None):
+    def notify(self, email_address, topic=None, audio_path=None,
+               template_name="default"):
         """Send an email notification for this note.
 
         Delegates to myemail.notify.
@@ -208,8 +209,15 @@ class Note:
             email_address (str): Recipient email address.
             topic (str|None): Optional topic for subject line.
             audio_path (str|None): Optional audio filename to include.
+            template_name (str): Selected email layout name.
         """
-        myemail.notify(self, email_address, topic, audio_path)
+        myemail.notify(
+            self,
+            email_address,
+            topic=topic,
+            audio_path=audio_path,
+            template_name=template_name
+        )
 
 
 class Inbox:
@@ -341,6 +349,37 @@ class Inbox:
             print(traceback.print_exc())
             logging.error(traceback.print_exc())
             return False
+
+    @classmethod
+    def get_email_template_name(cls, slug):
+        """Return the email template associated with an inbox slug.
+
+        Args:
+            slug (str): Inbox slug.
+
+        Returns:
+            str: Email template from the inboxes table.
+        """
+        ensure_column = sqlalchemy.text(
+            'ALTER TABLE inboxes '
+            'ADD COLUMN IF NOT EXISTS email_template_name text DEFAULT \'default\''
+        )
+        conn.execute(ensure_column)
+                
+        q = sqlalchemy.text('SELECT email_template_name FROM inboxes where slug = :slug')
+        r = conn.execute(q, slug=slug).fetchall()
+        # Default to 'default' if not found
+        return r[0]['email_template_name'] if r else 'default'  
+    
+    @classmethod
+    def toggle_template(cls, slug):
+        """Flip the email template for the given inbox."""
+        q = sqlalchemy.text(
+            'update inboxes set email_template_name = '
+            'case when email_template_name = \'default\' then \'compressed\' else \'default\' end '
+            'where slug = :slug'
+        )
+        conn.execute(q, slug=slug)
 
     @classmethod
     def disable_email(cls, slug):

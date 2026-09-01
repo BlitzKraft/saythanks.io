@@ -312,6 +312,14 @@ document.querySelectorAll('a.fb-share').forEach(function (a) {
   </li>
 
   <li>
+    {% if email_template_name == "default" %}
+      To use the compressed email layout please click <a href="{{ url_for('toggle_template') }}">here</a>.
+    {% elif  email_template_name != "default" %}
+      To use the default email layout please click <a href="{{ url_for('toggle_template') }}">here</a>.
+    {%endif%}
+  </li>
+
+  <li>
     {% if is_enabled == True %}
       To disable your account please click <a href="{{ url_for('disable_inbox') }}">here</a>.
     {% elif  is_enabled != True %}

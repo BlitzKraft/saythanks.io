@@ -24,7 +24,7 @@ if not mailersend_api_key:
 else:
     mailer = emails.NewEmail(mailersend_api_key)
 
-TEMPLATE = (
+COMPRESSED_TEMPLATE = (
     "<div style=\"font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,"
     "sans-serif;font-size:15px;line-height:1.5;color:#222;max-width:600px\">\n"
     '<div style="margin:0 0 12px">{}</div>\n'
@@ -38,6 +38,30 @@ TEMPLATE = (
     '(<a clicktracking=off href="https://edu.kgisl.com">'
     "https://edu.kgisl.com</a>).\n"
     "</div>\n"
+    "</div>\n"
+)
+
+# The airier layout SayThanks.io used before TEMPLATE replaced it. Inbox
+# owners who prefer it can toggle back from "Manage your Inbox".
+DEFAULT_TEMPLATE = (
+    "<div>{}\n"
+    "<br>\n"
+    "<br>\n"
+    "--{}\n"
+    "<br>\n"
+    "<br>\n"
+    "The public URL for this note is "
+    '<a clicktracking=off href="{}">here</a> <br>\n'
+    "<br>\n"
+    "<br>\n"
+    "=========\n"
+    "<br>\n"
+    "<br>\n"
+    "This note of gratitude was brought to you by SayThanks.io.\n"
+    "<br>\n"
+    "<br>\n"
+    "A KennethReitz project, now maintained by KGiSL Edu "
+    "(https://edu.kgisl.com).\n"
     "</div>\n"
 )
 
@@ -61,13 +85,15 @@ def _get_note_url(note):
         return url_for('share_note', uuid=note.uuid, _external=True)
 
 
-def _build_email_content(note, note_url, audio_html='', audio_text=''):
+def _build_email_content(note, note_url, audio_html='', audio_text='',
+                         template=DEFAULT_TEMPLATE):
     """Assemble HTML and plaintext email bodies.
 
     Parameters
     - note: object with attributes `body` and `byline`.
     - note_url: public URL for the note (string).
     - audio_html: optional HTML snippet for audio (string).
+    - template: the email template to use (string).
 
     Returns
     - tuple: (who, html_content, plaintext_content)
@@ -76,7 +102,7 @@ def _build_email_content(note, note_url, audio_html='', audio_text=''):
       - plaintext_content: plain text representation for fallback
     """
     who = note.byline or 'someone'
-    html_content = TEMPLATE.format(note.body, note.byline, note_url)
+    html_content = template.format(note.body, note.byline, note_url)
     plaintext_content = (
         f"{note.body}\n\n--{note.byline or ''}{audio_text}\n\n{note_url}"
     )
@@ -137,7 +163,7 @@ def _send_email(email_address, subject, html_content, plaintext_content):
     return True
 
 
-def notify(note, email_address, topic=None, audio_path=None):
+def notify(note, email_address, topic=None, audio_path=None, template_name="default"):
     """Send an email notification for a thank-you note.
     Orchestrates URL generation, optional audio handling, content assembly,
     subject formatting and the final send attempt. Catches and logs common
@@ -148,6 +174,7 @@ def notify(note, email_address, topic=None, audio_path=None):
     - email_address: recipient email address (string)
     - topic: optional topic string used in the email subject
     - audio_path: optional filename for an attached voice note
+    - template_name: name of the email template to use
 
     Returns
     - bool: True if the email was successfully submitted/queued,
@@ -162,8 +189,10 @@ def notify(note, email_address, topic=None, audio_path=None):
 
     try:
         note_url = _get_note_url(note)
+        template = DEFAULT_TEMPLATE if template_name == 'default' \
+        else COMPRESSED_TEMPLATE
         who, html_content, plaintext_content = \
-            _build_email_content(note, note_url)
+            _build_email_content(note, note_url, template=template)
 
         subject = (
             f'saythanks.io: {who} sent a note!'
@@ -196,26 +225,3 @@ def notify(note, email_address, topic=None, audio_path=None):
         print(e)
 
     return False
-
-
-# Deprecated TEMPLATE for reference, kept for backward compatibility
-'''
-TEMPLATE = """<div>{}
-<br>
-<br>
---{}
-<br>
-<br>
-The public URL for this note is <a clicktracking=off href="{}">here</a> <br>
-<br>
-<br>
-=========
-<br>
-<br>
-This note of gratitude was brought to you by SayThanks.io.
-<br>
-<br>
-A KennethReitz project, now maintained by KGiSL Edu (https://edu.kgisl.com).
-</div>
-"""
-'''
