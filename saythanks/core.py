@@ -235,6 +235,7 @@ def inbox():
         inbox=inbox_db,
         is_enabled=is_enabled,
         is_email_enabled=is_email_enabled,
+        is_original_template=storage.Inbox.is_original_template(inbox_db.slug),
         page=data["page"],
         total_pages=data["total_pages"],
         search_str=search_str,
@@ -318,6 +319,15 @@ def enable_email():
     # Auth0 stored account information.
     slug = session['profile']['nickname']
     storage.Inbox.enable_email(slug)
+    return redirect(url_for('inbox'))
+
+
+@app.route('/toggle-template')
+@requires_auth
+def toggle_template():
+    # Auth0 stored account information.
+    slug = session['profile']['nickname']
+    storage.Inbox.toggle_original_template(slug)
     return redirect(url_for('inbox'))
 
 
@@ -451,6 +461,8 @@ def submit_note(inbox_id, topic):
     byline = Markup(request.form['byline']).striptags()
     # Always send the email to the owner of the inbox, not the logged-in user
     email_address = storage.Inbox.get_email(inbox_db.slug)
+    # The layout is the inbox owner's choice, not the sender's.
+    original = storage.Inbox.is_original_template(inbox_db.slug)
 
 
     # If the user chooses to send an HTML email,
@@ -486,7 +498,8 @@ def submit_note(inbox_id, topic):
         )
         if storage.Inbox.is_email_enabled(inbox_db.slug):
             # Now notify, so the note has a UUID for the public URL
-            submitted_note.notify(email_address, topic)   # ← no audio_path
+            submitted_note.notify(  # ← no audio_path
+                email_address, topic, original=original)
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
@@ -506,7 +519,7 @@ def submit_note(inbox_id, topic):
     )
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox_db.slug):
-        submitted_note.notify(email_address, topic)
+        submitted_note.notify(email_address, topic, original=original)
 
     return redirect(url_for('thanks'))
 

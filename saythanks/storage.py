@@ -199,7 +199,8 @@ class Note:
         q = sqlalchemy.text("UPDATE notes SET archived = 't' WHERE uuid = :uuid")
         conn.execute(q, uuid=self.uuid)
 
-    def notify(self, email_address, topic=None, audio_path=None):
+    def notify(self, email_address, topic=None, audio_path=None,
+               original=False):
         """Send an email notification for this note.
 
         Delegates to myemail.notify.
@@ -208,8 +209,9 @@ class Note:
             email_address (str): Recipient email address.
             topic (str|None): Optional topic for subject line.
             audio_path (str|None): Optional audio filename to include.
+            original (bool): Send the original layout, not the current one.
         """
-        myemail.notify(self, email_address, topic, audio_path)
+        myemail.notify(self, email_address, topic, audio_path, original)
 
 
 class Inbox:
@@ -341,6 +343,54 @@ class Inbox:
             print(traceback.print_exc())
             logging.error(traceback.print_exc())
             return False
+
+    _original_template_ready = False
+
+    @classmethod
+    def _ensure_original_template(cls):
+        """Add inboxes.original_template to databases predating it.
+
+        Runs at most once per process; NULL reads as "current layout".
+        """
+        if not cls._original_template_ready:
+            q = sqlalchemy.text(
+                'ALTER TABLE inboxes '
+                'ADD COLUMN IF NOT EXISTS original_template boolean'
+            )
+            conn.execute(q)
+            cls._original_template_ready = True
+
+    @classmethod
+    def is_original_template(cls, slug):
+        """Return whether this inbox wants the original email layout.
+
+        Args:
+            slug (str): Inbox slug.
+
+        Returns:
+            bool: True for the original layout, False for the current one.
+        """
+        q = sqlalchemy.text(
+            'SELECT original_template FROM inboxes where slug = :slug'
+        )
+        try:
+            cls._ensure_original_template()
+            r = conn.execute(q, slug=slug).fetchall()
+            return bool(r and r[0]['original_template'])
+        except InFailedSqlTransaction:
+            print(traceback.print_exc())
+            logging.error(traceback.print_exc())
+            return False
+
+    @classmethod
+    def toggle_original_template(cls, slug):
+        """Flip the given inbox between the current and original layouts."""
+        cls._ensure_original_template()
+        q = sqlalchemy.text(
+            'update inboxes set original_template = '
+            'not coalesce(original_template, false) where slug = :slug'
+        )
+        conn.execute(q, slug=slug)
 
     @classmethod
     def disable_email(cls, slug):
