@@ -206,6 +206,7 @@ def inbox():
     inbox_db = storage.Inbox(profile['nickname'])
     is_enabled = storage.Inbox.is_enabled(inbox_db.slug)
     is_email_enabled = storage.Inbox.is_email_enabled(inbox_db.slug)
+    template_name = storage.Inbox.get_email_template_name(inbox_db.slug)
 
     # pagination
     page = request.args.get('page', 1, type=int)
@@ -235,7 +236,7 @@ def inbox():
         inbox=inbox_db,
         is_enabled=is_enabled,
         is_email_enabled=is_email_enabled,
-        is_original_template=storage.Inbox.is_original_template(inbox_db.slug),
+        email_template_name=template_name,
         page=data["page"],
         total_pages=data["total_pages"],
         search_str=search_str,
@@ -327,7 +328,7 @@ def enable_email():
 def toggle_template():
     # Auth0 stored account information.
     slug = session['profile']['nickname']
-    storage.Inbox.toggle_original_template(slug)
+    storage.Inbox.toggle_template(slug)
     return redirect(url_for('inbox'))
 
 
@@ -462,7 +463,7 @@ def submit_note(inbox_id, topic):
     # Always send the email to the owner of the inbox, not the logged-in user
     email_address = storage.Inbox.get_email(inbox_db.slug)
     # The layout is the inbox owner's choice, not the sender's.
-    original = storage.Inbox.is_original_template(inbox_db.slug)
+    template_name = storage.Inbox.get_email_template_name(inbox_db.slug)
 
 
     # If the user chooses to send an HTML email,
@@ -498,8 +499,11 @@ def submit_note(inbox_id, topic):
         )
         if storage.Inbox.is_email_enabled(inbox_db.slug):
             # Now notify, so the note has a UUID for the public URL
-            submitted_note.notify(  # ← no audio_path
-                email_address, topic, original=original)
+            submitted_note.notify(
+                email_address,
+                topic=topic,
+                template_name=template_name,
+            )
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
@@ -519,7 +523,11 @@ def submit_note(inbox_id, topic):
     )
     # Email the user the new note.
     if storage.Inbox.is_email_enabled(inbox_db.slug):
-        submitted_note.notify(email_address, topic, original=original)
+        submitted_note.notify(
+            email_address,
+            topic=topic,
+            template_name=template_name,
+        )
 
     return redirect(url_for('thanks'))
 
