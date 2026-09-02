@@ -361,23 +361,27 @@ class Inbox:
             str: Email template from the inboxes table.
         """
         ensure_column = sqlalchemy.text(
-            'ALTER TABLE inboxes '
-            'ADD COLUMN IF NOT EXISTS email_template_name text DEFAULT \'default\''
+            "ALTER TABLE inboxes "
+            "ADD COLUMN IF NOT EXISTS email_template_name "
+            "text DEFAULT 'default'"
         )
         conn.execute(ensure_column)
-                
-        q = sqlalchemy.text('SELECT email_template_name FROM inboxes where slug = :slug')
+
+        q = sqlalchemy.text(
+            "SELECT email_template_name FROM inboxes "
+            "WHERE slug = :slug"
+        )
         r = conn.execute(q, slug=slug).fetchall()
-        # Default to 'default' if not found
-        return r[0]['email_template_name'] if r else 'default'  
-    
+        return r[0]['email_template_name'] if r else 'default'
+
     @classmethod
     def toggle_template(cls, slug):
         """Flip the email template for the given inbox."""
         q = sqlalchemy.text(
-            'update inboxes set email_template_name = '
-            'case when email_template_name = \'default\' then \'compressed\' else \'default\' end '
-            'where slug = :slug'
+            "UPDATE inboxes SET email_template_name = "
+            "CASE WHEN email_template_name = 'default' "
+            "THEN 'compressed' ELSE 'default' END "
+            "WHERE slug = :slug"
         )
         conn.execute(q, slug=slug)
 
