@@ -156,8 +156,11 @@ auth_jwt_v2 = os.environ['AUTH0_JWT_V2_TOKEN']
 
 def get_callback_url():
     """Return callback URL dynamically based on request host or env setting."""
-    if request and hasattr(request, 'host') and ('ngrok' in request.host or 'localhost' not in request.host):
-        return url_for('callback_handling', _external=True)
+    if request and hasattr(request, 'host'):
+        host = request.host
+        if 'ngrok' in host or 'localhost' not in host:
+            return url_for('callback_handling', _external=True)
+
     return auth_callback_url or url_for('callback_handling', _external=True)
 
 def requires_auth(f):
@@ -591,8 +594,6 @@ def callback_handling():
 
     userid = user_info['sub']
     email = user_detail_info.get('email')
-    if not email:
-        logger.error('Auth0 userinfo email fetch failed!')
     nickname = resolve_nickname(user_detail_info, email, userid)
     picture = user_detail_info.get('picture')
     name = user_detail_info.get('name')
@@ -600,5 +601,10 @@ def callback_handling():
     session['profile']['picture'] = picture
     session['profile']['name'] = name
     final_slug = storage.Inbox.link_or_create(userid, nickname, email)
+    if not email:
+        logger.error('Auth0 userinfo email fetch failed!')
+        storage.Inbox.disable_email(final_slug)
+        logger.info(f"Email notifications disabled for {final_slug} due to missing email.")
+
     session['profile']['nickname'] = final_slug
     return redirect(url_for('inbox'))
