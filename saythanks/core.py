@@ -594,8 +594,6 @@ def callback_handling():
 
     userid = user_info['sub']
     email = user_detail_info.get('email')
-    if not email:
-        logger.error('Auth0 userinfo email fetch failed!')
     nickname = resolve_nickname(user_detail_info, email, userid)
     picture = user_detail_info.get('picture')
     name = user_detail_info.get('name')
@@ -603,5 +601,10 @@ def callback_handling():
     session['profile']['picture'] = picture
     session['profile']['name'] = name
     final_slug = storage.Inbox.link_or_create(userid, nickname, email)
+    if not email:
+        logger.error('Auth0 userinfo email fetch failed!')
+        storage.Inbox.disable_email(final_slug)
+        logger.info(f"Email notifications disabled for {final_slug} due to missing email.")
+
     session['profile']['nickname'] = final_slug
     return redirect(url_for('inbox'))
