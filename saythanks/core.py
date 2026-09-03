@@ -14,7 +14,7 @@ import time  # Added to handle timestamping for audio filenames
 
 # Import your get_version function
 from .version import get_version
-from .utils import strip_html, resolve_nickname
+from .utils import strip_html, resolve_nickname, is_valid_email
 from .logging_config import configure_logging
 
 from functools import wraps
@@ -594,6 +594,17 @@ def callback_handling():
 
     userid = user_info['sub']
     email = user_detail_info.get('email')
+    # Some social connections (e.g. Facebook without the email permission)
+    # legitimately return no email at all; only refuse the login when the
+    # provider returned something that isn't a usable email address, not
+    # when it returned nothing.
+    if email and not is_valid_email(email):
+        logger.error(
+            'Auth0 userinfo returned a malformed email for user %s; '
+            'refusing to create or update the account.',
+            userid,
+        )
+        return redirect(url_for('index'))
     nickname = resolve_nickname(user_detail_info, email, userid)
     picture = user_detail_info.get('picture')
     name = user_detail_info.get('name')
