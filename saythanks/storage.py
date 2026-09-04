@@ -397,9 +397,10 @@ class Inbox:
     def enable_email(cls, slug):
         """Enable outgoing emails for the given inbox."""
         q = sqlalchemy.text(
-            'update inboxes set email_enabled = true where slug = :slug'
+            'update inboxes set email_enabled = true '
+            'where slug = :slug and email is not null and btrim(email) <> :empty'
         )
-        conn.execute(q, slug=slug)
+        conn.execute(q, slug=slug, empty='')
 
     @classmethod
     def is_enabled(cls, slug):
