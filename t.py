@@ -22,5 +22,4 @@ if __name__ == '__main__' and not is_test_run:
     # while removing repeated GET / HTTP/1.1 entries.
     # Instead, went with the other approach of setting the werkzeug logger
     # to INFO level in logging_config.py.
-    # saythanks.app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
-    saythanks.app.run(host='0.0.0.0', port=5000)
+    saythanks.app.run(host='0.0.0.0', port=5000, use_reloader=False)

@@ -90,10 +90,11 @@ class CompatConnection:
             params.update(kwargs)
         with self._engine.connect() as current_conn:
             res = current_conn.execute(statement, params)
-            current_conn.commit()
             if hasattr(res, 'returns_rows') and res.returns_rows:
                 mappings = list(res.mappings().all())
+                current_conn.commit()
                 return CompatResult(mappings)
+            current_conn.commit()
             return res
 
     def __getattr__(self, name):
@@ -262,32 +263,51 @@ class Note:
                 'byline': self.byline,
                 'inbox': self.inbox.auth_id,
             }
-            base_query = '''
-                INSERT INTO notes (body, byline, inboxes_auth_id)
-                VALUES (:body, :byline, :inbox)
-                RETURNING uuid
-            '''
+            if 'sqlite' in str(db_url):
+                import uuid as _uuid_mod
+                params['uuid'] = str(_uuid_mod.uuid4())
+                base_query = '''
+                    INSERT INTO notes (uuid, body, byline, inboxes_auth_id)
+                    VALUES (:uuid, :body, :byline, :inbox)
+                    RETURNING uuid
+                '''
+            else:
+                base_query = '''
+                    INSERT INTO notes (body, byline, inboxes_auth_id)
+                    VALUES (:body, :byline, :inbox)
+                    RETURNING uuid
+                '''
             q = base_query
 
             if self.audio_path:
-                check_column = sqlalchemy.text(
+                if 'sqlite' in str(db_url):
+                    has_audio_column = True
+                else:
+                    check_column = sqlalchemy.text(
+                        """
+                        SELECT EXISTS (
+                            SELECT 1
+                            FROM information_schema.columns
+                            WHERE table_name='notes'
+                            AND column_name='audio_path'
+                        );
                     """
-                    SELECT EXISTS (
-                        SELECT 1
-                        FROM information_schema.columns
-                        WHERE table_name='notes'
-                        AND column_name='audio_path'
-                    );
-                """
-                )
-                has_audio_column = conn.execute(check_column).scalar()
+                    )
+                    has_audio_column = conn.execute(check_column).scalar()
 
                 if has_audio_column:
-                    q = '''
-                    INSERT INTO notes (body, byline, inboxes_auth_id, audio_path)
-                    VALUES (:body, :byline, :inbox, :audio_path)
-                    RETURNING uuid
-                    '''
+                    if 'sqlite' in str(db_url):
+                        q = '''
+                        INSERT INTO notes (uuid, body, byline, inboxes_auth_id, audio_path)
+                        VALUES (:uuid, :body, :byline, :inbox, :audio_path)
+                        RETURNING uuid
+                        '''
+                    else:
+                        q = '''
+                        INSERT INTO notes (body, byline, inboxes_auth_id, audio_path)
+                        VALUES (:body, :byline, :inbox, :audio_path)
+                        RETURNING uuid
+                        '''
                     params['audio_path'] = self.audio_path
                 else:
                     logger.info(
