@@ -26,6 +26,7 @@ def _load_myemail():
 
     if 'mailersend' not in sys.modules:
         mailersend = types.ModuleType('mailersend')
+        mailersend.__version__ = '2.0.3'
         emails = types.ModuleType('mailersend.emails')
         emails.NewEmail = lambda *a, **k: object()
         mailersend.emails = emails

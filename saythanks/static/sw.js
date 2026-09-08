@@ -22,10 +22,7 @@ const STATIC_ASSETS = [
   '/static/icons/icon-192.png',
   '/static/icons/icon-512.png',
   '/static/images/owly.svg',
-  '/static/images/inbox.png',
-  'https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js',
-  'https://uicdn.toast.com/editor/latest/toastui-editor.min.css',
-  'https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js'
+  '/static/images/inbox.png'
 ];
 
 // 1. Install: Pre-cache core local application shell

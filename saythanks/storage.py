@@ -1,18 +1,9 @@
 import logging
 import os
 
-try:
-    import tablib  # type: ignore
-except ImportError:
-    tablib = None
-
+import tablib
 import sqlalchemy
-
-try:
-    from auth0.v2.management import Auth0  # type: ignore
-except ImportError:
-    Auth0 = None
-
+from auth0.v2.management import Auth0
 
 from . import myemail
 from .logging_config import configure_logging
@@ -23,8 +14,13 @@ try:
     InFailedSqlTransaction = errors.lookup('25P02')
     UniqueViolation = errors.lookup('23505')
 except ImportError:
-    InFailedSqlTransaction = Exception
-    UniqueViolation = Exception
+    class InFailedSqlTransaction(Exception):
+        """Fallback exception when psycopg2 is not installed."""
+        pass
+
+    class UniqueViolation(Exception):
+        """Fallback exception when psycopg2 is not installed."""
+        pass
 
 
 # importing module
@@ -36,7 +32,7 @@ logger = logging.getLogger(__name__)
 # Auth0 API Client
 auth0_domain = os.environ.get('AUTH0_DOMAIN', '')
 auth0_token = os.environ.get('AUTH0_JWT_V2_TOKEN', '')
-auth0 = Auth0(auth0_domain, auth0_token) if (Auth0 and auth0_domain) else None
+auth0 = Auth0(auth0_domain, auth0_token) if (auth0_domain and auth0_token) else None
 
 class CompatRow:
     """Row proxy supporting both dictionary key and tuple index lookups across SQLAlchemy versions."""
@@ -94,10 +90,10 @@ class CompatConnection:
             params.update(kwargs)
         with self._engine.connect() as current_conn:
             res = current_conn.execute(statement, params)
+            current_conn.commit()
             if hasattr(res, 'returns_rows') and res.returns_rows:
                 mappings = list(res.mappings().all())
                 return CompatResult(mappings)
-            current_conn.commit()
             return res
 
     def __getattr__(self, name):
@@ -105,12 +101,15 @@ class CompatConnection:
 
 
 # Database connection.
-db_url = os.environ.get('DATABASE_URL', 'sqlite:///saythanks_dev.db')
+db_url = os.environ.get('DATABASE_URL')
+if not db_url:
+    db_url = 'sqlite:///saythanks_dev.db'
+
 connect_args = {'check_same_thread': False} if 'sqlite' in db_url else {}
 engine = sqlalchemy.create_engine(db_url, connect_args=connect_args)
 try:
     conn = CompatConnection(engine)
-    # Auto-initialize development schema if running on local SQLite
+    # Ensure local development tables exist if running on SQLite
     if 'sqlite' in db_url:
         conn.execute('''
             CREATE TABLE IF NOT EXISTS inboxes (
@@ -134,15 +133,6 @@ try:
                 timestamp datetime DEFAULT CURRENT_TIMESTAMP
             )
         ''')
-        # Seed default inboxes for testing/development
-        conn.execute(
-            "INSERT OR IGNORE INTO inboxes (slug, auth_id, email, enabled, email_enabled) VALUES (:slug, :auth_id, :email, 1, 1)",
-            slug='lifebalance', auth_id='auth_lifebalance', email='ashok@example.com'
-        )
-        conn.execute(
-            "INSERT OR IGNORE INTO inboxes (slug, auth_id, email, enabled, email_enabled) VALUES (:slug, :auth_id, :email, 1, 1)",
-            slug='nandhakumar', auth_id='auth_nandhakumar', email='nandha@example.com'
-        )
 except Exception as e:
     logger.warning("DB init/connection notice: %s", e)
     conn = None

@@ -1,10 +1,7 @@
 import os
 import requests
 
-try:
-    from mailersend import emails  # type: ignore
-except ImportError:
-    emails = None
+from mailersend import emails
 
 
 from urllib.error import URLError

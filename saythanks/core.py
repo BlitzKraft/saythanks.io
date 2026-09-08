@@ -20,71 +20,85 @@ from .logging_config import configure_logging
 from functools import wraps
 from flask import Flask, request, session, render_template, url_for
 from flask import abort, redirect, make_response
-try:
-    from markupsafe import Markup  # type: ignore
-except ImportError:
-    Markup = None
-
+from markupsafe import Markup
 from flask import send_from_directory
-try:
-    from flask_common import Common  # type: ignore
-except ImportError:
-    Common = None
-
-try:
-    from names import get_full_name  # type: ignore
-except ImportError:
-    get_full_name = lambda: "A Friend"
-
-try:
-    from raven.contrib.flask import Sentry  # type: ignore
-except ImportError:
-    Sentry = None
-
-try:
-    from flask_qrcode import QRcode  # type: ignore
-except ImportError:
-    QRcode = None
-
-try:
-    from markdown import markdown  # type: ignore
-except ImportError:
-    def markdown(text, *args, **kwargs):  # type: ignore
-        return text
-
-
+from flask_common import Common
+from names import get_full_name
+from raven.contrib.flask import Sentry
+from flask_qrcode import QRcode
 from . import storage
 from urllib.parse import quote, unquote
+from lxml_html_clean import Cleaner
+from markdown import markdown
 from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-try:
-    from lxml_html_clean import Cleaner  # type: ignore
-    cleaner = Cleaner()
-    cleaner.javascript = True
-    cleaner.style = True
+cleaner = Cleaner()
+cleaner.javascript = True
+cleaner.style = True
+cleaner.remove_tags = ['script', 'style', 'link']
+cleaner.allow_attributes = ['alt', 'href']
+cleaner.remove_attributes = [
+    'id',
+    'class',
+    'style',
+    'align',
+    'border',
+    'cellpadding',
+    'cellspacing',
+    'width',
+    'height',
+    'hspace',
+    'vspace',
+    'frameborder',
+    'marginwidth',
+    'marginheight',
+    'noresize',
+    'scrolling',
+    'target',
+    'onclick',
+    'ondblclick',
+    'onmousedown',
+    'onmousemove',
+    'onmouseover',
+    'onmouseout',
+    'onmouseup',
+    'onkeypress',
+    'onkeydown',
+    'onkeyup',
+    'onblur',
+    'onchange',
+    'onfocus',
+    'onselect',
+    'onreset',
+    'onsubmit',
+    'onabort',
+    'oncanplay',
+    'oncanplaythrough',
+    'oncuechange',
+    'ondurationchange',
+    'onemptied',
+    'onended',
+    'onloadeddata',
+    'onloadedmetadata',
+    'onloadstart',
+    'onpause',
+    'onplay',
+    'onplaying',
+    'onprogress',
+    'onratechange',
+    'onseeked',
+    'onseeking',
+    'onstalled',
+    'onsuspend',
+    'ontimeupdate',
+    'onvolumechange',
+    'onwaiting',
+]
 
-    cleaner.remove_tags = ['script', 'style', 'link']
-    cleaner.allow_attributes = ['alt', 'href']
-    cleaner.remove_attributes = [
-        'id', 'class', 'style', 'align', 'border', 'cellpadding', 'cellspacing',
-        'width', 'height', 'hspace', 'vspace', 'frameborder', 'marginwidth',
-        'marginheight', 'noresize', 'scrolling', 'target', 'onclick', 'ondblclick',
-        'onmousedown', 'onmousemove', 'onmouseover', 'onmouseout', 'onmouseup',
-        'onkeypress', 'onkeydown', 'onkeyup', 'onblur', 'onchange', 'onfocus',
-        'onselect', 'onreset', 'onsubmit', 'onabort', 'oncanplay', 'oncanplaythrough',
-        'oncuechange', 'ondurationchange', 'onemptied', 'onended', 'onloadeddata',
-        'onloadedmetadata', 'onloadstart', 'onpause', 'onplay', 'onplaying',
-        'onprogress', 'onratechange', 'onseeked', 'onseeking', 'onstalled',
-        'onsuspend', 'ontimeupdate', 'onvolumechange', 'onwaiting',
-    ]
 
-    def remove_tags(html):
-        return cleaner.clean_html(html)
-except ImportError:
-    import re
-    def remove_tags(html):
-        return re.sub(r'<[^>]*>', '', html)
+def remove_tags(html):
+    return cleaner.clean_html(html)
 
 
 
@@ -119,18 +133,16 @@ app.jinja_env.filters['quote'] = quote
 # to strip html formatting
 app.jinja_env.filters['strip_html'] = strip_html
 
-if QRcode is not None:
-    QRcode(app)
+QRcode(app)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
 app.config['MAX_RECORDING_TIME'] = int(os.environ.get('MAX_RECORDING_TIME', 30))
 app.debug = True
 
 # Flask-Common.
-if Common is not None:
-    common = Common(app)
+common = Common(app)
 
 # Sentry for catching application errors in production.
-if Sentry is not None and 'SENTRY_DSN' in os.environ:
+if 'SENTRY_DSN' in os.environ:
     sentry = Sentry(app, dsn=os.environ['SENTRY_DSN'])
 
 # Auth0 Integration

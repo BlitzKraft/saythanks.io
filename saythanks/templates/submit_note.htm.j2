@@ -133,8 +133,8 @@ thoughtful words, so far… (shoot for 42!)</h6>
 
 
 <script>
-  let currentUser = "{{ user }}";
-  let currentTopic = "{{ topic }}";
+  let currentUser = {{ user|tojson }};
+  let currentTopic = {{ topic|tojson }};
   const pathParts = window.location.pathname.split('/');
 
   // If served as an offline fallback shell for a /to/<user> route:
