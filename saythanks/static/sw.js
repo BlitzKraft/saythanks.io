@@ -25,6 +25,14 @@ const STATIC_ASSETS = [
   '/static/images/inbox.png'
 ];
 
+const ALLOWED_CDN_HOSTS = new Set([
+  'fonts.googleapis.com',
+  'fonts.gstatic.com',
+  'ajax.googleapis.com',
+  'uicdn.toast.com',
+  'cdnjs.cloudflare.com'
+]);
+
 // 1. Install: Pre-cache core local application shell
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -62,11 +70,7 @@ self.addEventListener('fetch', (event) => {
   // Strategy A: Static assets & fonts -> Cache-first with network fallback
   if (
     url.pathname.startsWith('/static/') ||
-    url.hostname.includes('fonts.googleapis.com') ||
-    url.hostname.includes('fonts.gstatic.com') ||
-    url.hostname.includes('ajax.googleapis.com') ||
-    url.hostname.includes('uicdn.toast.com') ||
-    url.hostname.includes('cdnjs.cloudflare.com')
+    ALLOWED_CDN_HOSTS.has(url.hostname)
   ) {
     event.respondWith(
       caches.match(request).then((cachedResponse) => {

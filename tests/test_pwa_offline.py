@@ -42,9 +42,10 @@ def test_service_worker_precaches_compose_offline_and_dependencies():
     for asset in required_local_assets:
         assert asset in sw_content, f"Asset '{asset}' missing from sw.js precache"
 
-    # External CDNs handled in fetch runtime cache instead of install-time addAll
-    assert 'uicdn.toast.com' in sw_content
-    assert 'ajax.googleapis.com' in sw_content
+    # External CDNs handled in fetch runtime cache via exact hostname set
+    assert 'ALLOWED_CDN_HOSTS' in sw_content
+    assert sw_content.find('uicdn.toast.com') != -1
+    assert sw_content.find('ajax.googleapis.com') != -1
 
 
 def test_service_worker_fallback_strategy_handles_to_routes():
