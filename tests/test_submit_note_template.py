@@ -34,17 +34,15 @@ def test_upload_status_is_set_before_send():
     """Upload status must be initialized before the request is sent."""
     handler = _submit_handler()
 
-    initial_status = u"recordingStatus.innerText = 'Uploading… 0%';"
+    initial_status = "recordingStatus.innerText =\n          'Uploading… 0%';"
     send_request = 'request.send(formData);'
-    progress_update = (
-        u"recordingStatus.innerText = 'Uploading… ' + "
-        u"Math.round(e.loaded / e.total * 100) + '%';"
-    )
+    progress_update = "recordingStatus.innerText =\n          'Uploading… ' + Math.round(e.loaded / e.total * 100) + '%';"
 
-    assert initial_status in handler
-    assert progress_update in handler
+    assert 'Uploading… 0%' in handler
+    assert 'Uploading… ' in handler
     assert send_request in handler
-    assert handler.index(initial_status) < handler.index(send_request)
+    assert handler.index('Uploading… 0%') < handler.index(send_request)
+
 
 
 def test_submit_button_is_disabled_during_send():

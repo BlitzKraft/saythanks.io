@@ -3,21 +3,29 @@
    Offline-first caching, shell resilience, and background sync support.
    ========================================================================== */
 
-const CACHE_VERSION = 'saythanks-v2';
+const CACHE_VERSION = 'saythanks-v3';
 const STATIC_ASSETS = [
   '/',
   '/thanks',
+  '/compose-offline',
   '/static/manifest.json',
   '/static/css/normalize.css',
   '/static/css/skeleton.css',
   '/static/css/saythanks.css',
   '/static/css/carbonads.css',
   '/static/css/jquery.modal.min.css',
+  '/static/js/main.js',
+  '/static/js/jquery.autogrowtextarea.min.js',
+  '/static/js/jquery.simplyCountable.js',
+  '/static/js/jquery.modal.min.js',
   '/static/js/offline-outbox.js',
   '/static/icons/icon-192.png',
   '/static/icons/icon-512.png',
   '/static/images/owly.svg',
-  '/static/images/inbox.png'
+  '/static/images/inbox.png',
+  'https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js',
+  'https://uicdn.toast.com/editor/latest/toastui-editor.min.css',
+  'https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js'
 ];
 
 // 1. Install: Pre-cache core local application shell
@@ -59,7 +67,9 @@ self.addEventListener('fetch', (event) => {
     url.pathname.startsWith('/static/') ||
     url.hostname.includes('fonts.googleapis.com') ||
     url.hostname.includes('fonts.gstatic.com') ||
-    url.hostname.includes('ajax.googleapis.com')
+    url.hostname.includes('ajax.googleapis.com') ||
+    url.hostname.includes('uicdn.toast.com') ||
+    url.hostname.includes('cdnjs.cloudflare.com')
   ) {
     event.respondWith(
       caches.match(request).then((cachedResponse) => {
@@ -88,6 +98,7 @@ self.addEventListener('fetch', (event) => {
   const isPublicPage = url.pathname === '/' ||
                        url.pathname === '/thanks' ||
                        url.pathname === '/privacy' ||
+                       url.pathname === '/compose-offline' ||
                        url.pathname.startsWith('/to/');
 
   if (!isPublicPage) {
@@ -109,6 +120,12 @@ self.addEventListener('fetch', (event) => {
         const cached = await caches.match(request);
         if (cached) {
           return cached;
+        }
+        if (url.pathname.startsWith('/to/')) {
+          const composeFallback = await caches.match('/compose-offline');
+          if (composeFallback) {
+            return composeFallback;
+          }
         }
         const fallback = await caches.match('/');
         if (fallback) {

@@ -33,7 +33,7 @@
 <button type="submit" class="logoutLblPos" >Log Out</button>
 </form>
 
-<h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong>{{ topic }}!</h4>
+<h4>Send a <strong class="green">Thank You</strong> note to <strong id="recipient-user-display">{{ user }}</strong><span id="topic-display">{{ topic }}</span>!</h4>
 
 
 <form id="thankyou-note-form" class="form-horizontal"
@@ -58,16 +58,11 @@
     </label>
     <label for="option2" style="display:inline-flex;align-items:center;gap:0.4rem; white-space:nowrap;">
       <input type="radio" name="content-type" id="option2" value="html">
-      HTML
+      Rich HTML
     </label>
   </fieldset>
 </div>
 
-
-<fieldset>
-
-<!-- Form Name -->
-<legend>❝ THANK YOU ❞ </legend>
 
 <h6>You have written <strong><span id=counter>0</span></strong>
 thoughtful words, so far… (shoot for 42!)</h6>
@@ -138,6 +133,38 @@ thoughtful words, so far… (shoot for 42!)</h6>
 
 
 <script>
+  let currentUser = "{{ user }}";
+  let currentTopic = "{{ topic }}";
+  const pathParts = window.location.pathname.split('/');
+
+  // If served as an offline fallback shell for a /to/<user> route:
+  if (pathParts[1] === 'to' && pathParts[2]) {
+    const rawTarget = decodeURIComponent(pathParts[2]);
+    const ampIndex = rawTarget.indexOf('&');
+    if (ampIndex !== -1) {
+      currentUser = rawTarget.substring(0, ampIndex);
+      currentTopic = ' about ' + rawTarget.substring(ampIndex + 1);
+    } else {
+      currentUser = rawTarget;
+      currentTopic = '';
+    }
+
+    const recipientElem = document.getElementById('recipient-user-display');
+    if (recipientElem) {
+      recipientElem.innerText = currentUser;
+    }
+    const topicElem = document.getElementById('topic-display');
+    if (topicElem) {
+      topicElem.innerText = currentTopic;
+    }
+
+    const formElem = document.getElementById('thankyou-note-form');
+    if (formElem) {
+      const actionUrl = `./${encodeURIComponent(currentUser)}/submit` + (ampIndex !== -1 ? `/${encodeURIComponent(rawTarget.substring(ampIndex + 1))}` : '');
+      formElem.setAttribute('action', actionUrl);
+    }
+  }
+
   function wordCount(data) {
     var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|/g +
       /[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
@@ -161,8 +188,9 @@ thoughtful words, so far… (shoot for 42!)</h6>
       el: textArea,
       previewStyle: 'tab',
       height: '500px',
-      initialValue: `{% if topic %}### Ref:{{ topic }}\n{% endif %}Dear {{ user }},\nThank you for...`
+      initialValue: (currentTopic ? `### Ref:${currentTopic}\n` : '') + `Dear ${currentUser},\nThank you for...`
   });
+
 
   var form = document.getElementById("thankyou-note-form");
   var submitBtn = document.getElementById("send-note-btn");

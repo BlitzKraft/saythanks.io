@@ -1,7 +1,12 @@
 import os
 import requests
 
-from mailersend import emails
+try:
+    from mailersend import emails  # type: ignore
+except ImportError:
+    emails = None
+
+
 from urllib.error import URLError
 from flask import url_for, current_app
 

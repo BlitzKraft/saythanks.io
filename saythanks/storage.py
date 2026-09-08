@@ -1,17 +1,31 @@
 import logging
 import os
 
-import tablib
+try:
+    import tablib  # type: ignore
+except ImportError:
+    tablib = None
+
 import sqlalchemy
-from auth0.v2.management import Auth0
+
+try:
+    from auth0.v2.management import Auth0  # type: ignore
+except ImportError:
+    Auth0 = None
+
 
 from . import myemail
 from .logging_config import configure_logging
-import traceback  # Just to show the full traceback
-from psycopg2 import errors
+import traceback
 
-InFailedSqlTransaction = errors.lookup('25P02')
-UniqueViolation = errors.lookup('23505')
+try:
+    from psycopg2 import errors
+    InFailedSqlTransaction = errors.lookup('25P02')
+    UniqueViolation = errors.lookup('23505')
+except ImportError:
+    InFailedSqlTransaction = Exception
+    UniqueViolation = Exception
+
 
 # importing module
 
@@ -20,13 +34,119 @@ configure_logging()
 logger = logging.getLogger(__name__)
 
 # Auth0 API Client
-auth0_domain = os.environ['AUTH0_DOMAIN']
-auth0_token = os.environ['AUTH0_JWT_V2_TOKEN']
-auth0 = Auth0(auth0_domain, auth0_token)
+auth0_domain = os.environ.get('AUTH0_DOMAIN', '')
+auth0_token = os.environ.get('AUTH0_JWT_V2_TOKEN', '')
+auth0 = Auth0(auth0_domain, auth0_token) if (Auth0 and auth0_domain) else None
+
+class CompatRow:
+    """Row proxy supporting both dictionary key and tuple index lookups across SQLAlchemy versions."""
+    def __init__(self, mapping):
+        self._mapping = dict(mapping)
+        self._values = list(self._mapping.values())
+
+    def __getitem__(self, key):
+        if isinstance(key, str):
+            return self._mapping[key]
+        return self._values[key]
+
+    def get(self, key, default=None):
+        return self._mapping.get(key, default)
+
+    def __getattr__(self, name):
+        if name in self._mapping:
+            return self._mapping[name]
+        raise AttributeError(name)
+
+    def __repr__(self):
+        return repr(self._mapping)
+
+
+class CompatResult:
+    """Result proxy wrapping rows to provide dictionary key and tuple index access."""
+    def __init__(self, rows_mappings):
+        self._rows = [CompatRow(m) for m in rows_mappings]
+
+    def fetchall(self):
+        return self._rows
+
+    def fetchone(self):
+        return self._rows[0] if self._rows else None
+
+    def scalar(self):
+        return self._rows[0][0] if self._rows else None
+
+    def __iter__(self):
+        return iter(self._rows)
+
+
+class CompatConnection:
+    """Connection proxy to bridge SQLAlchemy 1.x kwargs execution into SQLAlchemy 2.0 dict parameters across worker threads."""
+    def __init__(self, engine):
+        self._engine = engine
+
+    def execute(self, statement, *args, **kwargs):
+        if isinstance(statement, str):
+            statement = sqlalchemy.text(statement)
+        params = {}
+        if args and isinstance(args[0], dict):
+            params.update(args[0])
+        if kwargs:
+            params.update(kwargs)
+        with self._engine.connect() as current_conn:
+            res = current_conn.execute(statement, params)
+            if hasattr(res, 'returns_rows') and res.returns_rows:
+                mappings = list(res.mappings().all())
+                return CompatResult(mappings)
+            current_conn.commit()
+            return res
+
+    def __getattr__(self, name):
+        return getattr(self._engine, name)
+
 
 # Database connection.
-engine = sqlalchemy.create_engine(os.environ['DATABASE_URL'])
-conn = engine.connect()
+db_url = os.environ.get('DATABASE_URL', 'sqlite:///saythanks_dev.db')
+connect_args = {'check_same_thread': False} if 'sqlite' in db_url else {}
+engine = sqlalchemy.create_engine(db_url, connect_args=connect_args)
+try:
+    conn = CompatConnection(engine)
+    # Auto-initialize development schema if running on local SQLite
+    if 'sqlite' in db_url:
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS inboxes (
+                slug text PRIMARY KEY,
+                auth_id text,
+                enabled boolean DEFAULT 1,
+                email_enabled boolean DEFAULT 1,
+                email text,
+                email_template_name text DEFAULT 'default',
+                timestamp datetime DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS notes (
+                uuid text PRIMARY KEY,
+                inboxes_auth_id text,
+                body text,
+                byline text,
+                archived boolean DEFAULT 0,
+                audio_path text,
+                timestamp datetime DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        # Seed default inboxes for testing/development
+        conn.execute(
+            "INSERT OR IGNORE INTO inboxes (slug, auth_id, email, enabled, email_enabled) VALUES (:slug, :auth_id, :email, 1, 1)",
+            slug='lifebalance', auth_id='auth_lifebalance', email='ashok@example.com'
+        )
+        conn.execute(
+            "INSERT OR IGNORE INTO inboxes (slug, auth_id, email, enabled, email_enabled) VALUES (:slug, :auth_id, :email, 1, 1)",
+            slug='nandhakumar', auth_id='auth_nandhakumar', email='nandha@example.com'
+        )
+except Exception as e:
+    logger.warning("DB init/connection notice: %s", e)
+    conn = None
+
 
 
 # Storage Models
@@ -360,12 +480,15 @@ class Inbox:
         Returns:
             str: Email template from the inboxes table.
         """
-        ensure_column = sqlalchemy.text(
-            "ALTER TABLE inboxes "
-            "ADD COLUMN IF NOT EXISTS email_template_name "
-            "text DEFAULT 'default'"
-        )
-        conn.execute(ensure_column)
+        try:
+            ensure_column = sqlalchemy.text(
+                "ALTER TABLE inboxes "
+                "ADD COLUMN IF NOT EXISTS email_template_name "
+                "text DEFAULT 'default'"
+            )
+            conn.execute(ensure_column)
+        except Exception:
+            pass
 
         q = sqlalchemy.text(
             "SELECT email_template_name FROM inboxes "

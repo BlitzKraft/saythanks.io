@@ -14,11 +14,15 @@ ROOT = os.path.dirname(os.path.dirname(__file__))
 def _load_myemail():
     """Import myemail.py without booting the Flask app"""
     
-    if 'flask' not in sys.modules:
-        flask = types.ModuleType('flask')
-        flask.url_for = lambda *a, **k: ''
-        flask.current_app = None
-        sys.modules['flask'] = flask
+    try:
+        import flask
+    except ImportError:
+        if 'flask' not in sys.modules:
+            flask = types.ModuleType('flask')
+            flask.url_for = lambda *a, **k: ''
+            flask.current_app = None
+            sys.modules['flask'] = flask
+
 
     if 'mailersend' not in sys.modules:
         mailersend = types.ModuleType('mailersend')

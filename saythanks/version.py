@@ -4,7 +4,12 @@
 # It is used to retrieve the current version of the project.
 import subprocess as commands
 from datetime import datetime
-import mailersend
+try:
+    import mailersend  # type: ignore
+except ImportError:
+    mailersend = None
+
+
 
 
 #####################
@@ -35,8 +40,9 @@ def get_version():
             # Format month as three letters and get day
             formatted_date = f"{date_obj.strftime('%b')}-{date_obj.day}"
             version = f"{version} {formatted_date}"
-            print(f"Version: {version}")
-            print(f"mailsend:{mailersend.__version__}")
+            ms_ver = getattr(mailersend, '__version__', 'unknown')
+            print(f"mailsend:{ms_ver}")
+
         else:
             print("Warning: Could not retrieve commit date")
     else:
