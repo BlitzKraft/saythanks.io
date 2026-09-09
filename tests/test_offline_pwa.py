@@ -22,12 +22,15 @@ def test_service_worker_is_root_registered_and_has_offline_fallback():
     assert "navigator.serviceWorker.register('/service-worker.js')" in base_template
     assert "const OFFLINE_URL = '/static/offline.html';" in service_worker
     assert "caches.match(OFFLINE_URL)" in service_worker
+    assert "function matchCachedNavigation(request)" in service_worker
+    assert "url.pathname !== '/thanks'" in service_worker
 
 
 def test_service_worker_precaches_public_note_assets():
     service_worker = _read('saythanks/static/service-worker.js')
     expected_assets = (
         '/static/offline.html',
+        '/thanks',
         '/static/manifest.json',
         '/static/css/saythanks.css',
         '/static/js/main.js',
@@ -70,7 +73,7 @@ def test_service_worker_versioned_cache_removes_old_caches():
 def test_service_worker_cache_version_changes_for_new_offline_code():
     service_worker = _read('saythanks/static/service-worker.js')
 
-    assert "const CACHE_NAME = 'saythanks-public-v3';" in service_worker
+    assert "const CACHE_NAME = 'saythanks-public-v4';" in service_worker
 
 
 def test_android_manifest_has_install_and_display_metadata():
