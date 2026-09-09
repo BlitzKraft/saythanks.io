@@ -1,7 +1,8 @@
-const CACHE_NAME = 'saythanks-public-v3';
+const CACHE_NAME = 'saythanks-public-v4';
 const OFFLINE_URL = '/static/offline.html';
 const PRECACHE_URLS = [
   OFFLINE_URL,
+  '/thanks',
   '/static/manifest.json',
   '/static/css/normalize.css',
   '/static/css/skeleton.css',
@@ -42,6 +43,16 @@ function isPublicRequest(request) {
   ].some(path => url.pathname === path || url.pathname.startsWith(`${path}/`));
 }
 
+function matchCachedNavigation(request) {
+  const url = new URL(request.url);
+  return caches.match(request).then(cachedResponse => {
+    if (cachedResponse || url.pathname !== '/thanks') {
+      return cachedResponse;
+    }
+    return caches.match('/thanks');
+  });
+}
+
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -77,7 +88,7 @@ self.addEventListener('fetch', event => {
           }
           return response;
         })
-        .catch(() => caches.match(event.request).then(
+        .catch(() => matchCachedNavigation(event.request).then(
           cachedResponse => cachedResponse || caches.match(OFFLINE_URL)
         ))
     );
