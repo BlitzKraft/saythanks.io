@@ -164,6 +164,7 @@ def get_callback_url():
 
     return auth_callback_url or url_for('callback_handling', _external=True)
 
+
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -277,7 +278,9 @@ def inbox_export(export_format):
 
     # Send over the list of all given notes for the user.
     response = make_response(inbox_db.export(export_format))
-    response.headers['Content-Disposition'] = 'attachment; filename=saythanks-inbox.csv'
+    response.headers['Content-Disposition'] = (
+        'attachment; filename=saythanks-inbox.csv'
+    )
     response.headers['Content-type'] = 'text/csv'
     return response
 
@@ -380,9 +383,9 @@ def display_submit_note(inbox_id, topic):
     display_topic = ""
     if raw_topic:
         display_topic = " about " + raw_topic
-        
+
     max_recording_time = app.config.get('MAX_RECORDING_TIME', 30)
-    
+
     return render_template(
         'submit_note.htm.j2',
         user=inbox_id,
@@ -426,6 +429,7 @@ def clean_topic(t):
         return None
     return t.replace(' about ', '')
 
+
 def render_audio_html(audio_filename):
     """HTML snippet linking to a stored recording. Empty string when no audio."""
     if not audio_filename:
@@ -434,9 +438,11 @@ def render_audio_html(audio_filename):
         'static', filename='recordings/' + audio_filename, _external=True
     )
     return (
-        f'<div style="margin:10px 0 0"><strong>🎧 Voice Note:</strong> '
-        f'<a clicktracking=off href="{audio_url}" target="_blank">Click to listen</a></div>'
+        '<div style="margin:10px 0 0"><strong>🎧 Voice Note:</strong> '
+        f'<a clicktracking=off href="{audio_url}" target="_blank">'
+        'Click to listen</a></div>'
     )
+
 
 @app.route('/to/<inbox_id>/submit', methods=['POST'], defaults={"topic": None})
 @app.route('/to/<inbox_id>/submit/<topic>', methods=['POST'])
@@ -476,7 +482,6 @@ def submit_note(inbox_id, topic):
     # The layout is the inbox owner's choice, not the sender's.
     template_name = storage.Inbox.get_email_template_name(inbox_db.slug)
 
-
     # If the user chooses to send an HTML email,
     # the contents of the HTML document will be sent
     # as an email but will not be stored due to the enormous size
@@ -502,7 +507,7 @@ def submit_note(inbox_id, topic):
             safe_attrs_only=True, remove_unknown_tags=True,
         )
         body = Markup(html_cleaner.clean_html(body))
-        body = Markup(body + Markup(audio_html)) # ← now part of the stored body
+        body = Markup(body + Markup(audio_html))  # ← now part of the stored body
         # print("after markup", body)
         # Store the note first, so it gets a UUID
         submitted_note = inbox_db.submit_note(
@@ -560,7 +565,7 @@ def callback_handling():
             error, request.args.get('error_description', ''),
         )
         return redirect(url_for('index'))
-    
+
     code = request.args.get('code')
 
     json_header = {
@@ -584,7 +589,7 @@ def callback_handling():
     if 'access_token' not in token_info:
         logger.error('Auth0 token exchange failed: %s', token_info)
         return redirect(url_for('index'))
-    
+
     user_url = (
         f'https://{auth_domain}/userinfo?access_token={token_info["access_token"]}'
     )
@@ -612,7 +617,9 @@ def callback_handling():
     if not email:
         logger.error('Auth0 userinfo email fetch failed!')
         storage.Inbox.disable_email(final_slug)
-        logger.info(f"Email notifications disabled for {final_slug} due to missing email.")
+        logger.info(
+            f"Email notifications disabled for {final_slug} due to missing email."
+        )
 
     session['profile']['nickname'] = final_slug
     return redirect(url_for('inbox'))
