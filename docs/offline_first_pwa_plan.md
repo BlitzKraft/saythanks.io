@@ -1,3 +1,22 @@
+## Status Review and Next Incremental Improvement
+
+## Recommended Next Incremental Step
+_Updated: 2026-09-09T00:00:00Z_
+
+The recent pull already adds a substantial PWA foundation: install metadata and mobile configuration, service-worker registration and versioned cache management, an offline fallback page, a public-network-status live region, IndexedDB draft persistence, an offline outbox queue, queued-note retry handling, and thank-you status pages for delivery states. In practical terms, the app is no longer at the “bare shell” stage; it is now in the validation-and-hardening phase.
+
+The most useful next incremental improvement is to focus on end-to-end offline reliability and correctness of the queued submission flow, especially the parts that are most likely to cause real user-facing failure:
+
+1. Validate the browser flow for offline draft recovery, queue creation, retry-on-reconnect, and queue cleanup.
+2. Verify that queued submissions do not silently duplicate delivery when the connection returns, and ensure retries are tied to a stable idempotency key.
+3. Check the status UX for failed, queued, sending, and sent notes across the form and thank-you page.
+4. Test audio attachments and quota/error handling in the outbox, since they are the riskiest part of the offline interaction.
+5. Keep the next change narrow: improve the server-side contract and browser validation around retries, rather than expanding the feature set again.
+
+This is the next sensible improvement because the project has already demonstrated the core offline architecture. The remaining risk is correctness under real network loss, not the basic existence of the PWA scaffolding itself.
+
+---
+
 # PWQ Offline-First PWA Plan
 
 ## Prompt
