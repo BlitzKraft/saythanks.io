@@ -166,6 +166,7 @@ def get_callback_url():
 
 
 def requires_auth(f):
+    """Decorator to require authentication for a route."""
     @wraps(f)
     def decorated(*args, **kwargs):
         if 'profile' not in session:
@@ -180,6 +181,11 @@ def requires_auth(f):
 
 @app.route("/robots.txt")
 def robots():
+    """ Serve the robots.txt file to control web crawler access.
+
+    Returns:
+        str: Allows all user agents to crawl the site, except for the /inbox path.
+    """
     return send_from_directory("static", "robots.txt")
 
 
