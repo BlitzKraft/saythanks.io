@@ -163,7 +163,8 @@ def _send_email(email_address, subject, html_content, plaintext_content):
     return True
 
 
-def notify(note, email_address, topic=None, audio_path=None, template_name="default"):
+def notify(note, email_address, topic=None,
+           audio_path=None, template_name="default"):
     """Send an email notification for a thank-you note.
     Orchestrates URL generation, optional audio handling, content assembly,
     subject formatting and the final send attempt. Catches and logs common
