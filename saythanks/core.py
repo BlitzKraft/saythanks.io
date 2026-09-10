@@ -189,10 +189,11 @@ def requires_auth(f):
 
 @app.route("/robots.txt")
 def robots():
-    """ Serve the robots.txt file to control web crawler access.
+    """Serve the robots.txt file to control web crawler access.
 
     Returns:
-        str: Allows all user agents to crawl the site, except for the /inbox path.
+        str: Allows all user agents to crawl the site,
+        except for the /inbox path.
     """
     return send_from_directory("static", "robots.txt")
 
@@ -439,7 +440,7 @@ def archive_note(uuid):
 
 
 def clean_topic(t):
-    """take a topic string and remove the " about " prefix if it exists 
+    """take a topic string and remove the " about " prefix if it exists
 
     Args:
         t (str): topic string that may contain " about "
