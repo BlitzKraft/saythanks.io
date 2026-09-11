@@ -1,6 +1,7 @@
 # ☼ The 'Say Thanks' Project
 
 [![saythanks](https://img.shields.io/badge/say-thanks-modal.svg)](https://saythanks.io/to/lifebalance&saythanks)
+[![Uptime CI](https://github.com/BlitzKraft/saythanks.io/workflows/Uptime%20CI/badge.svg)](https://github.com/BlitzKraft/saythanks.io/actions/workflows/uptime.yml)
 
 ## Spreading Thankfulness in Open Source™
 
