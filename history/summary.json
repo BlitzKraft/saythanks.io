@@ -1,0 +1,20 @@
+[
+  {
+    "name": "SayThanks.io",
+    "url": "https://saythanks.io",
+    "icon": "https://icons.duckduckgo.com/ip3/saythanks.io.ico",
+    "slug": "say-thanks-io",
+    "status": "up",
+    "uptime": "100.00%",
+    "uptimeDay": "100.00%",
+    "uptimeWeek": "100.00%",
+    "uptimeMonth": "100.00%",
+    "uptimeYear": "100.00%",
+    "time": 1081,
+    "timeDay": 1081,
+    "timeWeek": 1081,
+    "timeMonth": 1081,
+    "timeYear": 1081,
+    "dailyMinutesDown": {}
+  }
+]
