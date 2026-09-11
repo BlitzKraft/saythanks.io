@@ -101,7 +101,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
   <p id="recordingStatus" style="color: green; font-weight: bold;"></p>
 </div>
 
-<h6>You have written <strong><span id="counter">0</span></strong>
+<h6>You have written <strong><span id="counter1">0</span></strong>
 thoughtful words, so far… (shoot for 42!)</h6>
 <!-- Text input-->
 <div class="form-group">
@@ -132,8 +132,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
 
 <script>
   function wordCount(data) {
-    var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|/g +
-      /[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
+    var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
     var m = data.match(pattern);
     var count = 0;
     if(m === null) return count;
@@ -147,7 +146,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
     return count;
   }
   var counter = document.getElementById("counter");
-  var counter1 = document.getElementById("counter1");
+  var counter1 = document.getElementById("counter");
 
   var textArea = document.getElementById("editor");
   const editor = new toastui.Editor({
@@ -394,18 +393,20 @@ thoughtful words, so far… (shoot for 42!)</h6>
   });
 
 
-  editor.addHook('change', () => {
+  function updateWordCounters() {
+    const count = wordCount(editor.getMarkdown());
+    counter.innerText = count;
+    counter1.innerText = count;
+    const color = count > 42 ? "green" : "red";
+    counter.style.color = color;
+    counter1.style.color = color;
+  }
+
+  editor.on('change', () => {
     scheduleDraftSave();
-    counter.innerText = wordCount(editor.getMarkdown());
-    counter1.innerText = wordCount(editor.getMarkdown());
-    if (wordCount(editor.getMarkdown()) > 42) {
-      counter.style.color = "green";
-      counter1.style.color = "green";
-    } else {
-      counter.style.color = "red";
-      counter1.style.color = "red";
-    }
+    updateWordCounters();
   });
+  updateWordCounters();
 
   document.getElementById('byline').addEventListener('input', scheduleDraftSave);
 
