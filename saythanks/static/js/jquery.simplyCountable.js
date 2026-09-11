@@ -27,7 +27,7 @@
         onSafeCount: function () {},
         onMaxCount: function () {},
       },
-      options
+      options,
     );
 
     var navKeys = [33, 34, 35, 36, 37, 38, 39, 40];
@@ -91,7 +91,7 @@
           }
           if (options.countType === "words") {
             var allowedText = content.match(
-              new RegExp("\\s?(\\S+\\s+){" + options.maxCount + "}")
+              new RegExp("\\s?(\\S+\\s+){" + options.maxCount + "}"),
             );
             if (allowedText) {
               changeCountableValue(allowedText[0]);

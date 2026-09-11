@@ -4,7 +4,7 @@ $(document).on("change", "#badge-format", () => {
 
   if (selectedFormat === "imageurl") {
     $("#badgeCode").val(
-      "https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg"
+      "https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg",
     );
   } else if (selectedFormat === "markdown") {
     const svg =
@@ -45,8 +45,8 @@ function handleFragmentToTopic() {
   if (pathname.match(/^\/to\/[^\/]+\/?$/) && hash && hash.length > 1) {
     // Remove the # from hash for the URL parameter, but keep it for display
     const topicWithoutHash = hash.substring(1); // Remove the # symbol
-    const topicForUrl = encodeURIComponent('#' + topicWithoutHash); // Add # back and encode
-    const cleanPath = pathname.replace(/\/$/, ''); // Remove trailing slash
+    const topicForUrl = encodeURIComponent("#" + topicWithoutHash); // Add # back and encode
+    const cleanPath = pathname.replace(/\/$/, ""); // Remove trailing slash
     const newUrl = `${cleanPath}&${topicForUrl}`;
     window.location.replace(newUrl);
   }

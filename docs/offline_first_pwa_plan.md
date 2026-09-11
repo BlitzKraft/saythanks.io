@@ -1,6 +1,7 @@
 ## Status Review and Next Incremental Improvement
 
 ## Recommended Next Incremental Step
+
 _Updated: 2026-09-09T00:00:00Z_
 
 The recent pull already adds a substantial PWA foundation: install metadata and mobile configuration, service-worker registration and versioned cache management, an offline fallback page, a public-network-status live region, IndexedDB draft persistence, an offline outbox queue, queued-note retry handling, and thank-you status pages for delivery states. In practical terms, the app is no longer at the “bare shell” stage; it is now in the validation-and-hardening phase.

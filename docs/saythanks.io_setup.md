@@ -10,7 +10,7 @@ through a public HTTPS ngrok URL. This is required for testing features
 such as Auth0 login, callback handling, and external services that
 cannot access `localhost`.
 
-------------------------------------------------------------------------
+---
 
 ## Step 1 --- Clone the Repository
 
@@ -18,18 +18,18 @@ Clone the SayThanks.io repository and open the project directory.
 
 Example:
 
-``` powershell
+```powershell
 git clone <repository-url>
 cd <project-folder>
 ```
 
 Verify that the project files are present:
 
-``` powershell
+```powershell
 Get-ChildItem
 ```
 
-------------------------------------------------------------------------
+---
 
 ## Step 2 --- Create the Local `conf` Folder
 
@@ -39,13 +39,13 @@ Do **not** edit the template for your local credentials.
 
 Create the local `conf` folder by copying the template:
 
-``` powershell
+```powershell
 Copy-Item -Recurse conf_template conf
 ```
 
 After copying, the structure should be similar to:
 
-``` text
+```text
 project/
 ├── conf/
 │   ├── db.env
@@ -61,20 +61,20 @@ project/
 
 ### Important
 
--   `conf_template/` contains configuration templates intended to be
-    committed.
--   `conf/` contains local configuration and should remain uncommitted
-    if it contains secrets.
--   Do not overwrite an existing `conf/` folder unless you intentionally
-    want to reset your local configuration.
+- `conf_template/` contains configuration templates intended to be
+  committed.
+- `conf/` contains local configuration and should remain uncommitted
+  if it contains secrets.
+- Do not overwrite an existing `conf/` folder unless you intentionally
+  want to reset your local configuration.
 
-------------------------------------------------------------------------
+---
 
 ## Step 3 --- Install ngrok
 
 On Windows, install ngrok using WinGet:
 
-``` powershell
+```powershell
 winget install ngrok.ngrok
 ```
 
@@ -82,24 +82,23 @@ Close and reopen PowerShell after installation.
 
 Verify the installation:
 
-``` powershell
+```powershell
 ngrok version
 ```
 
 You should see an ngrok version such as:
 
-``` text
+```text
 ngrok version 3.x.x
 ```
 
 Verify the configuration:
 
-``` powershell
+```powershell
 ngrok config check
 ```
 
-
-------------------------------------------------------------------------
+---
 
 ## Step 4 --- Start the Docker Application
 
@@ -107,26 +106,26 @@ Make sure Docker is installed and running.
 
 Check Docker:
 
-``` powershell
+```powershell
 docker --version
 docker compose version
 ```
 
 Confirm that the local configuration exists:
 
-``` powershell
+```powershell
 Get-ChildItem conf
 ```
 
 Build and start the application:
 
-``` powershell
+```powershell
 docker compose up --build
 ```
 
 Check the container status:
 
-``` powershell
+```powershell
 docker compose ps
 ```
 
@@ -135,19 +134,19 @@ such as `Up`.
 
 Test the website locally:
 
-``` text
+```text
 http://127.0.0.1:5000
 ```
 
 or:
 
-``` text
+```text
 http://localhost:5000
 ```
 
 The website should load before continuing.
 
-------------------------------------------------------------------------
+---
 
 ## Step 5 --- Start ngrok
 
@@ -155,19 +154,19 @@ Keep Docker running.
 
 Open a **new PowerShell terminal** and run:
 
-``` powershell
+```powershell
 ngrok http 127.0.0.1:5000
 ```
 
 ngrok should display a forwarding address similar to:
 
-``` text
+```text
 Forwarding    https://example.ngrok-free.dev -> http://127.0.0.1:5000
 ```
 
 Copy only the public HTTPS URL:
 
-``` text
+```text
 https://example.ngrok-free.dev
 ```
 
@@ -175,13 +174,13 @@ Keep this ngrok terminal running.
 
 Test the public URL in a browser:
 
-``` text
+```text
 https://example.ngrok-free.dev
 ```
 
 It should reach the same local SayThanks.io application.
 
-------------------------------------------------------------------------
+---
 
 ## Step 6 --- Create `AUTH0_CALLBACK_URL`
 
@@ -189,19 +188,19 @@ The Auth0 callback URL is created from the ngrok URL.
 
 If ngrok provides:
 
-``` text
+```text
 https://example.ngrok-free.dev
 ```
 
 add `/callback`:
 
-``` text
+```text
 https://example.ngrok-free.dev/callback
 ```
 
 Open:
 
-``` text
+```text
 conf/site.env
 ```
 
@@ -209,7 +208,7 @@ Edit the local configuration file, not the template.
 
 Set:
 
-``` env
+```env
 AUTH0_CALLBACK_URL='https://example.ngrok-free.dev/callback'
 ```
 
@@ -219,7 +218,7 @@ Use your actual ngrok URL.
 
 Do not use:
 
-``` text
+```text
 http://127.0.0.1:5000/callback
 ```
 
@@ -227,7 +226,7 @@ for the ngrok-based Auth0 setup.
 
 The callback URL must use the current public HTTPS ngrok URL.
 
-------------------------------------------------------------------------
+---
 
 ## Step 7 --- Add the Callback URL to Auth0
 
@@ -247,7 +246,7 @@ Add the exact callback URL from Step 6.
 
 Example:
 
-``` text
+```text
 https://example.ngrok-free.dev/callback
 ```
 
@@ -261,13 +260,13 @@ The following two values must match exactly:
 
 `conf/site.env`:
 
-``` env
+```env
 AUTH0_CALLBACK_URL='https://example.ngrok-free.dev/callback'
 ```
 
 Auth0:
 
-``` text
+```text
 Allowed Callback URLs
 https://example.ngrok-free.dev/callback
 ```
@@ -275,7 +274,7 @@ https://example.ngrok-free.dev/callback
 Differences in protocol, domain, path, port, or trailing slash can cause
 a callback URL mismatch.
 
-------------------------------------------------------------------------
+---
 
 ## Step 8 --- Get Auth0 Domain, Client ID, and Client Secret
 
@@ -293,7 +292,7 @@ Find **Domain** and copy it.
 
 Add it to:
 
-``` env
+```env
 AUTH0_DOMAIN='your-auth0-domain'
 ```
 
@@ -303,7 +302,7 @@ Find **Client ID** and copy it.
 
 Add it to:
 
-``` env
+```env
 AUTH0_CLIENT_ID='your-client-id'
 ```
 
@@ -313,13 +312,13 @@ Find **Client Secret** and copy it.
 
 Add it to:
 
-``` env
+```env
 AUTH0_CLIENT_SECRET='your-client-secret'
 ```
 
 Do not share or commit the Client Secret.
 
-------------------------------------------------------------------------
+---
 
 ## Step 9 --- Get `AUTH0_JWT_V2_TOKEN`
 
@@ -331,7 +330,7 @@ In the Auth0 Dashboard, navigate to:
 
 Follow this exact path in the Auth0 Dashboard sidebar:
 
-``` text
+```text
 Applications (sidebar)
    → APIs
       → Auth0 Management API   (card labeled "System API")
@@ -356,13 +355,13 @@ Copy the generated Management API token.
 
 Open:
 
-``` text
+```text
 conf/site.env
 ```
 
 Add:
 
-``` env
+```env
 AUTH0_JWT_V2_TOKEN='your-management-api-token'
 ```
 
@@ -374,16 +373,16 @@ Treat this token as a secret.
 
 Do not:
 
--   Commit it to Git.
--   Add it to a pull request.
--   Post it in an issue.
--   Share it in screenshots.
--   Send it publicly.
+- Commit it to Git.
+- Add it to a pull request.
+- Post it in an issue.
+- Share it in screenshots.
+- Send it publicly.
 
 The token must have the permissions required by the application's
 Management API operations.
 
-------------------------------------------------------------------------
+---
 
 ## Step 10 --- Verify `conf/site.env`
 
@@ -392,7 +391,7 @@ present.
 
 Your local `conf/site.env` should contain values similar to:
 
-``` env
+```env
 AUTH0_DOMAIN='your-auth0-domain'
 
 AUTH0_CLIENT_ID='your-client-id'
@@ -410,7 +409,7 @@ Use your real values instead of the examples.
 
 Run:
 
-``` powershell
+```powershell
 git check-ignore -v conf/site.env
 ```
 
@@ -418,19 +417,19 @@ If the file is ignored by Git, it should not appear as a file to commit.
 
 Check the repository status:
 
-``` powershell
+```powershell
 git status
 ```
 
 Do not run:
 
-``` powershell
+```powershell
 git add conf/site.env
 ```
 
 The file contains sensitive credentials.
 
-------------------------------------------------------------------------
+---
 
 ## Step 11 --- Restart Docker and Test the Application
 
@@ -440,19 +439,19 @@ Open another PowerShell terminal in the project directory.
 
 Stop the containers:
 
-``` powershell
+```powershell
 docker compose down
 ```
 
 Start them again:
 
-``` powershell
+```powershell
 docker compose up -d
 ```
 
 Check their status:
 
-``` powershell
+```powershell
 docker compose ps
 ```
 
@@ -462,7 +461,7 @@ The required containers should be running.
 
 Open:
 
-``` text
+```text
 http://127.0.0.1:5000
 ```
 
@@ -472,7 +471,7 @@ Confirm that the website loads.
 
 Open:
 
-``` text
+```text
 https://YOUR-NGROK-DOMAIN.ngrok-free.dev
 ```
 
@@ -480,7 +479,7 @@ Click the application's login option.
 
 The expected flow is:
 
-``` text
+```text
 Browser
    ↓
 ngrok HTTPS URL
@@ -496,13 +495,13 @@ Successful authentication
 Logged-in application
 ```
 
-------------------------------------------------------------------------
+---
 
 # Final Confirmation --- Local and Network Tunnel Setup
 
 After completing Steps 1--11, the complete architecture is:
 
-``` text
+```text
                          Internet
                             │
                             ▼
@@ -528,51 +527,51 @@ the internet.
 Therefore, features that use the SayThanks.io backend can be tested
 through the public ngrok URL, including:
 
--   Website pages
--   Auth0 login
--   Auth0 callback
--   Application forms and requests
--   Message-related application functionality
--   Database-backed operations
--   External services that need to access the public application URL
--   Social-sharing URL testing
+- Website pages
+- Auth0 login
+- Auth0 callback
+- Application forms and requests
+- Message-related application functionality
+- Database-backed operations
+- External services that need to access the public application URL
+- Social-sharing URL testing
 
 The PostgreSQL database does **not** need to be exposed through ngrok.
 It remains local and is accessed by the application.
 
 ### Final Verification Checklist
 
--   [ ] Repository cloned successfully
--   [ ] `conf/` created from `conf_template/`
--   [ ] ngrok installed and authenticated
--   [ ] Docker containers running
--   [ ] Website accessible at `localhost:5000`
--   [ ] ngrok tunnel running
--   [ ] Public ngrok HTTPS URL accessible
--   [ ] `AUTH0_CALLBACK_URL` configured in `conf/site.env`
--   [ ] Same callback URL added to Auth0
--   [ ] Auth0 Domain configured
--   [ ] Auth0 Client ID configured
--   [ ] Auth0 Client Secret configured
--   [ ] Auth0 Management API token configured
--   [ ] `conf/site.env` is not tracked by Git
--   [ ] Docker restarted after configuration
--   [ ] Auth0 login tested successfully
--   [ ] Website tested through the ngrok URL
--   [ ] Message/application functionality tested through the ngrok URL
+- [ ] Repository cloned successfully
+- [ ] `conf/` created from `conf_template/`
+- [ ] ngrok installed and authenticated
+- [ ] Docker containers running
+- [ ] Website accessible at `localhost:5000`
+- [ ] ngrok tunnel running
+- [ ] Public ngrok HTTPS URL accessible
+- [ ] `AUTH0_CALLBACK_URL` configured in `conf/site.env`
+- [ ] Same callback URL added to Auth0
+- [ ] Auth0 Domain configured
+- [ ] Auth0 Client ID configured
+- [ ] Auth0 Client Secret configured
+- [ ] Auth0 Management API token configured
+- [ ] `conf/site.env` is not tracked by Git
+- [ ] Docker restarted after configuration
+- [ ] Auth0 login tested successfully
+- [ ] Website tested through the ngrok URL
+- [ ] Message/application functionality tested through the ngrok URL
 
 ## Important Operational Note
 
 The free ngrok URL may change when the tunnel is restarted. If the URL
 changes, update both:
 
-``` text
+```text
 conf/site.env
 ```
 
 and:
 
-``` text
+```text
 Auth0 → Application → Settings → Allowed Callback URLs
 ```
 
