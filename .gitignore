@@ -1,7 +1,58 @@
+# ─── Python ───────────────────────────────────────────────
 *.pyc
+*.pyo
+*.pyd
 __pycache__/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ─── Environment & Secrets ────────────────────────────────
 .env
+.env.*
+!sample.env
+*.secret
+
+# ─── Private Keys & Certificates ─────────────────────────
+*.pem
+*.key
+*.crt
+*.cer
+*.pfx
+*.p12
+*.der
+
+# ─── Databases ────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ─── Virtual Environments ─────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ─── IDEs & Editors ───────────────────────────────────────
 .vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── Logs ─────────────────────────────────────────────────
 Logfile
 Logfile.log
+*.log
+
+# ─── Local Config ─────────────────────────────────────────
 conf
+conf/
+
+# ─── OS Files ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── Node (if any frontend tooling) ──────────────────────
+node_modules/
