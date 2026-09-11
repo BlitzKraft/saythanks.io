@@ -11,10 +11,6 @@
         color: red;
         font-weight: bold;
       }
-      #counter1 {
-        color: red;
-        font-weight: bold;
-      }
       /* Set font size and fixed font family for Toast UI Editor content */
      .toastui-editor-defaultUI .toastui-editor-contents,
      .toastui-editor-defaultUI .toastui-editor-md-preview-content,
@@ -101,8 +97,6 @@ thoughtful words, so far… (shoot for 42!)</h6>
   <p id="recordingStatus" style="color: green; font-weight: bold;"></p>
 </div>
 
-<h6>You have written <strong><span id="counter1">0</span></strong>
-thoughtful words, so far… (shoot for 42!)</h6>
 <!-- Text input-->
 <div class="form-group">
   <label class="col-md-4 control-label" for="byline">
@@ -146,7 +140,6 @@ thoughtful words, so far… (shoot for 42!)</h6>
     return count;
   }
   var counter = document.getElementById("counter");
-  var counter1 = document.getElementById("counter1");
 
   var textArea = document.getElementById("editor");
   const editor = new toastui.Editor({
@@ -396,10 +389,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
   function updateWordCounters() {
     const count = wordCount(editor.getMarkdown());
     counter.innerText = count;
-    counter1.innerText = count;
-    const color = count > 42 ? "green" : "red";
-    counter.style.color = color;
-    counter1.style.color = color;
+    counter.style.color = count > 42 ? "green" : "red";
   }
 
   editor.on('change', () => {
