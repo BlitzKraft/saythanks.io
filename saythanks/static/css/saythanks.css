@@ -118,6 +118,8 @@ textarea {
   }
 
   #thankyou-note-form .toastui-editor-defaultUI-toolbar {
+    width: 100%;
+    box-sizing: border-box;
     overflow-x: auto;
   }
 
