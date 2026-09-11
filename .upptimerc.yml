@@ -1,0 +1,8 @@
+owner: BlitzKraft
+repo: saythanks.io
+sites:
+  - name: SayThanks.io
+    url: https://saythanks.io
+status-website:
+  baseUrl: /saythanks.io
+  name: SayThanks.io Status
