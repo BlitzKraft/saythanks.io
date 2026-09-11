@@ -13,7 +13,6 @@ ROOT = os.path.dirname(os.path.dirname(__file__))
 
 def _load_myemail():
     """Import myemail.py without booting the Flask app"""
-    
     if 'flask' not in sys.modules:
         flask = types.ModuleType('flask')
         flask.url_for = lambda *a, **k: ''
