@@ -99,6 +99,14 @@ cleaner.remove_attributes = [
 
 
 def remove_tags(html):
+    """
+
+    Args:
+        html (str): HTML string to clean
+
+    Returns:
+        str: Cleaned HTML string
+    """
     return cleaner.clean_html(html)
 
 
@@ -166,6 +174,7 @@ def get_callback_url():
 
 
 def requires_auth(f):
+    """Decorator to require authentication for a route."""
     @wraps(f)
     def decorated(*args, **kwargs):
         if 'profile' not in session:
@@ -180,6 +189,12 @@ def requires_auth(f):
 
 @app.route("/robots.txt")
 def robots():
+    """Serve the robots.txt file to control web crawler access.
+
+    Returns:
+        str: Allows all user agents to crawl the site,
+        except for the /inbox path.
+    """
     return send_from_directory("static", "robots.txt")
 
 
@@ -425,6 +440,14 @@ def archive_note(uuid):
 
 
 def clean_topic(t):
+    """take a topic string and remove the " about " prefix if it exists
+
+    Args:
+        t (str): topic string that may contain " about "
+
+    Returns:
+        str: topic string with " about " prefix removed, or None if empty
+    """
     if not t:
         return None
     return t.replace(' about ', '')
@@ -550,6 +573,7 @@ def submit_note(inbox_id, topic):
 
 @app.route('/logout', methods=["POST"])
 def user_logout():
+    """Log the user out of the application and Auth0."""
     session.clear()
     return redirect(url_for('index'))
 
