@@ -16,6 +16,7 @@ def _read(relative_path):
 
 
 def test_service_worker_is_root_registered_and_has_offline_fallback():
+    """"""
     base_template = _read('saythanks/templates/base.htm.j2')
     service_worker = _read('saythanks/static/service-worker.js')
 
@@ -96,6 +97,7 @@ def test_network_status_is_exposed_as_an_accessible_live_region():
 
 
 def test_note_form_has_mobile_responsive_and_touch_friendly_controls():
+    """"""
     base_template = _read('saythanks/templates/base.htm.j2')
     css = _read('saythanks/static/css/saythanks.css')
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
@@ -111,6 +113,7 @@ def test_note_form_has_mobile_responsive_and_touch_friendly_controls():
 
 
 def test_note_form_uses_indexeddb_and_keys_drafts_by_form_action():
+    """"""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
     assert "const draftDatabaseName = 'saythanks-pwa';" in submit_template
@@ -128,6 +131,7 @@ def test_note_form_uses_indexeddb_and_keys_drafts_by_form_action():
 
 
 def test_note_form_restores_and_saves_body_and_byline():
+    """Test that the note form restores and saves the body and byline fields."""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
     assert "editor.setMarkdown(draft.body)" in submit_template
@@ -142,6 +146,7 @@ def test_note_form_restores_and_saves_body_and_byline():
 
 
 def test_offline_outbox_retries_on_startup_and_reconnection():
+    """"""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
     assert "window.addEventListener('online', () => syncOutbox()" in submit_template
@@ -152,6 +157,7 @@ def test_offline_outbox_retries_on_startup_and_reconnection():
 
 
 def test_audio_is_stored_in_offline_outbox():
+    """Test that audio is stored in the offline outbox and sent with the note."""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
     assert "const offlineAudio = audioBlob || audioFileInput.files[0] || null;" in submit_template
@@ -161,6 +167,7 @@ def test_audio_is_stored_in_offline_outbox():
 
 
 def test_submission_redirects_to_shared_thanks_statuses():
+    """Test that submissions redirect to the appropriate thanks statuses."""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
     assert "window.location.href = '/thanks?status=queued';" in submit_template
@@ -168,6 +175,7 @@ def test_submission_redirects_to_shared_thanks_statuses():
 
 
 def test_thanks_page_reports_delivery_status_and_waiting_count():
+    """"""
     thanks_template = _read('saythanks/templates/thanks.htm.j2')
 
     assert '<div id="delivery-status" role="status" aria-live="polite">' in thanks_template
@@ -184,6 +192,7 @@ def test_thanks_page_reports_delivery_status_and_waiting_count():
 
 
 def test_offline_fallback_does_not_claim_to_send_notes():
+    """"""
     offline_page = _read('saythanks/static/offline.html')
 
     assert 'Your note drafts remain on this device' in offline_page
