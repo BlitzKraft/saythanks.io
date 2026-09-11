@@ -1,7 +1,5 @@
 {% extends "base.htm.j2" %}
-
 {% block title %}Spreading Thankfulness in Open Source{% endblock %}
-
 {% block content %}
   <p style="text-align: center;">
     <script async
@@ -9,43 +7,36 @@
             src="//cdn.carbonads.com/carbon.js?serve=CESI52Q7&placement=saythanksio"
             id="_carbonads_js"></script>
   </p>
-
   <hr>
-
   <h2>Spreading Thankfulness in Open Source&trade;</h2>
-
   <p>
     <strong>SayThanks.io</strong> provides a handy URL for you to share
     with your open source projects&mdash; it encourages users to send a simple
     thank you note to you, the creator of that project.
   </p>
-
   <p>
     This simple link can be added to READMEs and project documentation.
   </p>
-
   <p>
     Then, you can enjoy a nice inbox of very small but thoughtful messages
     from the happy users of the software that you've toiled over. :)
   </p>
-
   <hr>
-
   <div class="row">
     <p style="text-align: center;">
-      <img style="height: 25rem; margin-left: auto; margin-right: auto; margin-bottom: -3.5em;"
+      <img style="height: 25rem;
+                  margin-left: auto;
+                  margin-right: auto;
+                  margin-bottom: -3.5em;"
            src="{{ url_for('static', filename='images/inbox.png') }}"
            alt="Thankfulness Inbox of Love">
     </p>
-
     <div class="twelve u-textcenter">
       <h3>Register Your Inbox of Thankfulness</h3>
-
       <p>
         Create an account to receive emails when users of your open source
         project say thanks!
       </p>
-
       {# GitHub Auth button #}
       <script src="https://cdn.auth0.com/js/lock/11.33/lock.min.js"></script>
       <script>
@@ -94,13 +85,12 @@
       </button>
     </div>
   </div>
-
   <hr>
-
   <p>
     This is an open source project, and its code is being actively
     developed in the open
-    <a href="https://github.com/BlitzKraft/saythanks.io">on GitHub</a>.
+    <a href="https://github.com/BlitzKraft/saythanks.io">on GitHub</a>
+    .
     <br>
     Oh, and if you like this project, try
     <a href="https://saythanks.io/to/lifebalance&saythanks">saying thanks</a>
