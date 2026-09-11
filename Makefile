@@ -1,9 +1,10 @@
 TEMPLATE_TARGETS := $(patsubst %.htm.j2,%,$(notdir $(wildcard saythanks/templates/*.htm.j2)))
 PYTHON_SAYTHANKS_TARGETS := $(patsubst %.py,%,$(notdir $(wildcard saythanks/*.py)))
 PYTHON_ROOT_TARGETS := $(patsubst %.py,%,$(notdir $(wildcard t.py)))
+PYTHON_TEST_TARGETS := $(patsubst %.py,%,$(notdir $(wildcard tests/*.py)))
 
 # Group the python targets together for the .PHONY declaration
-PYTHON_TARGETS := $(PYTHON_SAYTHANKS_TARGETS) $(PYTHON_ROOT_TARGETS)
+PYTHON_TARGETS := $(PYTHON_SAYTHANKS_TARGETS) $(PYTHON_ROOT_TARGETS) $(PYTHON_TEST_TARGETS)
 
 .PHONY: init test lint run clean-pyc clean-build clean \
 	djlint-reformat reformat djlint-reformat-win reformat2 \
@@ -20,6 +21,10 @@ $(PYTHON_SAYTHANKS_TARGETS):
 # Target for the root t.py file
 $(PYTHON_ROOT_TARGETS):
 	pipenv run flake8 $@.py
+
+# Target for Python files in the tests/ directory
+$(PYTHON_TEST_TARGETS):
+	pipenv run flake8 tests/$@.py
 
 #init:
 #	pipenv install --dev
