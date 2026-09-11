@@ -32,10 +32,10 @@ lint:
 	pipenv --python python run flake8 --exclude=.tox saythanks
 
 djlint-reformat:
-	find saythanks/templates -type f -name '*.htm.j2' -exec .venv/bin/djlint --reformat {} +
+	find saythanks/templates -type f -name '*.htm.j2' -exec .venv/bin/djlint --reformat --indent 2 {} +
 
 djlint-reformat-win:
-	find saythanks/templates -type f -name '*.htm.j2' -exec djlint --reformat {} +
+	find saythanks/templates -type f -name '*.htm.j2' -exec djlint --reformat --indent 2 {} +
 
 reformat: djlint-reformat
 
