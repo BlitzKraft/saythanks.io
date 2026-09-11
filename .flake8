@@ -1,4 +1,4 @@
 [flake8]
-max-line-length = 80
+max-line-length = 83
 #ignore = F403,F405,W293,W503
     
