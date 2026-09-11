@@ -1,6 +1,5 @@
 # **Architecture & Implementation Documentation: Auth0 & Ngrok URL Refactoring**
 
-
 ## **1. Our Motto & Architectural Philosophy**
 
 This refactor makes authentication and social-sharing URLs environment-aware. The previous implementation depended on hardcoded URLs such as `http://localhost:5000/callback` and `https://saythanks.io`. This breaks when the application is accessed through Ngrok or another external domain.
@@ -170,13 +169,13 @@ Request → core.py → Database → note
 
 ## **6. Summary of Changes**
 
-| Component | Change | Purpose |
-|---|---|---|
-| `core.py` | Added `get_callback_url()` | Dynamic Auth0 callback |
-| `core.py` | `url_for(..., _external=True)` | Use current host |
-| `share_note.htm.j2` | Removed hardcoded domain | Avoid incorrect sharing URLs |
-| `share_note.htm.j2` | Dynamic external URLs | Correct Ngrok/production links |
-| Facebook Sharing Debugger | Validation tool | Verify sharing metadata without Facebook API integration |
+| Component                 | Change                         | Purpose                                                  |
+| ------------------------- | ------------------------------ | -------------------------------------------------------- |
+| `core.py`                 | Added `get_callback_url()`     | Dynamic Auth0 callback                                   |
+| `core.py`                 | `url_for(..., _external=True)` | Use current host                                         |
+| `share_note.htm.j2`       | Removed hardcoded domain       | Avoid incorrect sharing URLs                             |
+| `share_note.htm.j2`       | Dynamic external URLs          | Correct Ngrok/production links                           |
+| Facebook Sharing Debugger | Validation tool                | Verify sharing metadata without Facebook API integration |
 
 ---
 

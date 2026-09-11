@@ -26,6 +26,7 @@ The author can then enjoy a nice inbox (ideally) filled with very small, thought
 ## Implementation Concepts
 
 ### ☤ The Basics
+
 - Send an email when a new message of thankfulness is submitted([CSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery) enabled).
 - Inbox page for each user/project with simple aggregation of messages (private).
 
