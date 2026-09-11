@@ -28,13 +28,11 @@
 
 {% block content %}
 
-
-<form action="../logout" method="POST">
+<form action="../logout" method="post">
 <button type="submit" class="logoutLblPos" >Log Out</button>
 </form>
 
 <h4>Send a <strong class="green">Thank You</strong> note to <strong>{{ user }}</strong>{{ topic }}!</h4>
-
 
 <form id="thankyou-note-form" class="form-horizontal"
       action="./{{ user|urlencode }}/submit{{ '/' ~ topic if topic else '' }}"
@@ -63,13 +61,12 @@
   </fieldset>
 </div>
 
-
 <fieldset>
 
 <!-- Form Name -->
 <legend>❝ THANK YOU ❞ </legend>
 
-<h6>You have written <strong><span id=counter>0</span></strong>
+<h6>You have written <strong><span id="counter">0</span></strong>
 thoughtful words, so far… (shoot for 42!)</h6>
 
 <div id="suggestion-templates" style="margin-bottom: 1em;">
@@ -84,9 +81,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
     data-message="Some things were not clear and left me confused.">Confusing</button>
   <button type="button" class="suggestion-btn" 
     data-message="It would help if you did the following:">Actionable</button>
-  
 </div>
-
 
 <!-- Textarea -->
 <div class="form-group">
@@ -106,9 +101,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
   <p id="recordingStatus" style="color: green; font-weight: bold;"></p>
 </div>
 
-
-
-<h6>You have written <strong><span id=counter>0</span></strong>
+<h6>You have written <strong><span id="counter">0</span></strong>
 thoughtful words, so far… (shoot for 42!)</h6>
 <!-- Text input-->
 <div class="form-group">
@@ -136,7 +129,6 @@ thoughtful words, so far… (shoot for 42!)</h6>
 <h2>🝐</h2>
 </fieldset>
 </form>
-
 
 <script>
   function wordCount(data) {
