@@ -34,6 +34,50 @@ button {
   touch-action: manipulation;
 }
 
+#thankyou-note-form .editor-container,
+#thankyou-note-form #editor,
+#thankyou-note-form #editor .toastui-editor-defaultUI {
+  display: block;
+  box-sizing: border-box;
+  width: 100% !important;
+  max-width: 100%;
+  min-width: 0;
+}
+
+#thankyou-note-form .editor-container {
+  float: none;
+  margin-left: 0;
+}
+
+#thankyou-note-form #editor .toastui-editor-toolbar,
+#thankyou-note-form #editor .toastui-editor-defaultUI-toolbar {
+  display: flex !important;
+  box-sizing: border-box;
+  width: 100% !important;
+  max-width: 100%;
+  min-width: 0;
+  background-color: #fff !important;
+  border-bottom-color: #fff !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+#thankyou-note-form #editor .toastui-editor-defaultUI-toolbar button {
+  box-sizing: border-box !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  margin: 7px 5px !important;
+  padding: 0 !important;
+  line-height: normal !important;
+}
+
+#thankyou-note-form #editor .toastui-editor-toolbar-group,
+#thankyou-note-form #editor .toastui-editor-toolbar-item-wrapper {
+  flex: 0 0 auto;
+}
+
 input,
 select,
 textarea {
