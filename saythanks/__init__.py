@@ -1,4 +1,4 @@
-from .core import *
+from .core import app
 
 
 @app.context_processor
