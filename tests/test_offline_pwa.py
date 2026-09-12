@@ -10,12 +10,14 @@ STATIC_ROOT = os.path.join(ROOT, 'saythanks', 'static')
 
 
 def _read(relative_path):
+    """Read the contents of a file relative to the project root."""
     path = os.path.join(ROOT, relative_path)
     with open(path, encoding='utf-8') as source_file:
         return source_file.read()
 
 
 def test_service_worker_is_root_registered_and_has_offline_fallback():
+    """Test that the service worker is registered at the root and has an offline fallback."""
     base_template = _read('saythanks/templates/base.htm.j2')
     service_worker = _read('saythanks/static/service-worker.js')
 
@@ -27,6 +29,7 @@ def test_service_worker_is_root_registered_and_has_offline_fallback():
 
 
 def test_service_worker_precaches_public_note_assets():
+    """Test that the service worker precaches the public note assets."""
     service_worker = _read('saythanks/static/service-worker.js')
     expected_assets = (
         '/static/offline.html',
@@ -45,6 +48,7 @@ def test_service_worker_precaches_public_note_assets():
 
 
 def test_service_worker_does_not_cache_private_routes_or_non_get_requests():
+    """Test that the service worker does not cache private routes or non-GET requests."""
     service_worker = _read('saythanks/static/service-worker.js')
 
     for private_route in (
@@ -61,6 +65,7 @@ def test_service_worker_does_not_cache_private_routes_or_non_get_requests():
 
 
 def test_service_worker_versioned_cache_removes_old_caches():
+    """Test that the service worker versioned cache removes old caches."""
     service_worker = _read('saythanks/static/service-worker.js')
     compact_worker = re.sub(r'\s+', '', service_worker)
 
@@ -96,6 +101,7 @@ def test_network_status_is_exposed_as_an_accessible_live_region():
 
 
 def test_note_form_has_mobile_responsive_and_touch_friendly_controls():
+    """Test that the note form has mobile-responsive and touch-friendly controls."""
     base_template = _read('saythanks/templates/base.htm.j2')
     css = _read('saythanks/static/css/saythanks.css')
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
@@ -111,6 +117,7 @@ def test_note_form_has_mobile_responsive_and_touch_friendly_controls():
 
 
 def test_note_form_uses_indexeddb_and_keys_drafts_by_form_action():
+    """Test that the note form uses IndexedDB and keys drafts by form action."""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
     assert "const draftDatabaseName = 'saythanks-pwa';" in submit_template
@@ -128,6 +135,7 @@ def test_note_form_uses_indexeddb_and_keys_drafts_by_form_action():
 
 
 def test_note_form_restores_and_saves_body_and_byline():
+    """Test that the note form restores and saves the body and byline fields."""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
     assert "editor.setMarkdown(draft.body)" in submit_template
@@ -142,6 +150,7 @@ def test_note_form_restores_and_saves_body_and_byline():
 
 
 def test_offline_outbox_retries_on_startup_and_reconnection():
+    """"""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
     assert "window.addEventListener('online', () => syncOutbox()" in submit_template
@@ -152,6 +161,7 @@ def test_offline_outbox_retries_on_startup_and_reconnection():
 
 
 def test_audio_is_stored_in_offline_outbox():
+    """Test that audio is stored in the offline outbox and sent with the note."""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
     assert "const offlineAudio = audioBlob || audioFileInput.files[0] || null;" in submit_template
@@ -161,6 +171,7 @@ def test_audio_is_stored_in_offline_outbox():
 
 
 def test_submission_redirects_to_shared_thanks_statuses():
+    """Test that submissions redirect to the appropriate thanks statuses."""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
     assert "window.location.href = '/thanks?status=queued';" in submit_template
@@ -168,6 +179,7 @@ def test_submission_redirects_to_shared_thanks_statuses():
 
 
 def test_thanks_page_reports_delivery_status_and_waiting_count():
+    """Test that the thanks page reports delivery status and waiting count."""
     thanks_template = _read('saythanks/templates/thanks.htm.j2')
 
     assert '<div id="delivery-status" role="status" aria-live="polite">' in thanks_template
@@ -184,6 +196,7 @@ def test_thanks_page_reports_delivery_status_and_waiting_count():
 
 
 def test_offline_fallback_does_not_claim_to_send_notes():
+    """Test that the offline fallback page does not claim to send notes while offline."""
     offline_page = _read('saythanks/static/offline.html')
 
     assert 'Your note drafts remain on this device' in offline_page
