@@ -55,4 +55,15 @@ conf/
 Thumbs.db
 
 # ─── Node (if any frontend tooling) ──────────────────────
-node_modules/
+node_modules/
+
+# ─── Upptime Auto-generated Files ──────────────────────────
+# Ignore Upptime bot status updates to prevent merge conflicts
+history/
+.github/workflows/uptime-monitor.yml
+.github/workflows/response-time.yml
+.github/workflows/setup.yml
+.github/workflows/graphs.yml
+README.md
+site/
+api/
