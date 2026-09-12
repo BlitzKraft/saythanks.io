@@ -7,11 +7,7 @@
     <link rel="stylesheet"
           href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
     <style>
-      #counter {
-        color: red;
-        font-weight: bold;
-      }
-      #counter1 {
+      .word-count {
         color: red;
         font-weight: bold;
       }
@@ -66,7 +62,7 @@
 <!-- Form Name -->
 <legend>❝ THANK YOU ❞ </legend>
 
-<h6>You have written <strong><span id="counter">0</span></strong>
+<h6>You have written <strong><span class="word-count">0</span></strong>
 thoughtful words, so far… (shoot for 42!)</h6>
 
 <div id="suggestion-templates" style="margin-bottom: 1em;">
@@ -101,7 +97,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
   <p id="recordingStatus" style="color: green; font-weight: bold;"></p>
 </div>
 
-<h6>You have written <strong><span id="counter1">0</span></strong>
+<h6>You have written <strong><span class="word-count">0</span></strong>
 thoughtful words, so far… (shoot for 42!)</h6>
 <!-- Text input-->
 <div class="form-group">
@@ -145,8 +141,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
     }
     return count;
   }
-  var counter = document.getElementById("counter");
-  var counter1 = document.getElementById("counter1");
+  const wordCountElements = document.querySelectorAll('.word-count');
 
   var textArea = document.getElementById("editor");
   const editor = new toastui.Editor({
@@ -395,11 +390,12 @@ thoughtful words, so far… (shoot for 42!)</h6>
 
   function updateWordCounters() {
     const count = wordCount(editor.getMarkdown());
-    counter.innerText = count;
-    counter1.innerText = count;
-    const color = count > 42 ? "green" : "red";
-    counter.style.color = color;
-    counter1.style.color = color;
+    const color = count > 42 ? 'green' : 'red';
+
+    wordCountElements.forEach(element => {
+      element.textContent = count;
+      element.style.color = color;
+    });
   }
 
   editor.on('change', () => {
