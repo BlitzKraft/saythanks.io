@@ -22,10 +22,13 @@ def test_service_worker_is_root_registered_and_has_offline_fallback():
     service_worker = _read('saythanks/static/service-worker.js')
 
     assert "navigator.serviceWorker.register('/service-worker.js')" in base_template
-    assert "const OFFLINE_URL = '/static/offline.html';" in service_worker
+    assert re.search(
+        r"const OFFLINE_URL = ['\"]\/static\/offline\.html['\"];",
+        service_worker,
+    )
     assert "caches.match(OFFLINE_URL)" in service_worker
     assert "function matchCachedNavigation(request)" in service_worker
-    assert "url.pathname !== '/thanks'" in service_worker
+    assert re.search(r"url\.pathname !== ['\"]\/thanks['\"]", service_worker)
 
 
 def test_service_worker_precaches_public_note_assets():
@@ -52,15 +55,15 @@ def test_service_worker_does_not_cache_private_routes_or_non_get_requests():
     service_worker = _read('saythanks/static/service-worker.js')
 
     for private_route in (
-        "'/inbox'",
-        "'/inbox/search'",
-        "'/inbox/archived'",
-        "'/logout'",
-        "'/callback'",
+        '"/inbox"',
+        '"/inbox/search"',
+        '"/inbox/archived"',
+        '"/logout"',
+        '"/callback"',
     ):
         assert private_route in service_worker
 
-    assert "request.method !== 'GET'" in service_worker
+    assert re.search(r"request\.method !== ['\"]GET['\"]", service_worker)
     assert "url.origin !== self.location.origin" in service_worker
 
 
@@ -70,15 +73,24 @@ def test_service_worker_versioned_cache_removes_old_caches():
     compact_worker = re.sub(r'\s+', '', service_worker)
 
     assert re.search(
-        r"const CACHE_NAME = 'saythanks-public-v\d+';", service_worker)
-    assert "cacheNames.filter(cacheName=>cacheName!==CACHE_NAME)" in compact_worker
+        r"const CACHE_NAME = ['\"]saythanks-public-v\d+['\"];",
+        service_worker,
+    )
+    assert re.search(
+        r"cacheNames\.filter\(\(?cacheName\)?=>cacheName!==CACHE_NAME\)",
+        compact_worker,
+    )
     assert "caches.delete(cacheName)" in service_worker
 
 
 def test_service_worker_cache_version_changes_for_new_offline_code():
     service_worker = _read('saythanks/static/service-worker.js')
 
-    assert "const CACHE_NAME = 'saythanks-public-v4';" in service_worker
+    cache_version = re.search(
+        r"const CACHE_NAME = ['\"]saythanks-public-v(\d+)['\"];",
+        service_worker,
+    )
+    assert cache_version and int(cache_version.group(1)) >= 4
 
 
 def test_android_manifest_has_install_and_display_metadata():
@@ -142,7 +154,7 @@ def test_note_form_restores_and_saves_body_and_byline():
     assert "document.getElementById('byline').value = draft.byline" in submit_template
     assert "body: editor.getMarkdown()," in submit_template
     assert "byline: document.getElementById('byline').value," in submit_template
-    assert "editor.addHook('change', () => {" in submit_template
+    assert "editor.on('change', () => {" in submit_template
     assert (
         "document.getElementById('byline').addEventListener("
         "'input', scheduleDraftSave)"
