@@ -2,6 +2,7 @@ import re
 
 
 def strip_html(text):
+    """Remove HTML and CSS tags from a string."""
     if not text:
         return ""
     # Remove HTML tags
