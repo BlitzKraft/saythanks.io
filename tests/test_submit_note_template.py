@@ -108,3 +108,19 @@ def test_no_stale_submit_id_selector_in_static_assets():
         'stale #submit selector(s) found after button rename:\n' +
         '\n'.join(offenders)
     )
+
+
+def test_word_count_uses_one_shared_value_for_both_displays():
+    """Both editor word-count displays must use the shared update path."""
+    template = _read_template()
+
+    assert template.count('class="word-count"') == 2
+    assert 'id="counter"' not in template
+    assert 'id="counter1"' not in template
+    assert (
+        "const wordCountElements = document.querySelectorAll('.word-count');"
+        in template
+    )
+    assert 'wordCountElements.forEach(element => {' in template
+    assert 'element.textContent = count;' in template
+    assert 'element.style.color = color;' in template
