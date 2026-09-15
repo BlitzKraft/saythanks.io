@@ -11,6 +11,8 @@ const PRECACHE_URLS = [
   "/static/images/owly.svg",
   "/static/icons/icon-192.png",
   "/static/icons/icon-512.png",
+  "/static/toastui-editor-all.min.js",
+  "/static/toastui-editor.min.css",
 ];
 
 function isPublicRequest(request) {
