@@ -9,6 +9,7 @@ Related issue: [#553](https://github.com/BlitzKraft/saythanks.io/issues/553) ("C
 **The Offline-First Philosophy:** A core promise of Progressive Web Apps (PWAs) is that user activity—specifically composing and submitting a thank-you note—must **never be lost due to network unavailability**. Whether a user is on a mobile device with poor connectivity or intentionally offline in Airplane Mode, typing a message at `saythanks.io/to/<inbox>` must allow seamless composition, store the note locally in an offline outbox (IndexedDB), and automatically background-sync the payload to the PostgreSQL database once connectivity returns.
 
 ### **Root Causes Addressed in Issue #553:**
+
 1. **CDN Hard Dependency:** The rich-text editor (`Toast UI Editor`) loaded scripts and CSS via external `uicdn.toast.com` links. When offline, the editor failed to load entirely, preventing note composition.
 2. **Fatal JavaScript Syntax Error:** A duplicate `let audioBlob` declaration broke strict-mode script execution, disabling the client-side IndexedDB database and service worker event listeners.
 3. **Missing Network Error Interception:** On network failures (`request.onerror`), the client printed "Network error." without saving the note to the offline queue.
@@ -21,15 +22,23 @@ Related issue: [#553](https://github.com/BlitzKraft/saythanks.io/issues/553) ("C
 ### **A. Toast UI Local Asset Bundling**
 
 #### **Original Code (Lines removed):**
+
 ```html
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
+<link
+  rel="stylesheet"
+  href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"
+/>
 ```
 
 #### **New Code (Lines added):**
+
 ```html
 <script src="{{ url_for('static', filename='toastui-editor-all.min.js') }}"></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='toastui-editor.min.css') }}"/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='toastui-editor.min.css') }}"
+/>
 ```
 
 - **Why this syntax?** Bundling `toastui-editor-all.min.js` and `toastui-editor.min.css` directly in `saythanks/static/` guarantees the editor loads completely from local Flask static assets / Service Worker cache when offline.
@@ -39,6 +48,7 @@ Related issue: [#553](https://github.com/BlitzKraft/saythanks.io/issues/553) ("C
 ### **B. Script Syntax Error & Scope Clean-up**
 
 #### **Original Code:**
+
 ```javascript
 // Scope 1
 let audioBlob;
@@ -48,6 +58,7 @@ let audioBlob;
 ```
 
 #### **New Code:**
+
 ```javascript
 // Top-level initialization
 let audioBlob = null;
@@ -62,22 +73,27 @@ let audioBlob = null;
 ### **C. Automatic Network Fallback to IndexedDB (`request.onerror`)**
 
 #### **Original Code:**
+
 ```javascript
-request.onerror = () => { 
-    submitBtn.disabled = false; 
-    recordingStatus.innerText = 'Network error.'; 
+request.onerror = () => {
+  submitBtn.disabled = false;
+  recordingStatus.innerText = "Network error.";
 };
 ```
 
 #### **New Code:**
+
 ```javascript
 request.onerror = () => {
-    queueOfflineNote().then(() => {
-        window.location.href = '/thanks?status=queued';
-    }).catch((queueError) => {
-        submitBtn.disabled = false;
-        outboxStatus.textContent = 'Could not reach the server and offline queuing also failed.';
-        console.error('queueOfflineNote failed:', queueError);
+  queueOfflineNote()
+    .then(() => {
+      window.location.href = "/thanks?status=queued";
+    })
+    .catch((queueError) => {
+      submitBtn.disabled = false;
+      outboxStatus.textContent =
+        "Could not reach the server and offline queuing also failed.";
+      console.error("queueOfflineNote failed:", queueError);
     });
 };
 ```
@@ -95,11 +111,13 @@ To handle auto-synced notes from reconnecting clients, database queries across `
 #### **A. Passing Parameters as Dictionaries**
 
 ##### **Original Code:**
+
 ```python
 r = conn.execute(q, slug=slug).fetchall()
 ```
 
 ##### **New Code:**
+
 ```python
 r = conn.execute(q, {"slug": slug}).fetchall()
 ```
@@ -109,11 +127,13 @@ r = conn.execute(q, {"slug": slug}).fetchall()
 #### **B. Using `._mapping` for Row Result Column Access**
 
 ##### **Original Code:**
+
 ```python
 return r[0]['email']
 ```
 
 ##### **New Code:**
+
 ```python
 return r[0]._mapping['email']
 ```
