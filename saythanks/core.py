@@ -630,7 +630,7 @@ def callback_handling():
     session['profile'] = user_info
 
     userid = user_info['sub']
-    email = user_detail_info.get('email').strip()
+    email = user_detail_info.get('email')
     nickname = resolve_nickname(user_detail_info, email, userid)
     picture = user_detail_info.get('picture')
     name = user_detail_info.get('name')
