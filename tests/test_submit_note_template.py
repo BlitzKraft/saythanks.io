@@ -141,8 +141,10 @@ def test_word_count_matches_editor_text_in_both_displays():
             % (word_count_function.group(0), editor_text),
         ],
         check=True,
-        capture_output=True,
-        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
     )
     assert result.stdout == str(expected_word_count)
     assert 'const count = wordCount(editor.getMarkdown());' in template
+
