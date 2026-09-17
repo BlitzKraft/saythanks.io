@@ -2,6 +2,7 @@
 
 import os
 import re
+import subprocess
 from io import open
 
 
@@ -110,8 +111,8 @@ def test_no_stale_submit_id_selector_in_static_assets():
     )
 
 
-def test_word_count_uses_one_shared_value_for_both_displays():
-    """Both editor word-count displays must use the shared update path."""
+def test_word_count_matches_editor_text_in_both_displays():
+    """Both displays show the number of words entered in the editor."""
     template = _read_template()
 
     assert template.count('class="word-count"') == 2
@@ -124,3 +125,26 @@ def test_word_count_uses_one_shared_value_for_both_displays():
     assert 'wordCountElements.forEach(element => {' in template
     assert 'element.textContent = count;' in template
     assert 'element.style.color = color;' in template
+
+    word_count_function = re.search(
+        r'function wordCount\(data\) \{.*?\n  \}', template, re.DOTALL
+    )
+    assert word_count_function is not None
+
+    editor_text = 'Thank you for building this project!'
+    expected_word_count = len(editor_text.split())
+    result = subprocess.run(
+        [
+            'node',
+            '-e',
+            '%s\nprocess.stdout.write(String(wordCount(%r)));'
+            % (word_count_function.group(0), editor_text),
+        ],
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+    )
+    assert result.stdout == str(expected_word_count)
+    assert 'const count = wordCount(editor.getMarkdown());' in template
+

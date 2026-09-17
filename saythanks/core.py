@@ -632,6 +632,20 @@ def callback_handling():
     userid = user_info['sub']
     email = user_detail_info.get('email')
     nickname = resolve_nickname(user_detail_info, email, userid)
+    if not isinstance(nickname, str) or not nickname.strip():
+        logger.error(
+            'Auth0 authentication failed: nickname is not a valid string.'
+        )
+        return render_template(
+            'index.htm.j2',
+            callback_url=get_callback_url(),
+            auth_id=auth_id,
+            auth_domain=auth_domain,
+            auth_error=(
+                'auth0 authentication failed. It might be due to the '
+                'AUTH0_JWT_V2_TOKEN having expired.'
+            ),
+        )
     picture = user_detail_info.get('picture')
     name = user_detail_info.get('name')
     session['profile']['nickname'] = nickname

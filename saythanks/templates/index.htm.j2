@@ -9,6 +9,9 @@
   </p>
   <hr>
   <h2>Spreading Thankfulness in Open Source&trade;</h2>
+  {% if auth_error %}
+    <p role="alert">{{ auth_error }}</p>
+  {% endif %}
   <p>
     <strong>SayThanks.io</strong> provides a handy URL for you to share
     with your open source projects&mdash; it encourages users to send a simple
