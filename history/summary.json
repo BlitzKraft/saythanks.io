@@ -4,17 +4,19 @@
     "url": "https://saythanks.io",
     "icon": "https://icons.duckduckgo.com/ip3/saythanks.io.ico",
     "slug": "say-thanks-io",
-    "status": "down",
-    "uptime": "100.00%",
-    "uptimeDay": "100.00%",
-    "uptimeWeek": "100.00%",
-    "uptimeMonth": "100.00%",
-    "uptimeYear": "100.00%",
-    "time": 1083,
-    "timeDay": 927,
-    "timeWeek": 1083,
-    "timeMonth": 1083,
-    "timeYear": 1083,
-    "dailyMinutesDown": {}
+    "status": "up",
+    "uptime": "96.96%",
+    "uptimeDay": "80.09%",
+    "uptimeWeek": "96.96%",
+    "uptimeMonth": "96.96%",
+    "uptimeYear": "96.96%",
+    "time": 1093,
+    "timeDay": 1051,
+    "timeWeek": 1093,
+    "timeMonth": 1093,
+    "timeYear": 1093,
+    "dailyMinutesDown": {
+      "2026-09-18": 287
+    }
   }
 ]
