@@ -1,5 +1,25 @@
 # -*- coding: utf-8 -*-
 
+"""Regression tests for the Auth callback flow.
+
+This file validates the callback handling path in the app's core logic,
+with a focus on rejecting invalid Auth0-derived nicknames before any inbox is
+created. It loads the real callback function from source, stubs external
+services and session state, and asserts that the user sees the rendered error
+page without persisting a profile or creating an inbox.
+
+Tradeoffs: the test is intentionally narrow and highly focused, which keeps it
+fast and stable while exercising the real callback logic. The use of AST-based
+loading and in-memory stubs is effective for isolating the callback behavior,
+but it also makes the test more brittle to internal refactors or changes in
+function structure.
+
+Possible enhancements: broaden coverage to the success path for valid
+nicknames, add assertions for redirect and session-state behavior on a
+successful callback, and include a small matrix of other failure modes such as
+Auth0 token exchange errors, missing userinfo, and failed inbox creation.
+"""
+
 import ast
 import json
 import os
