@@ -29,13 +29,6 @@ engine = sqlalchemy.create_engine(os.environ['DATABASE_URL'])
 conn = engine.connect()
 
 
-def row_dict(row):
-    """Safely return a dictionary-like row interface for both SQLAlchemy 1.x and 2.x."""
-    if row is None:
-        return None
-    return row._mapping if hasattr(row, '_mapping') else row
-
-
 # Storage Models
 # Note: Some of these are a little fancy (send email and such).
 # --------------
@@ -87,9 +80,9 @@ class Note:
         """
         self = cls()
         q = sqlalchemy.text("SELECT * FROM notes WHERE uuid=:uuid")
-        r = conn.execute(q, {"uuid": uuid}).fetchall()
-        self.body = row_dict(r[0])['body']
-        self.byline = row_dict(r[0])['byline']
+        r = conn.execute(q, uuid=uuid).fetchall()
+        self.body = r[0]['body']
+        self.byline = r[0]['byline']
         self.uuid = uuid
         return self
 
@@ -141,7 +134,7 @@ class Note:
             bool: True if the note exists, False otherwise.
         """
         q = sqlalchemy.text('SELECT * from notes where uuid = :uuid')
-        r = conn.execute(q, {"uuid": uuid}).fetchall()
+        r = conn.execute(q, uuid=uuid).fetchall()
         return bool(len(r))
 
     def store(self):
@@ -193,9 +186,9 @@ class Note:
 
             q = sqlalchemy.text(q)
             # Execute the query with parameters
-            result = conn.execute(q, params)
+            result = conn.execute(q, **params)
             # Assign the generated UUID from the database to this Note instance
-            self.uuid = row_dict(result.fetchone())['uuid']
+            self.uuid = result.fetchone()['uuid']
             logger.info("Note stored with UUID: %s", self.uuid)
         except Exception as e:
             logger.error(f"Error storing note: {str(e)}")
@@ -203,9 +196,8 @@ class Note:
 
     def archive(self):
         """Mark this note as archived in the database."""
-        q = sqlalchemy.text(
-            "UPDATE notes SET archived = 't' WHERE uuid = :uuid")
-        conn.execute(q, {"uuid": self.uuid})
+        q = sqlalchemy.text("UPDATE notes SET archived = 't' WHERE uuid = :uuid")
+        conn.execute(q, uuid=self.uuid)
 
     def notify(self, email_address, topic=None, audio_path=None,
                template_name="default"):
@@ -253,8 +245,8 @@ class Inbox:
             str: Auth0 user id.
         """
         q = sqlalchemy.text("SELECT * FROM inboxes WHERE slug=:inbox")
-        r = conn.execute(q, {"inbox": self.slug}).fetchall()
-        return row_dict(r[0])['auth_id']
+        r = conn.execute(q, inbox=self.slug).fetchall()
+        return r[0]['auth_id']
 
     @classmethod
     def is_linked(cls, auth_id):
@@ -267,23 +259,22 @@ class Inbox:
             bool: True if linked, False otherwise.
         """
         q = sqlalchemy.text('SELECT * from inboxes where auth_id = :auth_id')
-        r = conn.execute(q, {"auth_id": auth_id}).fetchall()
+        r = conn.execute(q, auth_id=auth_id).fetchall()
         return bool(len(r))
 
     @classmethod
     def link_or_create(cls, auth_id, nickname, email):
-        q = sqlalchemy.text(
-            'SELECT slug, email FROM inboxes WHERE auth_id = :auth_id')
-        row = conn.execute(q, {"auth_id": auth_id}).fetchone()
+        q = sqlalchemy.text('SELECT slug, email FROM inboxes WHERE auth_id = :auth_id')
+        row = conn.execute(q, auth_id=auth_id).fetchone()
         if row:
-            existing_slug = row_dict(row)['slug']
-            existing_email = row_dict(row)['email']
+            existing_slug = row['slug']
+            existing_email = row['email']
             # If they changed their email on GitHub/Auth0, update it silently
             if existing_email != email:
                 u = sqlalchemy.text(
                     'UPDATE inboxes SET email = :email WHERE auth_id = :auth_id'
                 )
-                conn.execute(u, {"email": email, "auth_id": auth_id})
+                conn.execute(u, email=email, auth_id=auth_id)
             return existing_slug
         base_slug = nickname
         slug_to_try = base_slug
@@ -319,7 +310,7 @@ class Inbox:
                     (:slug, :auth_id, :email)
             '''
             )
-            conn.execute(q, {"slug": slug, "auth_id": auth_id, "email": email})
+            conn.execute(q, slug=slug, auth_id=auth_id, email=email)
 
         except UniqueViolation:
             print('Duplicate record - ID already exist')
@@ -337,7 +328,7 @@ class Inbox:
             bool: True if the inbox exists, False otherwise.
         """
         q = sqlalchemy.text('SELECT * from inboxes where slug = :slug')
-        r = conn.execute(q, {"slug": slug}).fetchall()
+        r = conn.execute(q, slug=slug).fetchall()
         return bool(len(r))
 
     @classmethod
@@ -350,11 +341,10 @@ class Inbox:
         Returns:
             bool: True if email is enabled, False otherwise.
         """
-        q = sqlalchemy.text(
-            'SELECT email_enabled FROM inboxes where slug = :slug')
+        q = sqlalchemy.text('SELECT email_enabled FROM inboxes where slug = :slug')
         try:
-            r = conn.execute(q, {"slug": slug}).fetchall()
-            return bool(row_dict(r[0])['email_enabled'])
+            r = conn.execute(q, slug=slug).fetchall()
+            return bool(r[0]['email_enabled'])
         except InFailedSqlTransaction:
             print(traceback.print_exc())
             logging.error(traceback.print_exc())
@@ -381,8 +371,8 @@ class Inbox:
             "SELECT email_template_name FROM inboxes "
             "WHERE slug = :slug"
         )
-        r = conn.execute(q, {"slug": slug}).fetchall()
-        return row_dict(r[0])['email_template_name'] if r else 'default'
+        r = conn.execute(q, slug=slug).fetchall()
+        return r[0]['email_template_name'] if r else 'default'
 
     @classmethod
     def toggle_template(cls, slug):
@@ -393,7 +383,7 @@ class Inbox:
             "THEN 'compressed' ELSE 'default' END "
             "WHERE slug = :slug"
         )
-        conn.execute(q, {"slug": slug})
+        conn.execute(q, slug=slug)
 
     @classmethod
     def disable_email(cls, slug):
@@ -401,7 +391,7 @@ class Inbox:
         q = sqlalchemy.text(
             'update inboxes set email_enabled = false where slug = :slug'
         )
-        conn.execute(q, {"slug": slug})
+        conn.execute(q, slug=slug)
 
     @classmethod
     def enable_email(cls, slug):
@@ -410,7 +400,7 @@ class Inbox:
             'update inboxes set email_enabled = true '
             'where slug = :slug and email is not null and btrim(email) <> :empty'
         )
-        conn.execute(q, {"slug": slug, "empty": ""})
+        conn.execute(q, slug=slug, empty='')
 
     @classmethod
     def is_enabled(cls, slug):
@@ -424,10 +414,10 @@ class Inbox:
         """
         q = sqlalchemy.text('SELECT enabled FROM inboxes where slug = :slug')
         try:
-            r = conn.execute(q, {"slug": slug}).fetchall()
-            if not row_dict(r[0])['enabled']:
+            r = conn.execute(q, slug=slug).fetchall()
+            if not r[0]['enabled']:
                 return False
-            return bool(row_dict(r[0])['enabled'])
+            return bool(r[0]['enabled'])
         except InFailedSqlTransaction:
             print(traceback.print_exc())
             logging.error(traceback.print_exc())
@@ -436,16 +426,14 @@ class Inbox:
     @classmethod
     def disable_account(cls, slug):
         """Disable the inbox account (sets enabled = false)."""
-        q = sqlalchemy.text(
-            'update inboxes set enabled = false where slug = :slug')
-        conn.execute(q, {"slug": slug})
+        q = sqlalchemy.text('update inboxes set enabled = false where slug = :slug')
+        conn.execute(q, slug=slug)
 
     @classmethod
     def enable_account(cls, slug):
         """Enable the inbox account (sets enabled = true)."""
-        q = sqlalchemy.text(
-            'update inboxes set enabled = true where slug = :slug')
-        conn.execute(q, {"slug": slug})
+        q = sqlalchemy.text('update inboxes set enabled = true where slug = :slug')
+        conn.execute(q, slug=slug)
 
     def submit_note(self, body, byline, audio_path=None):
         """Create and store a new note for this inbox.
@@ -473,8 +461,8 @@ class Inbox:
             str: Email address from the inboxes table.
         """
         q = sqlalchemy.text('SELECT email FROM inboxes where slug = :slug')
-        r = conn.execute(q, {"slug": slug}).fetchall()
-        return row_dict(r[0])['email']
+        r = conn.execute(q, slug=slug).fetchall()
+        return r[0]['email']
 
     @property
     def myemail(self):
@@ -512,8 +500,7 @@ class Inbox:
             AND archived = 'f'
         """
         )
-        total_notes = conn.execute(
-            count_query, {"auth_id": self.auth_id}).scalar()
+        total_notes = conn.execute(count_query, auth_id=self.auth_id).scalar()
         query = sqlalchemy.text(
             """
             SELECT * FROM notes
@@ -523,18 +510,17 @@ class Inbox:
         """
         )
         result = conn.execute(
-            query, {"auth_id": self.auth_id,
-                    "limit": page_size, "offset": offset}
+            query, auth_id=self.auth_id, limit=page_size, offset=offset
         ).fetchall()
 
         notes = [
             Note.from_inbox(
                 self.slug,
-                row_dict(n)["body"],
-                row_dict(n)["byline"],
-                row_dict(n)["archived"],
-                row_dict(n)["uuid"],
-                row_dict(n)["timestamp"],
+                n["body"],
+                n["byline"],
+                n["archived"],
+                n["uuid"],
+                n["timestamp"],
             )
             for n in result
         ]
@@ -586,24 +572,26 @@ class Inbox:
         # Execute the query with the search string and pagination parameters
         result = conn.execute(
             query,
-            {"param": search_str_lower, "auth_id": self.auth_id,
-                "limit": page_size, "offset": offset}
+            param=search_str_lower,
+            auth_id=self.auth_id,
+            limit=page_size,
+            offset=offset,
         ).fetchall()
 
         notes = [
             Note.from_inbox(
                 self.slug,
-                row_dict(n)["body"],
-                row_dict(n)["byline"],
-                row_dict(n)["archived"],
-                row_dict(n)["uuid"],
-                row_dict(n)["timestamp"],
+                n["body"],
+                n["byline"],
+                n["archived"],
+                n["uuid"],
+                n["timestamp"],
             )
             for n in result
         ]
 
         # Get total_notes from the first row, or 0 if no results
-        total_notes = row_dict(result[0])['total_notes'] if result else 0
+        total_notes = result[0]['total_notes'] if result else 0
 
         return {
             "notes": notes,
@@ -625,7 +613,7 @@ class Inbox:
         q = sqlalchemy.text(
             "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'"
         )
-        r = conn.execute(q, {"auth_id": self.auth_id}).fetchall()
+        r = conn.execute(q, auth_id=self.auth_id).fetchall()
         return tablib.Dataset(r).export(file_format)
 
     @property
@@ -638,11 +626,10 @@ class Inbox:
         q = sqlalchemy.text(
             "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 't'"
         )
-        r = conn.execute(q, {"auth_id": self.auth_id}).fetchall()
+        r = conn.execute(q, auth_id=self.auth_id).fetchall()
 
         notes = [
-            Note.from_inbox(self.slug, row_dict(n)['body'], row_dict(
-                n)['byline'], row_dict(n)['archived'], row_dict(n)['uuid'])
+            Note.from_inbox(self.slug, n['body'], n['byline'], n['archived'], n['uuid'])
             for n in r
         ]
         return notes[::-1]
