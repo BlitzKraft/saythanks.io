@@ -3,9 +3,9 @@
 {% block title %}Say Thank You{% endblock %}
 
 {% block extra_head %} 
-    <script src="{{ url_for('static', filename='toastui-editor-all.min.js') }}"></script>
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
     <link rel="stylesheet"
-          href="{{ url_for('static', filename='toastui-editor.min.css') }}"/>
+          href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
     <style>
       .word-count {
         color: red;
@@ -159,7 +159,6 @@ thoughtful words, so far… (shoot for 42!)</h6>
   const draftKey = form.getAttribute('action');
   const outboxStatus = document.getElementById('outbox-status');
   let draftSaveTimer;
-  let audioBlob = null;
 
   function openDraftDatabase() {
     return new Promise((resolve, reject) => {
@@ -299,8 +298,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
   }
 
   async function queueOfflineNote() {
-    const fileInput = document.getElementById('audioFileInput');
-    const offlineAudio = audioBlob || (fileInput && fileInput.files && fileInput.files[0]) || null;
+    const offlineAudio = audioBlob || audioFileInput.files[0] || null;
     const audioFileName = offlineAudio
       ? (offlineAudio.name || (offlineAudio.type.includes('mp4')
         ? 'voice_note.m4a' : 'voice_note.webm'))
@@ -310,8 +308,8 @@ thoughtful words, so far… (shoot for 42!)</h6>
       action: new URL(form.getAttribute('action'), window.location.href).href,
       body: editor.getMarkdown(),
       byline: document.getElementById('byline').value,
-      fontStyle: (form.elements.font_style && form.elements.font_style.value) || '',
-      contentType: (form.elements['content-type'] && form.elements['content-type'].value) || '',
+      fontStyle: form.elements.font_style.value,
+      contentType: form.elements['content-type'].value,
       audioBlob: offlineAudio,
       audioFileName: audioFileName,
       status: 'queued',
@@ -380,15 +378,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
       }
       else { submitBtn.disabled = false; recordingStatus.innerText = 'Send failed: ' + request.status; }
     };
-    request.onerror = () => {
-      queueOfflineNote().then(() => {
-        window.location.href = '/thanks?status=queued';
-      }).catch((queueError) => {
-        submitBtn.disabled = false;
-        outboxStatus.textContent = 'Could not reach the server and offline queuing also failed. Check your connection and try again.';
-        console.error('queueOfflineNote failed:', queueError);
-      });
-    };
+    request.onerror = () => { submitBtn.disabled = false; recordingStatus.innerText = 'Network error.'; };
     request.upload.onprogress = e => {
       if (e.lengthComputable) 
         recordingStatus.innerText = 'Uploading… ' + Math.round(e.loaded / e.total * 100) + '%';
@@ -429,8 +419,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
   // Voice Recording Script
   let recording = false;
   let recorder;
-  // Note: audioBlob is already declared above as `let audioBlob = null;`
-  // Do NOT re-declare it here with `let` — that causes a SyntaxError in strict mode.
+  let audioBlob;
   let mediaStream;
   let recordingTimeout;
   const maxRecordingTime = {{ max_recording_time | default(30) }} * 1000;
