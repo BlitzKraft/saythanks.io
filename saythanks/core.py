@@ -630,7 +630,8 @@ def callback_handling():
     session['profile'] = user_info
 
     userid = user_info['sub']
-    email = user_detail_info.get('email')
+    raw_email = user_detail_info.get('email')
+    email = raw_email.strip() if isinstance(raw_email, str) and raw_email.strip() else None
     nickname = resolve_nickname(user_detail_info, email, userid)
     if not isinstance(nickname, str) or not nickname.strip():
         logger.error(
