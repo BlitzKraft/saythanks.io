@@ -5,16 +5,18 @@
     "icon": "https://icons.duckduckgo.com/ip3/saythanks.io.ico",
     "slug": "say-thanks-io",
     "status": "up",
-    "uptime": "100.00%",
-    "uptimeDay": "100.00%",
-    "uptimeWeek": "100.00%",
-    "uptimeMonth": "100.00%",
-    "uptimeYear": "100.00%",
+    "uptime": "97.26%",
+    "uptimeDay": "80.09%",
+    "uptimeWeek": "97.16%",
+    "uptimeMonth": "97.26%",
+    "uptimeYear": "97.26%",
     "time": 1064,
     "timeDay": 984,
     "timeWeek": 1052,
     "timeMonth": 1064,
     "timeYear": 1064,
-    "dailyMinutesDown": {}
+    "dailyMinutesDown": {
+      "2026-09-18": 287
+    }
   }
 ]
