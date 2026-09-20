@@ -10,10 +10,13 @@ services:
     volumes:
       - ./:/saythanks
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - saythanks
 
   db:
-    image: postgres
+    image: postgres:15
     container_name: local_pgdb
     restart: always
     ports:
@@ -25,6 +28,12 @@ services:
       - ./saythanks/sqls/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     networks:
       - saythanks
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+      start_period: 10s
 
   pgadmin:
     image: dpage/pgadmin4
