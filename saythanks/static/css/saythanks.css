@@ -29,7 +29,6 @@ h1 a {
 }
 
 button {
-  overflow: hidden !important;
   min-height: 44px;
   touch-action: manipulation;
 }
@@ -69,6 +68,7 @@ button {
   height: 28px !important;
   min-height: 28px !important;
   margin: 7px 5px !important;
+  overflow: hidden !important;
   padding: 0 !important;
   line-height: normal !important;
 }
@@ -76,6 +76,14 @@ button {
 #thankyou-note-form #editor .toastui-editor-toolbar-group,
 #thankyou-note-form #editor .toastui-editor-toolbar-item-wrapper {
   flex: 0 0 auto;
+}
+
+#recordBtn {
+  height: auto;
+  line-height: 1.4;
+  overflow: visible;
+  padding-bottom: 0.75rem;
+  padding-top: 0.75rem;
 }
 
 input,

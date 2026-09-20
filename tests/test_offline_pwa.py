@@ -128,6 +128,35 @@ def test_note_form_has_mobile_responsive_and_touch_friendly_controls():
     assert 'autocomplete="name"' in submit_template
 
 
+def test_voice_record_button_is_visible_and_operational():
+    """Toolbar clipping must not hide or disable the voice record control."""
+    css = _read('saythanks/static/css/saythanks.css')
+    submit_template = _read('saythanks/templates/submit_note.htm.j2')
+
+    global_button_rule = re.search(
+        r'^button\s*\{(.*?)^\}', css, re.MULTILINE | re.DOTALL
+    )
+    record_button_rule = re.search(
+        r'^#recordBtn\s*\{(.*?)^\}', css, re.MULTILINE | re.DOTALL
+    )
+    toolbar_button_rule = re.search(
+        r'#thankyou-note-form #editor '
+        r'\.toastui-editor-defaultUI-toolbar button\s*\{(.*?)^\}',
+        css,
+        re.MULTILINE | re.DOTALL,
+    )
+
+    assert global_button_rule
+    assert 'overflow: hidden' not in global_button_rule.group(1)
+    assert record_button_rule
+    assert 'height: auto;' in record_button_rule.group(1)
+    assert 'overflow: visible;' in record_button_rule.group(1)
+    assert toolbar_button_rule
+    assert 'overflow: hidden !important;' in toolbar_button_rule.group(1)
+    assert '<button type="button" id="recordBtn">' in submit_template
+    assert "recordBtn.addEventListener('click', async () => {" in submit_template
+
+
 def test_note_form_uses_indexeddb_and_keys_drafts_by_form_action():
     """Test that the note form uses IndexedDB and keys drafts by form action."""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
