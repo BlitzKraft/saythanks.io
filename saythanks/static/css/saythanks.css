@@ -166,7 +166,8 @@ textarea {
   }
 
   #thankyou-note-form .toastui-editor-defaultUI {
-    width: 100%;
+    width: 100% !important;
+    max-width: 100%;
   }
 
   #thankyou-note-form .toastui-editor-defaultUI-toolbar {
@@ -178,8 +179,10 @@ textarea {
   #recordBtn,
   #audioFilePickerLabel,
   #send-note-btn {
+    box-sizing: border-box;
     display: block;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100%;
     margin: 0.75rem 0;
     text-align: center;
   }
@@ -189,11 +192,6 @@ textarea {
     padding: 0.75rem;
     border: 1px solid #bbb;
     border-radius: 4px;
-  }
-
-  #eve-send {
-    height: 3.5rem;
-    margin-bottom: -2.3rem;
   }
 
   .notebodyfont {
@@ -245,8 +243,10 @@ a {
 }
 
 #eve-send {
-  height: 6rem;
-  margin-bottom: -4em;
+  height: 2.5rem !important;
+  width: auto;
+  margin: 0 0 0 0.5rem !important;
+  vertical-align: middle;
   color: green;
 }
 
