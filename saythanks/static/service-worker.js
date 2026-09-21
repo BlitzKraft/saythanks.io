@@ -1,4 +1,4 @@
-const CACHE_NAME = "saythanks-public-v7";
+const CACHE_NAME = "saythanks-public-v8";
 const OFFLINE_URL = "/static/offline.html";
 const PRECACHE_URLS = [
   OFFLINE_URL,

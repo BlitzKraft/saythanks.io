@@ -167,24 +167,67 @@ textarea {
 
   #thankyou-note-form .toastui-editor-defaultUI {
     width: 100% !important;
-    max-width: 100%;
+    max-width: 100% !important;
+    min-width: 0;
+    overflow: hidden !important;
   }
 
   #thankyou-note-form .toastui-editor-defaultUI-toolbar {
-    width: 100%;
     box-sizing: border-box;
+    max-width: 100% !important;
+    min-width: 0;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
+    width: 100% !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #thankyou-note-form,
+  #thankyou-note-form fieldset,
+  #thankyou-note-form .form-group,
+  #thankyou-note-form .editor-container,
+  #thankyou-note-form #editor,
+  #thankyou-note-form #editor .toastui-editor-main,
+  #thankyou-note-form #editor .toastui-editor-md-container,
+  #thankyou-note-form #editor .toastui-editor-ww-container {
+    box-sizing: border-box;
+    max-width: 100% !important;
+    min-width: 0;
+    width: 100% !important;
   }
 
   #recordBtn,
-  #audioFilePickerLabel,
   #send-note-btn {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    height: auto !important;
+    justify-content: center;
+    line-height: 1.25;
+    min-height: 48px;
+    width: 100% !important;
+    max-width: 100%;
+    margin: 0.75rem 0;
+    overflow: visible;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    white-space: normal;
+  }
+
+  #audioFilePickerLabel {
     box-sizing: border-box;
     display: block;
     width: 100% !important;
     max-width: 100%;
     margin: 0.75rem 0;
     text-align: center;
+  }
+
+  #send-note-btn #eve-send {
+    flex: 0 0 auto;
+    height: 2.5rem !important;
+    margin: 0 0 0 0.5rem !important;
+    max-width: 2.5rem;
   }
 
   #audioFilePickerLabel {
