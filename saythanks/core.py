@@ -24,6 +24,7 @@ from markupsafe import Markup
 from flask import send_from_directory
 from flask_common import Common
 from names import get_full_name
+import indian_names
 from raven.contrib.flask import Sentry
 from flask_qrcode import QRcode
 from . import storage
@@ -390,7 +391,11 @@ def display_submit_note(inbox_id, topic):
 
     print("topic received:", topic if topic else "No topic provided")
 
-    fake_name = get_full_name()
+    name_style = request.args.get('name_style', 'american')
+    if name_style == 'indian':
+        fake_name = indian_names.get_full_name()
+    else:
+        fake_name = get_full_name()
     raw_topic = topic
     # URL decode the topic if it was encoded
     if raw_topic:
