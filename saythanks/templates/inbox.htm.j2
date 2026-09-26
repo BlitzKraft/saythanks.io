@@ -29,8 +29,8 @@
     </textarea>
 </div>
 
-<img class="avatar" src="{{ user['picture'] }}" width="100" alt="Avatar">
-<h2>Welcome, {{ user['name'] }}!</h2>
+<img class="avatar" src="{{ user.get('picture') or url_for('static', filename='images/inbox.png') }}" width="100" alt="Avatar">
+<h2>Welcome, {{ user.get('name') or user.get('nickname') }}!</h2>
 
 <p>
     You may now direct your users (in a README or documentation, for example)
