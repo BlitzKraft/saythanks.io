@@ -157,6 +157,30 @@ def test_voice_record_button_is_visible_and_operational():
     assert "recordBtn.addEventListener('click', async () => {" in submit_template
 
 
+def test_android_note_controls_fit_narrow_touch_viewports():
+    """Editor and primary buttons must not overflow Android-sized screens."""
+    css = _read('saythanks/static/css/saythanks.css')
+    submit_template = _read('saythanks/templates/submit_note.htm.j2')
+
+    assert (
+        '#thankyou-note-form #editor .toastui-editor-md-container,'
+        in css
+    )
+    assert '#thankyou-note-form #editor .toastui-editor-ww-container {' in css
+    assert 'overscroll-behavior-x: contain;' in css
+    assert '-webkit-overflow-scrolling: touch;' in css
+    assert 'min-height: 48px;' in css
+    assert 'height: auto !important;' in css
+    assert 'white-space: normal;' in css
+    assert '#send-note-btn #eve-send {' in css
+    assert 'overflow: hidden !important;' in css
+    assert (
+        '#thankyou-note-form #editor .toastui-editor-defaultUI {\n'
+        '        overflow: hidden !important;'
+        not in submit_template
+    )
+
+
 def test_note_form_uses_indexeddb_and_keys_drafts_by_form_action():
     """Test that the note form uses IndexedDB and keys drafts by form action."""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
