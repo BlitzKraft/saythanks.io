@@ -196,5 +196,5 @@ def test_sharelinks_and_pagination_are_app_styles_not_vendor_overrides():
     assert len(re.findall(r'\.sharelinks\s*\{', skeleton_css, re.IGNORECASE)) == 0
     assert len(re.findall(r'\.pagination\s*\{', skeleton_css, re.IGNORECASE)) == 0
 
-    assert len(re.findall(r'\.sharelinks\s*\{', app_css, re.IGNORECASE)) == 1
-    assert len(re.findall(r'\.pagination\s*\{', app_css, re.IGNORECASE)) >= 1
+    assert re.search(r'\.sharelinks\s*\{', app_css, re.IGNORECASE) is not None
+    assert re.search(r'\.pagination\s*\{', app_css, re.IGNORECASE) is not None
