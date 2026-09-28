@@ -43,6 +43,11 @@ def test_service_worker_precaches_public_note_assets():
         '/static/images/owly.svg',
     )
 
+    assert re.search(
+        r"const PRECACHE_URLS = \[\s*OFFLINE_URL,\s*['\"]\/['\"],",
+        service_worker,
+    )
+
     for asset in expected_assets:
         assert asset in service_worker
 
