@@ -201,9 +201,9 @@ def test_android_note_controls_fit_narrow_touch_viewports():
     assert '#send-note-btn #eve-send {' in css
     assert 'overflow: hidden !important;' in css
     editor_container_rule = re.search(
-        r'#thankyou-note-form \.editor-container,\n'
-        r'#thankyou-note-form #editor,\n'
-        r'#thankyou-note-form #editor \.toastui-editor-defaultUI\s*'
+        r'#thankyou-note-form\s+\.editor-container\s*,\s*'
+        r'#thankyou-note-form\s+#editor\s*,\s*'
+        r'#thankyou-note-form\s+#editor\s+\.toastui-editor-defaultUI\s*'
         r'\{(.*?)\}',
         css,
         re.DOTALL,

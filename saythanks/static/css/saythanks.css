@@ -115,6 +115,7 @@ h1 a,
 }
 
 #thankyou-note-form #audioFilePickerLabel {
+  cursor: pointer;
   margin-left: 0.5rem;
 }
 
