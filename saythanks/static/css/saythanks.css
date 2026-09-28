@@ -107,6 +107,10 @@ textarea {
   font-size: 13px;
 }
 
+#audioFilePickerLabel {
+  cursor: pointer;
+}
+
 @media (max-width: 775px) {
   .button {
     display: block;
