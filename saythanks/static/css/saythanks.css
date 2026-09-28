@@ -115,8 +115,13 @@ h1 a,
 }
 
 #thankyou-note-form #audioFilePickerLabel {
+  display: inline-block;
   cursor: pointer;
   margin-left: 0.5rem;
+}
+
+#thankyou-note-form #audioFilePickerLabel:hover {
+  text-decoration: underline;
 }
 
 #thankyou-note-form #audioFileInput {
@@ -358,7 +363,6 @@ h1 a,
   }
 
   #thankyou-note-form #audioFilePickerLabel {
-    cursor: pointer;
     box-sizing: border-box;
     display: block;
     width: 100% !important;
