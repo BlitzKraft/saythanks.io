@@ -184,8 +184,8 @@ def test_sharelinks_and_pagination_are_app_styles_not_vendor_overrides():
     skeleton_css = _read_file('saythanks', 'static', 'css', 'skeleton.css')
     app_css = _read_file('saythanks', 'static', 'css', 'saythanks.css')
 
-    assert '.sharelinks' not in skeleton_css
-    assert '.pagination{' not in skeleton_css
+    assert re.search(r'\.sharelinks\s*\{', skeleton_css) is None
+    assert re.search(r'\.pagination\s*\{', skeleton_css) is None
 
-    assert '.sharelinks {' in app_css
-    assert '.pagination {' in app_css
+    assert re.search(r'\.sharelinks\s*\{', app_css) is not None
+    assert re.search(r'\.pagination\s*\{', app_css) is not None
