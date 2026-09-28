@@ -40,11 +40,18 @@ h1 a {
   text-decoration: none;
 }
 
+h1 a,
+.content a,
+#footer a {
+  color: var(--color-brand);
+}
+
 .u-textcenter {
   text-align: center;
 }
 
-button {
+.content button,
+.content .button {
   min-height: 44px;
   touch-action: manipulation;
 }
@@ -102,11 +109,16 @@ button {
   padding-top: 0.75rem;
 }
 
-input,
-select,
-textarea {
+.content input,
+.content select,
+.content textarea {
   max-width: 100%;
   font-size: 16px;
+}
+
+.content :is(button, input, select, textarea):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-focus) 45%, transparent);
+  outline-offset: 2px;
 }
 
 #network-status {
@@ -159,6 +171,29 @@ textarea {
   #network-status {
     display: block;
     margin-left: 0;
+  }
+
+  .qr-code {
+    justify-content: center;
+    margin-top: var(--space-md);
+  }
+
+  .content table.u-full-width {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .notes-grid {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .notes-header,
+  .note-item {
+    min-width: 760px;
   }
 
   #thankyou-note-form .form-row {
@@ -285,10 +320,6 @@ textarea {
 .button-primary {
   background-color: var(--color-brand) !important;
   border-color: var(--color-brand) !important;
-}
-
-a {
-  color: var(--color-brand);
 }
 
 .green {
@@ -433,8 +464,27 @@ a.share {
 }
 
 .qr-code {
-  text-align: right;
-  margin-top: -3em;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-sm);
+}
+
+.content > .avatar {
+  display: block;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-bottom: var(--space-sm);
+}
+
+.content table.u-full-width {
+  table-layout: fixed;
+}
+
+.content table.u-full-width pre {
+  max-width: 600px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 /* --- Search form --------------------------------------------- */
@@ -585,6 +635,18 @@ a.share {
 
 .pagination a {
   text-decoration: none;
+}
+
+.pagination {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pagination a,
+.pagination span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 
 .btn-load-more {

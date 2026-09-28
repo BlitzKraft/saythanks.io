@@ -133,8 +133,10 @@ def test_voice_record_button_is_visible_and_operational():
     css = _read('saythanks/static/css/saythanks.css')
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
-    global_button_rule = re.search(
-        r'^button\s*\{(.*?)^\}', css, re.MULTILINE | re.DOTALL
+    content_button_rule = re.search(
+        r'^\.content button,\n\.content \.button\s*\{(.*?)^\}',
+        css,
+        re.MULTILINE | re.DOTALL,
     )
     record_button_rule = re.search(
         r'^#recordBtn\s*\{(.*?)^\}', css, re.MULTILINE | re.DOTALL
@@ -146,8 +148,8 @@ def test_voice_record_button_is_visible_and_operational():
         re.MULTILINE | re.DOTALL,
     )
 
-    assert global_button_rule
-    assert 'overflow: hidden' not in global_button_rule.group(1)
+    assert content_button_rule
+    assert 'overflow: hidden' not in content_button_rule.group(1)
     assert record_button_rule
     assert 'height: auto;' in record_button_rule.group(1)
     assert 'overflow: visible;' in record_button_rule.group(1)
