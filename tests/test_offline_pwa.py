@@ -88,6 +88,25 @@ def test_service_worker_versioned_cache_removes_old_caches():
     assert "caches.delete(cacheName)" in service_worker
 
 
+def test_share_icons_stay_white_on_inbox_and_shared_notes():
+    """SVGs using currentColor must not inherit the content link's brand green."""
+    css = _read('saythanks/static/css/saythanks.css')
+    assert re.search(
+        r'\.content a\.x-share\s*,\s*'
+        r'\.content a\.fb-share\s*\{[^}]*color:\s*#ffffff;',
+        css,
+        re.DOTALL,
+    )
+    for template_path in (
+        'saythanks/templates/inbox.htm.j2',
+        'saythanks/templates/share_note.htm.j2',
+    ):
+        template = _read(template_path)
+        assert 'class="x-share"' in template
+        assert 'class="fb-share"' in template
+        assert template.count('fill="currentColor"') >= 2
+
+
 def test_service_worker_cache_version_changes_for_new_offline_code():
     service_worker = _read('saythanks/static/service-worker.js')
 

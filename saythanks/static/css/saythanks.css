@@ -472,8 +472,8 @@ a.share {
   background-color: #333;
 }
 
-.x-share,
-.fb-share {
+.content a.x-share,
+.content a.fb-share {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -488,9 +488,10 @@ a.share {
   background-color: #1877f2;
 }
 
-.fb-share:hover,
-.fb-share:focus {
+.content a.fb-share:hover,
+.content a.fb-share:focus {
   background-color: #1664d9;
+  color: #ffffff;
 }
 
 .x-share {
@@ -498,9 +499,10 @@ a.share {
   margin-right: 8px;
 }
 
-.x-share:hover,
-.x-share:focus {
+.content a.x-share:hover,
+.content a.x-share:focus {
   background-color: #333333;
+  color: #ffffff;
 }
 
 /* ============================================================
