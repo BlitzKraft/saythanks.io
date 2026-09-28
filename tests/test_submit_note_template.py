@@ -196,13 +196,25 @@ def test_sharelinks_and_pagination_are_app_styles_not_vendor_overrides():
     assert re.search(r'\.sharelinks\s*\{', skeleton_css) is None
     assert re.search(r'\.pagination\s*\{', skeleton_css) is None
 
-    assert re.search(
-        r'\.sharelinks\s*\{[^}]*display\s*:\s*flex\s*;[^}]*gap\s*:\s*0?\.2em\s*;',
+    sharelinks_block = re.search(
+        r'\.sharelinks\s*\{([^}]*)\}',
         app_css,
         re.IGNORECASE | re.DOTALL,
-    ) is not None
-    assert re.search(
-        r'\.pagination\s*\{[^}]*display\s*:\s*flex\s*;[^}]*justify-content\s*:\s*center\s*;[^}]*gap\s*:\s*2em\s*;',
+    )
+    assert sharelinks_block is not None
+    assert re.search(r'display\s*:\s*flex\s*;', sharelinks_block.group(1), re.IGNORECASE)
+    assert re.search(r'gap\s*:\s*0?\.2em\s*;', sharelinks_block.group(1), re.IGNORECASE)
+
+    pagination_block = re.search(
+        r'\.pagination\s*\{([^}]*)\}',
         app_css,
         re.IGNORECASE | re.DOTALL,
-    ) is not None
+    )
+    assert pagination_block is not None
+    assert re.search(r'display\s*:\s*flex\s*;', pagination_block.group(1), re.IGNORECASE)
+    assert re.search(
+        r'justify-content\s*:\s*center\s*;',
+        pagination_block.group(1),
+        re.IGNORECASE,
+    )
+    assert re.search(r'gap\s*:\s*2em\s*;', pagination_block.group(1), re.IGNORECASE)
