@@ -181,16 +181,17 @@ def test_android_note_controls_fit_narrow_touch_viewports():
     assert 'white-space: normal;' in css
     assert '#send-note-btn #eve-send {' in css
     assert 'overflow: hidden !important;' in css
-    assert (
-        '#thankyou-note-form #editor .toastui-editor-defaultUI {\n'
-        '  overflow: hidden !important;'
-        in css
+    editor_container_rule = re.search(
+        r'#thankyou-note-form \.editor-container,\n'
+        r'#thankyou-note-form #editor,\n'
+        r'#thankyou-note-form #editor \.toastui-editor-defaultUI\s*'
+        r'\{(.*?)\}',
+        css,
+        re.DOTALL,
     )
-    assert (
-        '#thankyou-note-form #editor .toastui-editor-defaultUI {\n'
-        '  overflow: hidden !important;'
-        not in submit_template
-    )
+    assert editor_container_rule
+    assert 'overflow: hidden !important;' in editor_container_rule.group(1)
+    assert '.toastui-editor-defaultUI' not in submit_template
 
 
 def test_note_form_uses_indexeddb_and_keys_drafts_by_form_action():
