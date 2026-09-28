@@ -175,8 +175,8 @@ def test_submit_template_uses_css_classes_not_inline_styles():
 def test_archived_inbox_no_embedded_styles():
     template = _read_file('saythanks', 'templates', 'inbox_archived.htm.j2')
 
-    assert '{% block extra_head %}' not in template
-    assert '<style>' not in template
+    assert re.search(r'{%\s*block\s+extra_head\s*%}', template, re.IGNORECASE) is None
+    assert re.search(r'<\s*style\b', template, re.IGNORECASE) is None
     assert 'class="u-textcenter"' in template
 
 
