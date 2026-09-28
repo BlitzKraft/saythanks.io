@@ -50,6 +50,100 @@ h1 a,
   text-align: center;
 }
 
+.home-ad,
+.thanks-image-wrap {
+  text-align: center;
+}
+
+.home-inbox-image {
+  display: block;
+  height: 25rem;
+  margin: 0 auto -3.5em;
+}
+
+.thanks-image {
+  display: block;
+  height: 25rem;
+  margin: 0 auto;
+}
+
+.sharelinks {
+  display: flex;
+  gap: 0.2em;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 2em;
+}
+
+/* Submit-note form ------------------------------------------ */
+
+#thankyou-note-form .font-style-label {
+  white-space: nowrap;
+}
+
+#thankyou-note-form .content-type-options {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#thankyou-note-form .content-type-options legend {
+  font-size: 0.95rem;
+  margin: 0 0.5rem 0 0;
+  white-space: nowrap;
+}
+
+#thankyou-note-form .content-type-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+#thankyou-note-form .suggestion-templates {
+  margin-bottom: 1em;
+}
+
+#thankyou-note-form .recording-controls {
+  margin: 1em 0;
+}
+
+#thankyou-note-form #audioFilePickerLabel {
+  margin-left: 0.5rem;
+}
+
+#thankyou-note-form #audioFileInput {
+  display: none;
+}
+
+#thankyou-note-form #audioPreview {
+  display: none;
+  margin-top: 10px;
+}
+
+#thankyou-note-form #recordingStatus {
+  color: var(--color-brand);
+  font-weight: bold;
+}
+
+#thankyou-note-form #editor .toastui-editor-contents,
+#thankyou-note-form #editor .toastui-editor-md-preview-content,
+#thankyou-note-form #editor .ProseMirror {
+  font-size: 16px !important;
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco',
+    'Liberation Mono', monospace !important;
+}
+
+#thankyou-note-form #editor .toastui-editor-defaultUI {
+  overflow: hidden !important;
+}
+
 .content button,
 .content .button {
   min-height: 44px;
@@ -341,6 +435,19 @@ a.share {
 
 .github-corner:hover .octo-arm {
   animation: octocat-wave 560ms ease-in-out
+}
+
+.github-corner-svg {
+  fill: #151513;
+  color: #fff;
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: 0;
+}
+
+.github-corner .octo-arm {
+  transform-origin: 130px 106px;
 }
 
 @keyframes octocat-wave {
