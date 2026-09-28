@@ -161,15 +161,24 @@ def test_submit_template_uses_css_classes_not_inline_styles():
 
     assert '<style>' not in template
     assert re.search(r'<[^>]+\bstyle\s*=', template, re.IGNORECASE) is None
-    assert 'class="form-label-nowrap"' in template
-    assert 'class="form-content-type-fieldset"' in template
-    assert 'class="form-content-type-legend"' in template
-    assert 'class="form-radio-label"' in template
-    assert 'class="recording-controls"' in template
-    assert 'class="audio-file-label"' in template
-    assert 'class="hidden-file-input"' in template
-    assert 'class="audio-preview"' in template
-    assert 'class="recording-status-success"' in template
+
+    expected_class_tokens = (
+        'form-label-nowrap',
+        'form-content-type-fieldset',
+        'form-content-type-legend',
+        'form-radio-label',
+        'recording-controls',
+        'audio-file-label',
+        'hidden-file-input',
+        'audio-preview',
+        'recording-status-success',
+    )
+    for token in expected_class_tokens:
+        assert re.search(
+            r'class=["\'][^"\']*\b%s\b[^"\']*["\']' % re.escape(token),
+            template,
+            re.IGNORECASE,
+        ) is not None
 
 
 def test_archived_inbox_no_embedded_styles():
