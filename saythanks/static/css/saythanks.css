@@ -140,10 +140,6 @@ h1 a,
     'Liberation Mono', monospace !important;
 }
 
-#thankyou-note-form #editor .toastui-editor-defaultUI {
-  overflow: hidden !important;
-}
-
 .content button,
 .content .button {
   min-height: 44px;
@@ -158,6 +154,7 @@ h1 a,
   width: 100% !important;
   max-width: 100%;
   min-width: 0;
+  overflow: hidden !important;
 }
 
 #thankyou-note-form .editor-container {
@@ -227,10 +224,6 @@ h1 a,
 
 #badge-modal textarea {
   font-size: 13px;
-}
-
-#audioFilePickerLabel {
-  cursor: pointer;
 }
 
 @media (max-width: 775px) {
@@ -363,12 +356,16 @@ h1 a,
     white-space: normal;
   }
 
-  #audioFilePickerLabel {
+  #thankyou-note-form #audioFilePickerLabel {
+    cursor: pointer;
     box-sizing: border-box;
     display: block;
     width: 100% !important;
     max-width: 100%;
     margin: 0.75rem 0;
+    padding: 0.75rem;
+    border: 1px solid #bbb;
+    border-radius: 4px;
     text-align: center;
   }
 
@@ -377,13 +374,6 @@ h1 a,
     height: 2.5rem !important;
     margin: 0 0 0 0.5rem !important;
     max-width: 2.5rem;
-  }
-
-  #audioFilePickerLabel {
-    cursor: pointer;
-    padding: 0.75rem;
-    border: 1px solid #bbb;
-    border-radius: 4px;
   }
 
   .notebodyfont {
@@ -482,16 +472,20 @@ a.share {
   background-color: #333;
 }
 
+.x-share,
 .fb-share {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 26px;
   height: 26px;
-  background-color: #1877f2;
   color: #ffffff;
   border-radius: 4px;
-  vertical-align: middle;   /* aligns with the X Post button */
+  vertical-align: middle;
+}
+
+.fb-share {
+  background-color: #1877f2;
 }
 
 .fb-share:hover,
@@ -500,15 +494,7 @@ a.share {
 }
 
 .x-share {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
   background-color: #000000;
-  color: #ffffff;
-  border-radius: 4px;
-  vertical-align: middle;
   margin-right: 8px;
 }
 
