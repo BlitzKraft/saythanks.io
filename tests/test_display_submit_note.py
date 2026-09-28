@@ -18,7 +18,7 @@ CORE_PATH = os.path.join(ROOT, 'saythanks', 'core.py')
 
 
 def _load_display_submit_note(namespace):
-    """Load the real display_submit_note function without importing the Flask app."""
+    """Load the real display_submit_note without importing the Flask app."""
     with open(CORE_PATH, encoding='utf-8') as core_file:
         tree = ast.parse(core_file.read(), filename=CORE_PATH)
 
@@ -33,6 +33,11 @@ def _load_display_submit_note(namespace):
     ast.fix_missing_locations(module)
     exec(compile(module, CORE_PATH, 'exec'), namespace)
     return namespace['display_submit_note']
+
+
+def _abort(code):
+    """Stand-in for Flask's abort(): fail the test if it is ever called."""
+    raise AssertionError(f'unexpected abort({code})')
 
 
 def _build_namespace(name_style_value):
@@ -54,16 +59,17 @@ def _build_namespace(name_style_value):
             return True
 
     args = {'name_style': name_style_value} if name_style_value else {}
+    config = SimpleNamespace(get=lambda key, default=None: default)
 
     namespace = {
         'storage': SimpleNamespace(Inbox=Inbox),
-        'abort': lambda code: (_ for _ in ()).throw(AssertionError(f'unexpected abort({code})')),
+        'abort': _abort,
         'request': SimpleNamespace(args=args),
         'get_full_name': lambda: 'John Smith',
         'indian_names': SimpleNamespace(get_full_name=lambda: 'Nisha Asthana'),
         'unquote': lambda s: s,
         'render_template': render_template,
-        'app': SimpleNamespace(config=SimpleNamespace(get=lambda key, default=None: default)),
+        'app': SimpleNamespace(config=config),
     }
     return namespace, captured
 
