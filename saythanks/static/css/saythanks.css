@@ -18,17 +18,136 @@
 
 :root {
   --customfont: 'Annie Use Your Telescope', 'SerendityFont', cursive;
+  --color-brand: #3ac025;
+  --color-brand-dark: #208a13;
+  --color-text: #222;
+  --color-muted: #555;
+  --color-surface: #fff;
+  --color-surface-subtle: #f5f5f5;
+  --color-border: #ddd;
+  --color-border-subtle: #eee;
+  --color-focus: #33c3f0;
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 3rem;
+  --space-xl: 6rem;
+  --content-max-width: 960px;
+  --mobile-breakpoint: 775px;
 }
 
 h1 a {
   text-decoration: none;
 }
 
+h1 a,
+.content a,
+#footer a {
+  color: var(--color-brand);
+}
+
 .u-textcenter {
   text-align: center;
 }
 
-button {
+.home-ad,
+.thanks-image-wrap {
+  text-align: center;
+}
+
+.home-inbox-image {
+  display: block;
+  height: 25rem;
+  margin: 0 auto -3.5em;
+}
+
+.thanks-image {
+  display: block;
+  height: 25rem;
+  margin: 0 auto;
+}
+
+.sharelinks {
+  display: flex;
+  gap: 0.2em;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 2em;
+}
+
+/* Submit-note form ------------------------------------------ */
+
+#thankyou-note-form .font-style-label {
+  white-space: nowrap;
+}
+
+#thankyou-note-form .content-type-options {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#thankyou-note-form .content-type-options legend {
+  font-size: 0.95rem;
+  margin: 0 0.5rem 0 0;
+  white-space: nowrap;
+}
+
+#thankyou-note-form .content-type-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+#thankyou-note-form .suggestion-templates {
+  margin-bottom: 1em;
+}
+
+#thankyou-note-form .recording-controls {
+  margin: 1em 0;
+}
+
+#thankyou-note-form #audioFilePickerLabel {
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+#thankyou-note-form #audioFilePickerLabel:hover {
+  text-decoration: underline;
+}
+
+#thankyou-note-form #audioFileInput {
+  display: none;
+}
+
+#thankyou-note-form #audioPreview {
+  display: none;
+  margin-top: 10px;
+}
+
+#thankyou-note-form #recordingStatus {
+  color: var(--color-brand);
+  font-weight: bold;
+}
+
+#thankyou-note-form #editor .toastui-editor-contents,
+#thankyou-note-form #editor .toastui-editor-md-preview-content,
+#thankyou-note-form #editor .ProseMirror {
+  font-size: 16px !important;
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco',
+    'Liberation Mono', monospace !important;
+}
+
+.content button,
+.content .button {
   min-height: 44px;
   touch-action: manipulation;
 }
@@ -41,6 +160,7 @@ button {
   width: 100% !important;
   max-width: 100%;
   min-width: 0;
+  overflow: hidden !important;
 }
 
 #thankyou-note-form .editor-container {
@@ -55,8 +175,8 @@ button {
   width: 100% !important;
   max-width: 100%;
   min-width: 0;
-  background-color: #fff !important;
-  border-bottom-color: #fff !important;
+  background-color: var(--color-surface) !important;
+  border-bottom-color: var(--color-surface) !important;
   overflow-x: auto;
   overflow-y: hidden;
   flex-wrap: nowrap;
@@ -86,11 +206,22 @@ button {
   padding-top: 0.75rem;
 }
 
-input,
-select,
-textarea {
+.content input,
+.content select,
+.content textarea {
   max-width: 100%;
   font-size: 16px;
+}
+
+#thankyou-note-form #byline {
+  font-size: 24px;
+  height: auto;
+  min-height: 44px;
+}
+
+.content :is(button, input, select, textarea):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-focus) 45%, transparent);
+  outline-offset: 2px;
 }
 
 #network-status {
@@ -141,6 +272,29 @@ textarea {
     margin-left: 0;
   }
 
+  .qr-code {
+    justify-content: center;
+    margin-top: var(--space-md);
+  }
+
+  .content table.u-full-width {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .notes-grid {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .notes-header,
+  .note-item {
+    min-width: 760px;
+  }
+
   #thankyou-note-form .form-row {
     align-items: stretch !important;
     flex-direction: column;
@@ -167,31 +321,70 @@ textarea {
 
   #thankyou-note-form .toastui-editor-defaultUI {
     width: 100% !important;
-    max-width: 100%;
+    max-width: 100% !important;
+    min-width: 0;
+    overflow: hidden !important;
   }
 
   #thankyou-note-form .toastui-editor-defaultUI-toolbar {
-    width: 100%;
     box-sizing: border-box;
+    max-width: 100% !important;
+    min-width: 0;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
+    width: 100% !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #thankyou-note-form,
+  #thankyou-note-form fieldset,
+  #thankyou-note-form .form-group,
+  #thankyou-note-form .editor-container,
+  #thankyou-note-form #editor,
+  #thankyou-note-form #editor .toastui-editor-main,
+  #thankyou-note-form #editor .toastui-editor-md-container,
+  #thankyou-note-form #editor .toastui-editor-ww-container {
+    box-sizing: border-box;
+    max-width: 100% !important;
+    min-width: 0;
+    width: 100% !important;
   }
 
   #recordBtn,
-  #audioFilePickerLabel,
   #send-note-btn {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    height: auto !important;
+    justify-content: center;
+    line-height: 1.25;
+    min-height: 48px;
+    width: 100% !important;
+    max-width: 100%;
+    margin: 0.75rem 0;
+    overflow: visible;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    white-space: normal;
+  }
+
+  #thankyou-note-form #audioFilePickerLabel {
     box-sizing: border-box;
     display: block;
     width: 100% !important;
     max-width: 100%;
     margin: 0.75rem 0;
-    text-align: center;
-  }
-
-  #audioFilePickerLabel {
-    cursor: pointer;
     padding: 0.75rem;
     border: 1px solid #bbb;
     border-radius: 4px;
+    text-align: center;
+  }
+
+  #send-note-btn #eve-send {
+    flex: 0 0 auto;
+    height: 2.5rem !important;
+    margin: 0 0 0 0.5rem !important;
+    max-width: 2.5rem;
   }
 
   .notebodyfont {
@@ -214,26 +407,13 @@ textarea {
   text-overflow: ellipsis;
 }
 
-.noteinput {
-  height: 6em;
-}
-
-
 .button-primary {
-  background-color: #3ac025 !important;
-  border-color: #3ac025 !important;
-}
-
-a {
-  color: #3ac025;
+  background-color: var(--color-brand) !important;
+  border-color: var(--color-brand) !important;
 }
 
 .green {
-  color: #3ac025 !important;
-}
-
-.dark-green {
-  color: #208A13 !important;
+  color: var(--color-brand) !important;
 }
 
 #eve {
@@ -250,28 +430,25 @@ a {
   color: green;
 }
 
-.auth0-lock-name:after {
-  content: ' (for SayThanks.io)';
-}
-
-.no-color {
-  color: none !important;
-}
-
 a.share {
   text-decoration: none
-}
-
-.logoutLblPos {
-  position: relative;
 }
 
 .github-corner:hover .octo-arm {
   animation: octocat-wave 560ms ease-in-out
 }
 
-#from {
-  width: 15%;
+.github-corner-svg {
+  fill: #151513;
+  color: #fff;
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: 0;
+}
+
+.github-corner .octo-arm {
+  transform-origin: 130px 106px;
 }
 
 @keyframes octocat-wave {
@@ -306,39 +483,37 @@ a.share {
   background-color: #333;
 }
 
-.fb-share {
+.content a.x-share,
+.content a.fb-share {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 26px;
   height: 26px;
-  background-color: #1877f2;
-  color: #ffffff;
-  border-radius: 4px;
-  vertical-align: middle;   /* aligns with the X Post button */
-}
-
-.fb-share:hover,
-.fb-share:focus {
-  background-color: #1664d9;
-}
-
-.x-share {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  background-color: #000000;
   color: #ffffff;
   border-radius: 4px;
   vertical-align: middle;
+}
+
+.fb-share {
+  background-color: #1877f2;
+}
+
+.content a.fb-share:hover,
+.content a.fb-share:focus {
+  background-color: #1664d9;
+  color: #ffffff;
+}
+
+.x-share {
+  background-color: #000000;
   margin-right: 8px;
 }
 
-.x-share:hover,
-.x-share:focus {
+.content a.x-share:hover,
+.content a.x-share:focus {
   background-color: #333333;
+  color: #ffffff;
 }
 
 /* ============================================================
@@ -370,8 +545,27 @@ a.share {
 }
 
 .qr-code {
-  text-align: right;
-  margin-top: -3em;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-sm);
+}
+
+.content > .avatar {
+  display: block;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-bottom: var(--space-sm);
+}
+
+.content table.u-full-width {
+  table-layout: fixed;
+}
+
+.content table.u-full-width pre {
+  max-width: 600px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 /* --- Search form --------------------------------------------- */
@@ -396,7 +590,7 @@ a.share {
   grid-template-columns: auto minmax(200px, 500px) auto auto auto;
   gap: 1rem;
   padding: 0.5rem;
-  background-color: #f5f5f5;
+  background-color: var(--color-surface-subtle);
   font-weight: bold;
 }
 
@@ -410,7 +604,7 @@ a.share {
   grid-template-columns: auto minmax(200px, 500px) auto auto auto;
   gap: 1rem;
   padding: 0.5rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .note-cell {
@@ -427,13 +621,13 @@ a.share {
 .message-cell a {
   display: block;
   text-decoration: none;
-  color: #333; /* Dark gray text color */
+  color: var(--color-text);
   cursor: pointer;
 }
 
 .message-cell a:hover {
-  color: #3ac025; /* Change text color on hover */
-  text-decoration: none; /* No underline on hover */
+  color: var(--color-brand);
+  text-decoration: none;
 }
 
 .share:hover {
@@ -464,7 +658,7 @@ a.share {
 .message-cell th,
 .message-cell td {
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   word-break: break-word;
   max-width: 300px;
   vertical-align: top;
@@ -524,9 +718,21 @@ a.share {
   text-decoration: none;
 }
 
+.pagination {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pagination a,
+.pagination span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
 .btn-load-more {
   padding: 0.15em 1.5em;
-  background-color: #4CAF50;
+  background-color: var(--color-brand);
   color: white;
   border: none;
   border-radius: 8px;

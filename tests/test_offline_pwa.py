@@ -43,6 +43,11 @@ def test_service_worker_precaches_public_note_assets():
         '/static/images/owly.svg',
     )
 
+    assert re.search(
+        r"const PRECACHE_URLS = \[\s*OFFLINE_URL,\s*['\"]\/['\"],",
+        service_worker,
+    )
+
     for asset in expected_assets:
         assert asset in service_worker
 
@@ -81,6 +86,62 @@ def test_service_worker_versioned_cache_removes_old_caches():
         compact_worker,
     )
     assert "caches.delete(cacheName)" in service_worker
+
+
+def test_share_icons_stay_white_on_inbox_and_shared_notes():
+    """SVGs using currentColor must not inherit the content link's brand green."""
+    css = _read('saythanks/static/css/saythanks.css')
+    assert re.search(
+        r'\.content a\.x-share\s*,\s*'
+        r'\.content a\.fb-share\s*\{[^}]*color:\s*#ffffff;',
+        css,
+        re.DOTALL,
+    )
+    for template_path in (
+        'saythanks/templates/inbox.htm.j2',
+        'saythanks/templates/share_note.htm.j2',
+    ):
+        template = _read(template_path)
+        assert 'class="x-share"' in template
+        assert 'class="fb-share"' in template
+        assert template.count('fill="currentColor"') >= 2
+
+
+def test_audio_file_picker_has_one_pointer_rule_and_hover_affordance():
+    css = _read('saythanks/static/css/saythanks.css')
+    submit_template = _read('saythanks/templates/submit_note.htm.j2')
+    picker_rules = re.findall(
+        r'#thankyou-note-form #audioFilePickerLabel\s*\{([^}]*)\}',
+        css,
+    )
+    assert len(picker_rules) == 2  # desktop and mobile layout
+    assert 'display: inline-block;' in picker_rules[0]
+    assert 'cursor: pointer;' in picker_rules[0]
+    assert 'display: block;' in picker_rules[1]
+    assert sum(rule.count('cursor: pointer;') for rule in picker_rules) == 1
+    assert re.search(
+        r'#thankyou-note-form #audioFilePickerLabel:hover\s*'
+        r'\{[^}]*text-decoration:\s*underline;',
+        css,
+    )
+    assert 'for="audioFileInput" id="audioFilePickerLabel"' in submit_template
+
+
+def test_byline_input_uses_one_and_a_half_times_form_font_size():
+    css = _read('saythanks/static/css/saythanks.css')
+    submit_template = _read('saythanks/templates/submit_note.htm.j2')
+    assert re.search(
+        r'\.content input\s*,\s*\.content select\s*,\s*'
+        r'\.content textarea\s*\{[^}]*font-size:\s*16px;',
+        css,
+    )
+    assert re.search(
+        r'#thankyou-note-form #byline\s*\{[^}]*'
+        r'font-size:\s*24px;[^}]*height:\s*auto;[^}]*'
+        r'min-height:\s*44px;',
+        css,
+    )
+    assert 'id="byline"' in submit_template
 
 
 def test_service_worker_cache_version_changes_for_new_offline_code():
@@ -133,8 +194,10 @@ def test_voice_record_button_is_visible_and_operational():
     css = _read('saythanks/static/css/saythanks.css')
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
-    global_button_rule = re.search(
-        r'^button\s*\{(.*?)^\}', css, re.MULTILINE | re.DOTALL
+    content_button_rule = re.search(
+        r'^\.content button,\n\.content \.button\s*\{(.*?)^\}',
+        css,
+        re.MULTILINE | re.DOTALL,
     )
     record_button_rule = re.search(
         r'^#recordBtn\s*\{(.*?)^\}', css, re.MULTILINE | re.DOTALL
@@ -146,8 +209,8 @@ def test_voice_record_button_is_visible_and_operational():
         re.MULTILINE | re.DOTALL,
     )
 
-    assert global_button_rule
-    assert 'overflow: hidden' not in global_button_rule.group(1)
+    assert content_button_rule
+    assert 'overflow: hidden' not in content_button_rule.group(1)
     assert record_button_rule
     assert 'height: auto;' in record_button_rule.group(1)
     assert 'overflow: visible;' in record_button_rule.group(1)
@@ -155,6 +218,36 @@ def test_voice_record_button_is_visible_and_operational():
     assert 'overflow: hidden !important;' in toolbar_button_rule.group(1)
     assert '<button type="button" id="recordBtn">' in submit_template
     assert "recordBtn.addEventListener('click', async () => {" in submit_template
+
+
+def test_android_note_controls_fit_narrow_touch_viewports():
+    """Editor and primary buttons must not overflow Android-sized screens."""
+    css = _read('saythanks/static/css/saythanks.css')
+    submit_template = _read('saythanks/templates/submit_note.htm.j2')
+
+    assert (
+        '#thankyou-note-form #editor .toastui-editor-md-container,'
+        in css
+    )
+    assert '#thankyou-note-form #editor .toastui-editor-ww-container {' in css
+    assert 'overscroll-behavior-x: contain;' in css
+    assert '-webkit-overflow-scrolling: touch;' in css
+    assert 'min-height: 48px;' in css
+    assert 'height: auto !important;' in css
+    assert 'white-space: normal;' in css
+    assert '#send-note-btn #eve-send {' in css
+    assert 'overflow: hidden !important;' in css
+    editor_container_rule = re.search(
+        r'#thankyou-note-form\s+\.editor-container\s*,\s*'
+        r'#thankyou-note-form\s+#editor\s*,\s*'
+        r'#thankyou-note-form\s+#editor\s+\.toastui-editor-defaultUI\s*'
+        r'\{(.*?)\}',
+        css,
+        re.DOTALL,
+    )
+    assert editor_container_rule
+    assert 'overflow: hidden !important;' in editor_container_rule.group(1)
+    assert '.toastui-editor-defaultUI' not in submit_template
 
 
 def test_note_form_uses_indexeddb_and_keys_drafts_by_form_action():
