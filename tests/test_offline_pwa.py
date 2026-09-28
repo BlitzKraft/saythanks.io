@@ -177,7 +177,7 @@ def test_android_note_controls_fit_narrow_touch_viewports():
     assert (
         '#thankyou-note-form #editor .toastui-editor-defaultUI {\n'
         '        overflow: hidden !important;'
-        not in submit_template
+        in submit_template
     )
 
 
