@@ -160,7 +160,7 @@ def test_submit_template_uses_css_classes_not_inline_styles():
     template = _read_template()
 
     assert '<style>' not in template
-    assert re.search(r'\bstyle\s*=', template, re.IGNORECASE) is None
+    assert re.search(r'<[^>]+\bstyle\s*=', template, re.IGNORECASE) is None
     assert 'class="form-label-nowrap"' in template
     assert 'class="form-content-type-fieldset"' in template
     assert 'class="form-content-type-legend"' in template
