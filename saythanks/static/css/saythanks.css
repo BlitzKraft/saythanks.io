@@ -115,7 +115,13 @@ h1 a,
 }
 
 #thankyou-note-form #audioFilePickerLabel {
+  display: inline-block;
+  cursor: pointer;
   margin-left: 0.5rem;
+}
+
+#thankyou-note-form #audioFilePickerLabel:hover {
+  text-decoration: underline;
 }
 
 #thankyou-note-form #audioFileInput {
@@ -205,6 +211,12 @@ h1 a,
 .content textarea {
   max-width: 100%;
   font-size: 16px;
+}
+
+#thankyou-note-form #byline {
+  font-size: 24px;
+  height: auto;
+  min-height: 44px;
 }
 
 .content :is(button, input, select, textarea):focus-visible {
@@ -357,7 +369,6 @@ h1 a,
   }
 
   #thankyou-note-form #audioFilePickerLabel {
-    cursor: pointer;
     box-sizing: border-box;
     display: block;
     width: 100% !important;

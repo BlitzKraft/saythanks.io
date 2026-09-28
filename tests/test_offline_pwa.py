@@ -107,6 +107,43 @@ def test_share_icons_stay_white_on_inbox_and_shared_notes():
         assert template.count('fill="currentColor"') >= 2
 
 
+def test_audio_file_picker_has_one_pointer_rule_and_hover_affordance():
+    css = _read('saythanks/static/css/saythanks.css')
+    submit_template = _read('saythanks/templates/submit_note.htm.j2')
+    picker_rules = re.findall(
+        r'#thankyou-note-form #audioFilePickerLabel\s*\{([^}]*)\}',
+        css,
+    )
+    assert len(picker_rules) == 2  # desktop and mobile layout
+    assert 'display: inline-block;' in picker_rules[0]
+    assert 'cursor: pointer;' in picker_rules[0]
+    assert 'display: block;' in picker_rules[1]
+    assert sum(rule.count('cursor: pointer;') for rule in picker_rules) == 1
+    assert re.search(
+        r'#thankyou-note-form #audioFilePickerLabel:hover\s*'
+        r'\{[^}]*text-decoration:\s*underline;',
+        css,
+    )
+    assert 'for="audioFileInput" id="audioFilePickerLabel"' in submit_template
+
+
+def test_byline_input_uses_one_and_a_half_times_form_font_size():
+    css = _read('saythanks/static/css/saythanks.css')
+    submit_template = _read('saythanks/templates/submit_note.htm.j2')
+    assert re.search(
+        r'\.content input\s*,\s*\.content select\s*,\s*'
+        r'\.content textarea\s*\{[^}]*font-size:\s*16px;',
+        css,
+    )
+    assert re.search(
+        r'#thankyou-note-form #byline\s*\{[^}]*'
+        r'font-size:\s*24px;[^}]*height:\s*auto;[^}]*'
+        r'min-height:\s*44px;',
+        css,
+    )
+    assert 'id="byline"' in submit_template
+
+
 def test_service_worker_cache_version_changes_for_new_offline_code():
     service_worker = _read('saythanks/static/service-worker.js')
 
@@ -201,9 +238,9 @@ def test_android_note_controls_fit_narrow_touch_viewports():
     assert '#send-note-btn #eve-send {' in css
     assert 'overflow: hidden !important;' in css
     editor_container_rule = re.search(
-        r'#thankyou-note-form \.editor-container,\n'
-        r'#thankyou-note-form #editor,\n'
-        r'#thankyou-note-form #editor \.toastui-editor-defaultUI\s*'
+        r'#thankyou-note-form\s+\.editor-container\s*,\s*'
+        r'#thankyou-note-form\s+#editor\s*,\s*'
+        r'#thankyou-note-form\s+#editor\s+\.toastui-editor-defaultUI\s*'
         r'\{(.*?)\}',
         css,
         re.DOTALL,
