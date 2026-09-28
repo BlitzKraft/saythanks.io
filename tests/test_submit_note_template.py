@@ -187,5 +187,13 @@ def test_sharelinks_and_pagination_are_app_styles_not_vendor_overrides():
     assert re.search(r'\.sharelinks\s*\{', skeleton_css) is None
     assert re.search(r'\.pagination\s*\{', skeleton_css) is None
 
-    assert re.search(r'\.sharelinks\s*\{', app_css) is not None
-    assert re.search(r'\.pagination\s*\{', app_css) is not None
+    assert re.search(
+        r'\.sharelinks\s*\{[^}]*display\s*:\s*flex\s*;[^}]*gap\s*:\s*0?\.2em\s*;',
+        app_css,
+        re.IGNORECASE | re.DOTALL,
+    ) is not None
+    assert re.search(
+        r'\.pagination\s*\{[^}]*display\s*:\s*flex\s*;[^}]*justify-content\s*:\s*center\s*;[^}]*gap\s*:\s*2em\s*;',
+        app_css,
+        re.IGNORECASE | re.DOTALL,
+    ) is not None
