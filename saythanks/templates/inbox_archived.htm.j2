@@ -1,5 +1,19 @@
 {% extends "base.htm.j2" %}
 {% block title %}Say Thank You{% endblock %}
+{% block extra_head %}
+  <style>
+        pre {
+            max-width: 600px!important;
+        }
+        .avatar {
+            border-radius: 50%;
+            width: 100px;
+        }
+        .centered {
+            text-align: center;
+        }
+  </style>
+{% endblock %}
 {% block content %}
   <form action="../logout" method="post">
     <button type="submit" class="logoutLblPos">Log Out</button>
@@ -10,7 +24,9 @@
     .
   </p>
   <hr>
-  <h3 class="u-textcenter">Archived Notes:</h3>
+  <p class="centered">
+    <h3>Archived Notes:</h3>
+  </p>
   <table class="u-full-width">
     <thead>
       <tr>
