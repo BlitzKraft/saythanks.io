@@ -26,6 +26,13 @@ def _submit_handler():
     return template[template.index(marker):]
 
 
+def _read_file(*parts):
+    repository_root = os.path.dirname(os.path.dirname(__file__))
+    file_path = os.path.join(repository_root, *parts)
+    with open(file_path, encoding='utf-8') as source_file:
+        return source_file.read()
+
+
 # Any form control carrying one of these as id/name clobbers the matching
 # HTMLFormElement property (form.submit, form.action, form.elements, ...).
 CLOBBERING_NAMES = ('submit', 'action', 'method', 'elements', 'reset', 'length')
@@ -148,3 +155,46 @@ def test_word_count_matches_editor_text_in_both_displays():
     assert result.stdout == str(expected_word_count)
     assert 'const count = wordCount(editor.getMarkdown());' in template
 
+
+def test_submit_template_uses_css_classes_not_inline_styles():
+    template = _read_template()
+
+    assert '<style>' not in template
+    assert re.search(r'<[^>]+\bstyle\s*=', template, re.IGNORECASE) is None
+
+    expected_class_tokens = (
+        'form-label-nowrap',
+        'form-content-type-fieldset',
+        'form-content-type-legend',
+        'form-radio-label',
+        'recording-controls',
+        'audio-file-label',
+        'hidden-file-input',
+        'audio-preview',
+        'recording-status-success',
+    )
+    for token in expected_class_tokens:
+        assert re.search(
+            r'class=["\'][^"\']*\b%s\b[^"\']*["\']' % re.escape(token),
+            template,
+            re.IGNORECASE,
+        ) is not None
+
+
+def test_archived_inbox_no_embedded_styles():
+    template = _read_file('saythanks', 'templates', 'inbox_archived.htm.j2')
+
+    assert re.search(r'{%\s*block\s+extra_head\s*%}', template, re.IGNORECASE) is None
+    assert re.search(r'<\s*style\b', template, re.IGNORECASE) is None
+    assert 'class="u-textcenter"' in template
+
+
+def test_sharelinks_and_pagination_are_app_styles_not_vendor_overrides():
+    skeleton_css = _read_file('saythanks', 'static', 'css', 'skeleton.css')
+    app_css = _read_file('saythanks', 'static', 'css', 'saythanks.css')
+
+    assert '.sharelinks' not in skeleton_css
+    assert '.pagination' not in skeleton_css
+
+    assert '.sharelinks' in app_css
+    assert '.pagination' in app_css

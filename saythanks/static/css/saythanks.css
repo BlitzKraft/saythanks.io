@@ -71,6 +71,17 @@ h1 a,
   margin-left: 0;
 }
 
+#thankyou-note-form #editor .toastui-editor-defaultUI {
+  overflow: hidden !important;
+}
+
+#thankyou-note-form #editor .toastui-editor-defaultUI .toastui-editor-contents,
+#thankyou-note-form #editor .toastui-editor-defaultUI .toastui-editor-md-preview-content,
+#thankyou-note-form #editor .toastui-editor-defaultUI .ProseMirror {
+  font-size: 16px !important;
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', 'Liberation Mono', monospace !important;
+}
+
 #thankyou-note-form #editor .toastui-editor-toolbar,
 #thankyou-note-form #editor .toastui-editor-defaultUI-toolbar {
   display: flex !important;
@@ -137,6 +148,63 @@ h1 a,
 
 #audioFilePickerLabel {
   cursor: pointer;
+}
+
+.word-count {
+  color: red;
+  font-weight: bold;
+}
+
+.form-label-nowrap {
+  white-space: nowrap;
+}
+
+.form-content-type-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.form-content-type-legend {
+  font-size: 0.95rem;
+  margin: 0 0.5rem 0 0;
+  white-space: nowrap;
+}
+
+.form-radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.suggestion-templates {
+  margin-bottom: 1em;
+}
+
+.recording-controls {
+  margin: 1em 0;
+}
+
+.audio-file-label {
+  margin-left: 0.5rem;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.audio-preview {
+  display: none;
+  margin-top: 10px;
+}
+
+.recording-status-success {
+  color: green;
+  font-weight: bold;
 }
 
 @media (max-width: 775px) {
@@ -435,6 +503,11 @@ a.share {
   background-color: #333333;
 }
 
+.sharelinks {
+  display: flex;
+  gap: 0.2em;
+}
+
 /* ============================================================
  * Inbox page (extracted from inbox.htm.j2 <style> + inline styles)
  * ============================================================ */
@@ -638,6 +711,9 @@ a.share {
 }
 
 .pagination {
+  display: flex;
+  justify-content: center;
+  gap: 2em;
   align-items: center;
   flex-wrap: wrap;
 }
