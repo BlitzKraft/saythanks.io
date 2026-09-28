@@ -75,10 +75,10 @@ thoughtful words, so far… (shoot for 42!)</h6>
 <!-- Voice Recording part -->
 <div class="recording-controls">
   <button type="button" id="recordBtn">🗣️ Say Something!</button>
+  <input id="audioFileInput" type="file" accept="audio/*" capture="environment">
   <label for="audioFileInput" id="audioFilePickerLabel">
     📁 Use Mobile Mic / Audio File
   </label>
-  <input id="audioFileInput" type="file" accept="audio/*" capture="environment">
   <audio id="audioPreview" controls></audio>
   <p id="recordingStatus"></p>
 </div>
