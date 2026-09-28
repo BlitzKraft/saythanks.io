@@ -312,11 +312,6 @@ h1 a,
   text-overflow: ellipsis;
 }
 
-.noteinput {
-  height: 6em;
-}
-
-
 .button-primary {
   background-color: var(--color-brand) !important;
   border-color: var(--color-brand) !important;
@@ -324,10 +319,6 @@ h1 a,
 
 .green {
   color: var(--color-brand) !important;
-}
-
-.dark-green {
-  color: var(--color-brand-dark) !important;
 }
 
 #eve {
@@ -344,28 +335,12 @@ h1 a,
   color: green;
 }
 
-.auth0-lock-name:after {
-  content: ' (for SayThanks.io)';
-}
-
-.no-color {
-  color: none !important;
-}
-
 a.share {
   text-decoration: none
 }
 
-.logoutLblPos {
-  position: relative;
-}
-
 .github-corner:hover .octo-arm {
   animation: octocat-wave 560ms ease-in-out
-}
-
-#from {
-  width: 15%;
 }
 
 @keyframes octocat-wave {
