@@ -52,6 +52,7 @@ werkzeug = "*"
 whitenoise = "*"
 python-dotenv = "*"
 markdown = "*"
+indian-names = "==0.3"
 
 [dev-packages]
 
