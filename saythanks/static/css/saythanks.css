@@ -213,6 +213,12 @@ h1 a,
   font-size: 16px;
 }
 
+#thankyou-note-form #byline {
+  font-size: 24px;
+  height: auto;
+  min-height: 44px;
+}
+
 .content :is(button, input, select, textarea):focus-visible {
   outline: 3px solid color-mix(in srgb, var(--color-focus) 45%, transparent);
   outline-offset: 2px;

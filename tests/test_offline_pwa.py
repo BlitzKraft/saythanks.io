@@ -127,6 +127,23 @@ def test_audio_file_picker_has_one_pointer_rule_and_hover_affordance():
     assert 'for="audioFileInput" id="audioFilePickerLabel"' in submit_template
 
 
+def test_byline_input_uses_one_and_a_half_times_form_font_size():
+    css = _read('saythanks/static/css/saythanks.css')
+    submit_template = _read('saythanks/templates/submit_note.htm.j2')
+    assert re.search(
+        r'\.content input\s*,\s*\.content select\s*,\s*'
+        r'\.content textarea\s*\{[^}]*font-size:\s*16px;',
+        css,
+    )
+    assert re.search(
+        r'#thankyou-note-form #byline\s*\{[^}]*'
+        r'font-size:\s*24px;[^}]*height:\s*auto;[^}]*'
+        r'min-height:\s*44px;',
+        css,
+    )
+    assert 'id="byline"' in submit_template
+
+
 def test_service_worker_cache_version_changes_for_new_offline_code():
     service_worker = _read('saythanks/static/service-worker.js')
 
