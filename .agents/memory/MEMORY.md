@@ -1,0 +1,1 @@
+- [Responsive Chromium fixtures](responsive-chromium-fixtures.md) — visible diagnostic output can itself widen mobile emulation; hide it before judging page overflow.
