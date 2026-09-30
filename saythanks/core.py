@@ -210,6 +210,17 @@ def privacy():
     return render_template("privacy.htm.j2")
 
 
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("404notfound.htm.j2"), 404
+
+
+@app.errorhandler(500)
+def server_error(e):
+    logger.exception("Internal server error: %s", e)
+    return render_template("404notfound.htm.j2"), 500
+
+
 @app.route('/')
 def index():
     if 'search_str' in session:
