@@ -24,7 +24,7 @@ from markupsafe import Markup
 from flask import send_from_directory
 from flask_common import Common
 from names import get_full_name
-import indian_names
+import random
 from raven.contrib.flask import Sentry
 from flask_qrcode import QRcode
 from . import storage
@@ -380,6 +380,15 @@ def enable_inbox():
     return redirect(url_for('inbox'))
 
 
+INDIAN_NAMES = [
+    "Nisha Asthana",
+    "Rohan Mehta",
+    "Priya Nair",
+    "Arjun Rao",
+    "Ananya Iyer",
+]
+
+
 @app.route('/to/<inbox_id>', methods=['GET'], defaults={"topic": ""})
 @app.route('/to/<inbox_id>&<topic>', methods=['GET'])
 def display_submit_note(inbox_id, topic):
@@ -393,7 +402,7 @@ def display_submit_note(inbox_id, topic):
 
     name_style = request.args.get('name_style', 'american')
     if name_style == 'indian':
-        fake_name = indian_names.get_full_name()
+        fake_name = random.choice(INDIAN_NAMES)
     else:
         fake_name = get_full_name()
     raw_topic = topic

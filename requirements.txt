@@ -45,4 +45,3 @@ whitenoise
 python-dotenv
 markdown
 flask_common
-indian-names==0.3
