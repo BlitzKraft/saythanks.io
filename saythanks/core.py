@@ -11,6 +11,7 @@ import os
 import json
 import requests
 import time  # Added to handle timestamping for audio filenames
+import threading  # For background email notifications (prevents Gunicorn worker timeouts)
 
 # Import your get_version function
 from .version import get_version
@@ -531,18 +532,23 @@ def submit_note(inbox_id, topic):
         )
         body = Markup(html_cleaner.clean_html(body))
         body = Markup(body + Markup(audio_html))  # ← now part of the stored body
-        # print("after markup", body)
         # Store the note first, so it gets a UUID
         submitted_note = inbox_db.submit_note(
             body=body, byline=byline, audio_path=audio_filename
         )
         if storage.Inbox.is_email_enabled(inbox_db.slug):
-            # Now notify, so the note has a UUID for the public URL
-            submitted_note.notify(
-                email_address,
-                topic=topic,
-                template_name=template_name,
+            # Fire email in a daemon thread so this response returns immediately
+            # without waiting on the MailerSend API (prevents Gunicorn 503 timeouts)
+            t = threading.Thread(
+                target=submitted_note.notify,
+                kwargs={
+                    'email_address': email_address,
+                    'topic': topic,
+                    'template_name': template_name,
+                },
+                daemon=True,
             )
+            t.start()
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
@@ -560,15 +566,21 @@ def submit_note(inbox_id, topic):
     submitted_note = inbox_db.submit_note(
         body=body, byline=byline, audio_path=audio_filename
     )
-    # Email the user the new note.
+    # Fire email in a daemon thread — response returns immediately
     if storage.Inbox.is_email_enabled(inbox_db.slug):
-        submitted_note.notify(
-            email_address,
-            topic=topic,
-            template_name=template_name,
+        t = threading.Thread(
+            target=submitted_note.notify,
+            kwargs={
+                'email_address': email_address,
+                'topic': topic,
+                'template_name': template_name,
+            },
+            daemon=True,
         )
+        t.start()
 
     return redirect(url_for('thanks'))
+
 
 
 @app.route('/logout', methods=["POST"])

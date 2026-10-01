@@ -20,4 +20,7 @@ RUN python3 -m pip install -r requirements.txt
 COPY . .
 
 EXPOSE 5000
-CMD [ "python3", "t.py" ]
+
+# Run gunicorn with 4 workers and 120s timeout to handle slow upstream calls
+CMD ["gunicorn", "saythanks:app", "-w", "4", "--bind", "0.0.0.0:5000", "--timeout", "120", "--log-file", "-"]
+
