@@ -618,9 +618,9 @@ def callback_handling():
         'grant_type': 'authorization_code',
     }
 
-    # Fetch User info from Auth0 — timeout prevents worker hanging on slow network
+    # Fetch User info from Auth0.
     token_info = requests.post(
-        token_url, data=json.dumps(token_payload), headers=json_header, timeout=10
+        token_url, data=json.dumps(token_payload), headers=json_header
     ).json()
     if 'access_token' not in token_info:
         logger.error('Auth0 token exchange failed: %s', token_info)
@@ -629,20 +629,21 @@ def callback_handling():
     user_url = (
         f'https://{auth_domain}/userinfo?access_token={token_info["access_token"]}'
     )
-    user_info = requests.get(user_url, timeout=10).json()
+    user_info = requests.get(user_url).json()
     if 'sub' not in user_info:
         logger.error('Auth0 userinfo fetch failed: %s', user_info)
         return redirect(url_for('index'))
 
     user_info_url = f'https://{auth_domain}/api/v2/users/{user_info["sub"]}'
 
-    user_detail_info = requests.get(user_info_url, headers=json_header, timeout=10).json()
+    user_detail_info = requests.get(user_info_url, headers=json_header).json()
 
     # Add the 'user_info' to Flask session.
     session['profile'] = user_info
 
     userid = user_info['sub']
-    email = user_detail_info.get('email')
+    raw_email = user_detail_info.get('email')
+    email = raw_email.strip() if isinstance(raw_email, str) and raw_email.strip() else None
     nickname = resolve_nickname(user_detail_info, email, userid)
     if not isinstance(nickname, str) or not nickname.strip():
         logger.error(
@@ -658,8 +659,8 @@ def callback_handling():
                 'AUTH0_JWT_V2_TOKEN having expired.'
             ),
         )
-    picture = user_detail_info.get('picture')
-    name = user_detail_info.get('name')
+    picture = user_detail_info.get('picture') or user_info.get('picture') or url_for('static', filename='images/inbox.png')
+    name = user_detail_info.get('name') or user_info.get('name') or nickname
     session['profile']['nickname'] = nickname
     session['profile']['picture'] = picture
     session['profile']['name'] = name
