@@ -246,6 +246,8 @@ class Inbox:
         """
         q = sqlalchemy.text("SELECT * FROM inboxes WHERE slug=:inbox")
         r = conn.execute(q, inbox=self.slug).fetchall()
+        if not r:
+            return None
         return r[0]['auth_id']
 
     @classmethod

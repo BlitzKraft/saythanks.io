@@ -482,8 +482,12 @@ def render_audio_html(audio_filename):
 @app.route('/to/<inbox_id>/submit/<topic>', methods=['POST'])
 def submit_note(inbox_id, topic):
     """Store note in database and send a copy to user's email."""
+    if not storage.Inbox.does_exist(inbox_id):
+        abort(404)
+    elif not storage.Inbox.is_enabled(inbox_id):
+        abort(404)
+
     # Fetch the current inbox.
-    # print("topic", topic)
     inbox_db = storage.Inbox(inbox_id)
 
     # ---- AUDIO UPLOAD HANDLING ----
