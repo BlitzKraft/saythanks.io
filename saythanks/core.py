@@ -645,7 +645,7 @@ def callback_handling():
     session['profile'] = user_info
 
     userid = user_info['sub']
-    email = user_detail_info.get('email')
+    email = user_detail_info.get('email') or user_info.get('email')
     nickname = resolve_nickname(user_detail_info, email, userid)
     if not isinstance(nickname, str) or not nickname.strip():
         logger.error(
@@ -661,8 +661,8 @@ def callback_handling():
                 'AUTH0_JWT_V2_TOKEN having expired.'
             ),
         )
-    picture = user_detail_info.get('picture')
-    name = user_detail_info.get('name')
+    picture = user_detail_info.get('picture') or user_info.get('picture')
+    name = user_detail_info.get('name') or user_info.get('name')
     session['profile']['nickname'] = nickname
     session['profile']['picture'] = picture
     session['profile']['name'] = name
