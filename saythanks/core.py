@@ -644,7 +644,11 @@ def callback_handling():
     session['profile'] = user_info
 
     userid = user_info['sub']
+    # Auth0 may omit email when Facebook has not returned one. Use .get()
+    # rather than indexing so that sign-in can continue without an email.
     email = user_detail_info.get('email')
+    # If email is missing, check the Auth0 user profile and Facebook email
+    # permission; see FACEBOOK_AUTH_TROUBLESHOOTING.md for diagnostic steps.
     nickname = resolve_nickname(user_detail_info, email, userid)
     if not isinstance(nickname, str) or not nickname.strip():
         logger.error(

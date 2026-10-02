@@ -119,3 +119,54 @@ def test_callback_rejects_invalid_resolved_nickname_before_creating_inbox():
         assert context['auth_domain'] == 'auth.example.com'
         assert 'AUTH0_JWT_V2_TOKEN' in context['auth_error']
         assert 'nickname' not in namespace['session']['profile']
+
+
+def test_callback_disables_email_notifications_when_auth0_has_no_email():
+    """A missing email does not prevent login and disables inbox email."""
+    linked_inboxes = []
+    disabled_inboxes = []
+
+    class RequestsWithoutEmail(_Auth0Requests):
+        def get(self, url, headers=None):
+            if url.endswith('/userinfo?access_token=test-access-token'):
+                return _Response({'sub': 'auth0|test-user'})
+            return _Response({'nickname': 'test-nickname'})
+
+    class Inbox:
+        @staticmethod
+        def link_or_create(*args):
+            linked_inboxes.append(args)
+            return 'test-inbox'
+
+        @staticmethod
+        def disable_email(slug):
+            disabled_inboxes.append(slug)
+
+    namespace = {
+        'json': json,
+        'request': SimpleNamespace(args={'code': 'test-code'}),
+        'requests': RequestsWithoutEmail(),
+        'session': {},
+        'logger': SimpleNamespace(
+            error=lambda *args: None,
+            info=lambda *args: None,
+        ),
+        'auth_domain': 'auth.example.com',
+        'auth_jwt_v2': 'test-management-token',
+        'auth_id': 'test-client-id',
+        'auth_secret': 'test-client-secret',
+        'get_callback_url': lambda: 'https://example.com/callback',
+        'resolve_nickname': lambda details, email, userid: details['nickname'],
+        'render_template': lambda *args, **kwargs: None,
+        'storage': SimpleNamespace(Inbox=Inbox),
+        'redirect': lambda location: location,
+        'url_for': lambda endpoint: '/' + endpoint,
+    }
+    callback_handling = _load_callback_handling(namespace)
+
+    result = callback_handling()
+
+    assert result == '/inbox'
+    assert linked_inboxes == [('auth0|test-user', 'test-nickname', None)]
+    assert disabled_inboxes == ['test-inbox']
+    assert namespace['session']['profile']['nickname'] == 'test-inbox'
