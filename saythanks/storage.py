@@ -405,7 +405,7 @@ class Inbox:
         if cls.is_email_enabled(slug): 
             logger.info(f"Enabling email for inbox with slug: {slug}")
         else: 
-            logger.warning(f"Failed to enable email for inbox with slug: {slug}")
+            logger.warning(f"Failed to enable email for inbox with slug: {slug}. Email may not be set or is invalid." )
 
     @classmethod
     def is_enabled(cls, slug):
