@@ -139,7 +139,9 @@ def _send_email(email_address, subject, html_content, plaintext_content):
 
     response = mailer.send(mail_body)
     logger.info(f"MailerSend SDK send response: {response.strip()}")
-
+    # What happens if response is just 401, the string? 
+    # As reported in https://github.com/BlitzKraft/saythanks.io/issues/608 ?
+    
     if not hasattr(response, 'status_code'):
         logger.info(
             f"Email request submitted successfully to {email_address}"
