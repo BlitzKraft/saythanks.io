@@ -644,7 +644,7 @@ def callback_handling():
     session['profile'] = user_info
 
     userid = user_info['sub']
-    email = user_detail_info.get('email')
+    email = user_detail_info.get('email') or user_info.get('email')
     nickname = resolve_nickname(user_detail_info, email, userid)
     if not isinstance(nickname, str) or not nickname.strip():
         logger.error(
@@ -672,6 +672,8 @@ def callback_handling():
         logger.info(
             f"Email notifications disabled for {final_slug} due to missing email."
         )
+    else:
+        storage.Inbox.enable_email(final_slug)
 
     session['profile']['nickname'] = final_slug
     return redirect(url_for('inbox'))
