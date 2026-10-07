@@ -1,6 +1,7 @@
 # Issue #106: OAuth Email Fallback & Notification Sync Resolution
 
 ## Overview
+
 This document provides a technical overview of the root cause and resolution for **Issue #106** regarding OAuth authentication and email notification syncing in `saythanks.io`.
 
 ---
@@ -11,9 +12,11 @@ During social authentication (e.g., Facebook or Google OAuth) mediated by Auth0:
 
 1. **Email Extraction Gap:**
    In `saythanks/core.py` (Line 647), the `/callback` handler extracted user email addresses exclusively from the Auth0 Management API endpoint (`user_detail_info`):
+
    ```python
    email = user_detail_info.get('email')
    ```
+
    For social identity providers, `user_detail_info` may omit the email or fail to populate if Management API tokens expire or have restricted scopes. However, the standard OAuth user profile (`user_info`) retrieved directly from `/userinfo` contains the verified email. Without checking `user_info`, `email` evaluated to `None`.
 
 2. **One-Way Notification Disabling:**
@@ -47,6 +50,7 @@ if not email:
 ```
 
 ### Key Benefits:
+
 - **Provider Agnostic:** Supports Facebook, Google, GitHub, and custom OIDC providers reliably.
 - **Preserves User Preferences:** Explicit `/disable-email` opt-outs are never overwritten on re-login.
 - **Schema Aligned:** Relies on `email_enabled DEFAULT true` in schema for new inboxes — no redundant DB writes.
@@ -55,4 +59,5 @@ if not email:
 ---
 
 ## 3. Verification
+
 - All 35 pytest unit and integration test suites pass cleanly.
