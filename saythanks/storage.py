@@ -174,14 +174,17 @@ class Note:
 
                 if has_audio_column:
                     q = '''
-                    INSERT INTO notes (body, byline, inboxes_auth_id, audio_path)
+                    INSERT INTO notes (
+                        body, byline, inboxes_auth_id, audio_path
+                    )
                     VALUES (:body, :byline, :inbox, :audio_path)
                     RETURNING uuid
                     '''
                     params['audio_path'] = self.audio_path
                 else:
                     logger.info(
-                        "Audio_path column absent; voice-note link is embedded in body"
+                        "Audio_path column absent; voice-note link is embedded "
+                        "in body"
                     )
 
             q = sqlalchemy.text(q)
@@ -196,7 +199,10 @@ class Note:
 
     def archive(self):
         """Mark this note as archived in the database."""
-        q = sqlalchemy.text("UPDATE notes SET archived = 't' WHERE uuid = :uuid")
+        q = sqlalchemy.text(
+            "UPDATE notes SET archived = 't' "
+            "WHERE uuid = :uuid"
+        )
         conn.execute(q, uuid=self.uuid)
 
     def notify(self, email_address, topic=None, audio_path=None,
@@ -264,7 +270,9 @@ class Inbox:
 
     @classmethod
     def link_or_create(cls, auth_id, nickname, email):
-        q = sqlalchemy.text('SELECT slug, email FROM inboxes WHERE auth_id = :auth_id')
+        q = sqlalchemy.text(
+            'SELECT slug, email FROM inboxes WHERE auth_id = :auth_id'
+        )
         row = conn.execute(q, auth_id=auth_id).fetchone()
         if row:
             existing_slug = row['slug']
@@ -299,7 +307,8 @@ class Inbox:
             Inbox: The created Inbox instance or existing slug wrapper.
 
         Notes:
-            Logs and continues on UniqueViolation to avoid raising on duplicates.
+            Logs and continues on UniqueViolation to avoid raising on
+            duplicates.
         """
         try:
             q = sqlalchemy.text(
@@ -341,7 +350,9 @@ class Inbox:
         Returns:
             bool: True if email is enabled, False otherwise.
         """
-        q = sqlalchemy.text('SELECT email_enabled FROM inboxes where slug = :slug')
+        q = sqlalchemy.text(
+            'SELECT email_enabled FROM inboxes where slug = :slug'
+        )
         try:
             r = conn.execute(q, slug=slug).fetchall()
             return bool(r[0]['email_enabled'])
@@ -398,14 +409,18 @@ class Inbox:
         """Enable outgoing emails for the given inbox."""
         q = sqlalchemy.text(
             'update inboxes set email_enabled = true '
-            'where slug = :slug and email is not null and btrim(email) <> :empty'
+            'where slug = :slug and email is not null '
+            'and btrim(email) <> :empty'
         )
         conn.execute(q, slug=slug, empty='')
-        
-        if cls.is_email_enabled(slug): 
+
+        if cls.is_email_enabled(slug):
             logger.info(f"Enabling email for inbox with slug: {slug}")
-        else: 
-            logger.warning(f"Failed to enable email for inbox with slug: {slug}. Email may not be set or is invalid." )
+        else:
+            logger.warning(
+                f"Failed to enable email for inbox with slug: {slug}. "
+                "Email may not be set or is invalid."
+            )
 
     @classmethod
     def is_enabled(cls, slug):
@@ -431,13 +446,17 @@ class Inbox:
     @classmethod
     def disable_account(cls, slug):
         """Disable the inbox account (sets enabled = false)."""
-        q = sqlalchemy.text('update inboxes set enabled = false where slug = :slug')
+        q = sqlalchemy.text(
+            'update inboxes set enabled = false where slug = :slug'
+        )
         conn.execute(q, slug=slug)
 
     @classmethod
     def enable_account(cls, slug):
         """Enable the inbox account (sets enabled = true)."""
-        q = sqlalchemy.text('update inboxes set enabled = true where slug = :slug')
+        q = sqlalchemy.text(
+            'update inboxes set enabled = true where slug = :slug'
+        )
         conn.execute(q, slug=slug)
 
     def submit_note(self, body, byline, audio_path=None):
@@ -616,7 +635,8 @@ class Inbox:
             bytes|str: Exported data in the requested format.
         """
         q = sqlalchemy.text(
-            "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 'f'"
+            "SELECT * from notes where inboxes_auth_id = :auth_id "
+            "and archived = 'f'"
         )
         r = conn.execute(q, auth_id=self.auth_id).fetchall()
         return tablib.Dataset(r).export(file_format)
@@ -629,12 +649,19 @@ class Inbox:
             list[Note]: Archived Note instances (most recent first).
         """
         q = sqlalchemy.text(
-            "SELECT * from notes where inboxes_auth_id = :auth_id and archived = 't'"
+            "SELECT * from notes where inboxes_auth_id = :auth_id "
+            "and archived = 't'"
         )
         r = conn.execute(q, auth_id=self.auth_id).fetchall()
 
         notes = [
-            Note.from_inbox(self.slug, n['body'], n['byline'], n['archived'], n['uuid'])
+            Note.from_inbox(
+                self.slug,
+                n['body'],
+                n['byline'],
+                n['archived'],
+                n['uuid'],
+            )
             for n in r
         ]
         return notes[::-1]
