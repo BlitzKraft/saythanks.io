@@ -672,8 +672,6 @@ def callback_handling():
         logger.info(
             f"Email notifications disabled for {final_slug} due to missing email."
         )
-    else:
-        storage.Inbox.enable_email(final_slug)
 
     session['profile']['nickname'] = final_slug
     return redirect(url_for('inbox'))
