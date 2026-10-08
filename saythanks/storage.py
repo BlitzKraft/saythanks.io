@@ -29,6 +29,27 @@ engine = sqlalchemy.create_engine(os.environ['DATABASE_URL'])
 conn = engine.connect()
 
 
+def ensure_note_topic_column():
+    """Ensure the notes table has a topic column for backwards compatibility."""
+    check_column = sqlalchemy.text(
+        """
+        SELECT EXISTS (
+            SELECT 1
+            FROM information_schema.columns
+            WHERE table_name='notes'
+            AND column_name='topic'
+        );
+        """
+    )
+    if not conn.execute(check_column).scalar():
+        conn.execute(
+            sqlalchemy.text(
+                "ALTER TABLE notes ADD COLUMN IF NOT EXISTS topic text"
+            )
+        )
+        logger.info("Added topic column to notes table")
+
+
 # Storage Models
 # Note: Some of these are a little fancy (send email and such).
 # --------------
@@ -56,6 +77,7 @@ class Note:
         self.uuid = None
         self.timestamp = None
         self.audio_path = None
+        self.topic = None
 
     def __repr__(self):
         """Return a short representation for debugging."""
@@ -78,11 +100,13 @@ class Note:
         Raises:
             IndexError: If no row is found for the given UUID.
         """
+        ensure_note_topic_column()
         self = cls()
         q = sqlalchemy.text("SELECT * FROM notes WHERE uuid=:uuid")
         r = conn.execute(q, uuid=uuid).fetchall()
         self.body = r[0]['body']
         self.byline = r[0]['byline']
+        self.topic = r[0]['topic'] if 'topic' in r[0].keys() else None
         self.uuid = uuid
         return self
 
@@ -96,6 +120,7 @@ class Note:
         uuid=None,
         timestamp=None,
         audio_path=None,
+        topic=None,
     ):
         """Instantiate a Note associated with a given inbox slug.
 
@@ -107,6 +132,7 @@ class Note:
             uuid (str|None): Optional existing UUID.
             timestamp (datetime|None): Optional timestamp.
             audio_path (str|None): Optional filename for stored audio.
+            topic (str|None): Optional topic associated with the note.
 
         Returns:
             Note: New Note instance.
@@ -120,6 +146,7 @@ class Note:
         self.inbox = Inbox(inbox)
         self.timestamp = timestamp
         self.audio_path = audio_path
+        self.topic = topic
 
         return self
 
@@ -133,6 +160,7 @@ class Note:
         Returns:
             bool: True if the note exists, False otherwise.
         """
+        ensure_note_topic_column()
         q = sqlalchemy.text('SELECT * from notes where uuid = :uuid')
         r = conn.execute(q, uuid=uuid).fetchall()
         return bool(len(r))
@@ -147,14 +175,16 @@ class Note:
             Exception: Propagates database errors after logging.
         """
         try:
+            ensure_note_topic_column()
             params = {
                 'body': self.body,
                 'byline': self.byline,
                 'inbox': self.inbox.auth_id,
+                'topic': self.topic,
             }
             base_query = '''
-                INSERT INTO notes (body, byline, inboxes_auth_id)
-                VALUES (:body, :byline, :inbox)
+                INSERT INTO notes (body, byline, inboxes_auth_id, topic)
+                VALUES (:body, :byline, :inbox, :topic)
                 RETURNING uuid
             '''
             q = base_query
@@ -175,9 +205,9 @@ class Note:
                 if has_audio_column:
                     q = '''
                     INSERT INTO notes (
-                        body, byline, inboxes_auth_id, audio_path
+                        body, byline, inboxes_auth_id, topic, audio_path
                     )
-                    VALUES (:body, :byline, :inbox, :audio_path)
+                    VALUES (:body, :byline, :inbox, :topic, :audio_path)
                     RETURNING uuid
                     '''
                     params['audio_path'] = self.audio_path
@@ -459,18 +489,25 @@ class Inbox:
         )
         conn.execute(q, slug=slug)
 
-    def submit_note(self, body, byline, audio_path=None):
+    def submit_note(self, body, byline, audio_path=None, topic=None):
         """Create and store a new note for this inbox.
 
         Args:
             body (str): Note content.
             byline (str): Author/display name.
             audio_path (str|None): Optional audio filename.
+            topic (str|None): Optional topic associated with the note.
 
         Returns:
             Note: Stored Note instance (uuid will be set).
         """
-        note = Note.from_inbox(self.slug, body, byline, audio_path=audio_path)
+        note = Note.from_inbox(
+            self.slug,
+            body,
+            byline,
+            audio_path=audio_path,
+            topic=topic,
+        )
         note.store()
         return note
 
@@ -515,6 +552,7 @@ class Inbox:
                 "total_pages": int
             }
         """
+        ensure_note_topic_column()
         offset = (page - 1) * page_size
         count_query = sqlalchemy.text(
             """
@@ -545,6 +583,7 @@ class Inbox:
                 n["archived"],
                 n["uuid"],
                 n["timestamp"],
+                topic=(n["topic"] if "topic" in n.keys() else None),
             )
             for n in result
         ]
@@ -575,6 +614,7 @@ class Inbox:
                 "total_pages": int
             }
         """
+        ensure_note_topic_column()
         offset = (page - 1) * page_size
         search_str_lower = search_str.lower()
 
@@ -610,6 +650,7 @@ class Inbox:
                 n["archived"],
                 n["uuid"],
                 n["timestamp"],
+                topic=(n["topic"] if "topic" in n.keys() else None),
             )
             for n in result
         ]
