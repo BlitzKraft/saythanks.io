@@ -93,3 +93,14 @@ def test_indian_name_style_uses_indian_names_package():
     display_submit_note('someuser', '')
 
     assert captured['context']['fake_name'] == 'Nisha Asthana'
+
+
+def test_name_style_is_case_and_whitespace_insensitive():
+    """'?name_style=INDIAN' or ' indian ' should still work."""
+    for messy_value in ('INDIAN', ' indian ', 'Indian'):
+        namespace, captured = _build_namespace(name_style_value=messy_value)
+        display_submit_note = _load_display_submit_note(namespace)
+        display_submit_note('someuser', '')
+        assert captured['context']['fake_name'] == 'Nisha Asthana'
+
+
