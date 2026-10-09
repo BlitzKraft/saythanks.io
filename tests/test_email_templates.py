@@ -57,6 +57,36 @@ class Note:
     byline = 'Ada'
 
 
+def test_send_email_returns_false_for_unauthorized_sdk_response(monkeypatch):
+    class Mailer:
+        def __getattr__(self, _):
+            return lambda *args: None
+
+        def send(self, mail_body):
+            return '401\n{"message":"Unauthenticated."}'
+
+    monkeypatch.setattr(myemail, 'mailer', Mailer())
+
+    assert not myemail._send_email(
+        'owner@example.com', 'subject', '<p>body</p>', 'body'
+    )
+
+
+def test_send_email_returns_true_for_accepted_sdk_response(monkeypatch):
+    class Mailer:
+        def __getattr__(self, _):
+            return lambda *args: None
+
+        def send(self, mail_body):
+            return '202\n'
+
+    monkeypatch.setattr(myemail, 'mailer', Mailer())
+
+    assert myemail._send_email(
+        'owner@example.com', 'subject', '<p>body</p>', 'body'
+    )
+
+
 def test_template_objects_select_the_expected_layout():
     url = 'https://saythanks.io/note/abc'
     _, default_html, _ = myemail._build_email_content(
