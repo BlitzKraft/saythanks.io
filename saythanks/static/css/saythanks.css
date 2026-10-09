@@ -107,7 +107,35 @@ h1 a,
 }
 
 #thankyou-note-form .suggestion-templates {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   margin-bottom: 1em;
+}
+
+#thankyou-note-form .suggestion-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+#thankyou-note-form .suggestion-btn {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  min-height: 40px;
+  padding: 0.5rem 0.8rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+#thankyou-note-form .suggestion-btn:hover {
+  background: var(--color-surface);
+  border-color: var(--color-brand);
 }
 
 #thankyou-note-form .recording-controls {

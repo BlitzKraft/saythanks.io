@@ -51,18 +51,15 @@
 <h6>You have written <strong><span class="word-count">0</span></strong>
 thoughtful words, so far… (shoot for 42!)</h6>
 
-<div id="suggestion-templates" class="suggestion-templates">
+<div id="suggestion-templates" class="suggestion-templates" aria-live="polite">
   <strong>Need inspiration?</strong>
-  <button type="button" class="suggestion-btn" 
-    data-message="Thank you for always being so helpful!">Thankful</button>
-  <button type="button" class="suggestion-btn" 
-    data-message="Your support means a lot to me.">Gratitude</button>
-  <button type="button" class="suggestion-btn" 
-    data-message="I appreciate your hard work and dedication.">Admiration</button>
-  <button type="button" class="suggestion-btn" 
-    data-message="Some things were not clear and left me confused.">Confusing</button>
-  <button type="button" class="suggestion-btn" 
-    data-message="It would help if you did the following:">Actionable</button>
+  <div class="suggestion-btn-group" role="group" aria-label="Suggested note phrases">
+    <button type="button" class="suggestion-btn" data-message="Thank you for always being so helpful!">Thankful</button>
+    <button type="button" class="suggestion-btn" data-message="Your support means a lot to me.">Gratitude</button>
+    <button type="button" class="suggestion-btn" data-message="I appreciate your hard work and dedication.">Admiration</button>
+    <button type="button" class="suggestion-btn" data-message="Some things were not clear and left me confused.">Confusing</button>
+    <button type="button" class="suggestion-btn" data-message="It would help if you did the following:">Actionable</button>
+  </div>
 </div>
 
 <!-- Textarea -->
@@ -135,6 +132,23 @@ thoughtful words, so far… (shoot for 42!)</h6>
       previewStyle: 'tab',
       height: '500px',
       initialValue: `{% if topic %}### Ref:{{ topic }}\n{% endif %}Dear {{ user }},\nThank you for...`
+  });
+
+  function appendSuggestionMessage(message) {
+    if (!message) return;
+    const currentMarkdown = editor.getMarkdown();
+    const nextMarkdown = currentMarkdown.trim()
+      ? `${currentMarkdown.trim()}\n\n${message}`
+      : message;
+    editor.setMarkdown(nextMarkdown);
+    editor.focus();
+  }
+
+  document.querySelectorAll('#suggestion-templates .suggestion-btn').forEach(button => {
+    button.setAttribute('aria-label', `Insert suggestion: ${button.textContent.trim()}`);
+    button.addEventListener('click', () => {
+      appendSuggestionMessage(button.getAttribute('data-message'));
+    });
   });
 
   var form = document.getElementById("thankyou-note-form");
@@ -391,16 +405,6 @@ thoughtful words, so far… (shoot for 42!)</h6>
   updateWordCounters();
 
   document.getElementById('byline').addEventListener('input', scheduleDraftSave);
-
-  document.querySelectorAll('.suggestion-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      const msg = btn.getAttribute('data-message');
-      // For Toast UI Editor:
-      //editor.setMarkdown(msg);
-      editor.setMarkdown(editor.getMarkdown() + '\n' + msg);
-    });
-  });
-
 
   // Voice Recording Script
   let recording = false;
