@@ -153,9 +153,12 @@ def test_note_form_contains_reusable_suggestion_phrases():
     """The note form must expose a reusable selection of canned phrases."""
     template = _read_template()
 
-    assert 'const suggestionPhrases = [' in template
+    assert 'class="suggestion-btn-group"' in template
     assert 'Thank you for always being so helpful!' in template
     assert 'Your support means a lot to me.' in template
-    assert 'renderSuggestionButtons()' in template
-    assert 'appendSuggestionMessage(message)' in template
-
+    assert (
+        "document.querySelectorAll('#suggestion-templates .suggestion-btn')"
+        in template
+    )
+    assert "appendSuggestionMessage(button.getAttribute('data-message'))" in template
+    assert 'const suggestionPhrases =' not in template

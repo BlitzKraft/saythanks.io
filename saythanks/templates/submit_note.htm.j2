@@ -53,7 +53,13 @@ thoughtful words, so far… (shoot for 42!)</h6>
 
 <div id="suggestion-templates" class="suggestion-templates" aria-live="polite">
   <strong>Need inspiration?</strong>
-  <div class="suggestion-btn-group" aria-label="Suggested note phrases"></div>
+  <div class="suggestion-btn-group" role="group" aria-label="Suggested note phrases">
+    <button type="button" class="suggestion-btn" data-message="Thank you for always being so helpful!">Thankful</button>
+    <button type="button" class="suggestion-btn" data-message="Your support means a lot to me.">Gratitude</button>
+    <button type="button" class="suggestion-btn" data-message="I appreciate your hard work and dedication.">Admiration</button>
+    <button type="button" class="suggestion-btn" data-message="Some things were not clear and left me confused.">Confusing</button>
+    <button type="button" class="suggestion-btn" data-message="It would help if you did the following:">Actionable</button>
+  </div>
 </div>
 
 <!-- Textarea -->
@@ -128,14 +134,6 @@ thoughtful words, so far… (shoot for 42!)</h6>
       initialValue: `{% if topic %}### Ref:{{ topic }}\n{% endif %}Dear {{ user }},\nThank you for...`
   });
 
-  const suggestionPhrases = [
-    { label: 'Thankful', message: 'Thank you for always being so helpful!' },
-    { label: 'Gratitude', message: 'Your support means a lot to me.' },
-    { label: 'Admiration', message: 'I appreciate your hard work and dedication.' },
-    { label: 'Confusing', message: 'Some things were not clear and left me confused.' },
-    { label: 'Actionable', message: 'It would help if you did the following:' }
-  ];
-
   function appendSuggestionMessage(message) {
     if (!message) return;
     const currentMarkdown = editor.getMarkdown();
@@ -146,23 +144,12 @@ thoughtful words, so far… (shoot for 42!)</h6>
     editor.focus();
   }
 
-  function renderSuggestionButtons() {
-    const suggestionButtonGroup = document.querySelector('#suggestion-templates .suggestion-btn-group');
-    if (!suggestionButtonGroup) return;
-
-    suggestionPhrases.forEach(({ label, message }) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'suggestion-btn';
-      button.textContent = label;
-      button.setAttribute('data-message', message);
-      button.setAttribute('aria-label', `Insert suggestion: ${label}`);
-      button.addEventListener('click', () => appendSuggestionMessage(message));
-      suggestionButtonGroup.appendChild(button);
+  document.querySelectorAll('#suggestion-templates .suggestion-btn').forEach(button => {
+    button.setAttribute('aria-label', `Insert suggestion: ${button.textContent.trim()}`);
+    button.addEventListener('click', () => {
+      appendSuggestionMessage(button.getAttribute('data-message'));
     });
-  }
-
-  renderSuggestionButtons();
+  });
 
   var form = document.getElementById("thankyou-note-form");
   var submitBtn = document.getElementById("send-note-btn");
