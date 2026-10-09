@@ -28,9 +28,15 @@ auth0 = Auth0(auth0_domain, auth0_token)
 engine = sqlalchemy.create_engine(os.environ['DATABASE_URL'])
 conn = engine.connect()
 
+_note_topic_column_ready = False
+
 
 def ensure_note_topic_column():
     """Ensure the notes table has a topic column for backwards compatibility."""
+    global _note_topic_column_ready
+    if _note_topic_column_ready:
+        return
+
     check_column = sqlalchemy.text(
         """
         SELECT EXISTS (
@@ -48,6 +54,7 @@ def ensure_note_topic_column():
             )
         )
         logger.info("Added topic column to notes table")
+    _note_topic_column_ready = True
 
 
 # Storage Models
@@ -702,6 +709,7 @@ class Inbox:
                 n['byline'],
                 n['archived'],
                 n['uuid'],
+                topic=(n['topic'] if 'topic' in n.keys() else None),
             )
             for n in r
         ]
