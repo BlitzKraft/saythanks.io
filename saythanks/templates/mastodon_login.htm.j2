@@ -1,0 +1,26 @@
+{% extends "base.htm.j2" %}
+{% block title %}Sign in with Mastodon{% endblock %}
+
+{% block content %}
+<div class="row" style="margin-top: 50px; text-align: center;">
+  <div class="twelve columns">
+    <h3>Sign in with Mastodon</h3>
+    <p>Enter your decentralized Mastodon server instance domain below:</p>
+
+    {% if error %}
+      <p role="alert" style="color: red; font-weight: bold;">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" style="max-width: 400px; margin: 0 auto;">
+      <div style="margin-bottom: 15px;">
+        <input class="u-full-width" type="text" name="instance" placeholder="e.g. mastodon.social" required>
+      </div>
+      <button type="submit" class="button button-primary" style="width: 100%;">Connect to Instance</button>
+    </form>
+
+    <p style="margin-top: 20px;">
+      <a href="{{ url_for('index') }}">&larr; Back to Home</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

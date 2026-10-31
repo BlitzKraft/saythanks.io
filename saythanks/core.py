@@ -9,6 +9,8 @@
 import logging
 import os
 import json
+import re
+import secrets
 import requests
 import time  # Added to handle timestamping for audio filenames
 
@@ -163,6 +165,19 @@ auth_secret = os.environ['AUTH0_CLIENT_SECRET']
 auth_callback_url = os.environ['AUTH0_CALLBACK_URL']
 auth_domain = os.environ['AUTH0_DOMAIN']
 auth_jwt_v2 = os.environ['AUTH0_JWT_V2_TOKEN']
+
+# Mastodon OAuth Configuration
+# -----------------
+
+MASTODON_CLIENT_ID = os.environ.get('MASTODON_CLIENT_ID', '')
+MASTODON_CLIENT_SECRET = os.environ.get('MASTODON_CLIENT_SECRET', '')
+
+# Basic hostname check (e.g. "mastodon.social"). Keeps users from pointing
+# the server-side requests at IPs, ports, paths or other odd targets.
+MASTODON_INSTANCE_RE = re.compile(
+    r'^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$'
+)
+MASTODON_HTTP_TIMEOUT = 30
 
 
 def get_callback_url():
@@ -675,4 +690,128 @@ def callback_handling():
         )
 
     session['profile']['nickname'] = final_slug
+    return redirect(url_for('inbox'))
+
+# Mastodon Authentication Routes
+
+@app.route('/auth/mastodon', methods=['GET', 'POST'])
+def mastodon_login():
+    """Step 1: Prompt user for their Mastodon instance domain."""
+    if request.method == 'POST':
+        instance = request.form.get('instance', '').strip().lower()
+        # Clean up protocol if provided
+        instance = instance.replace('https://', '').replace('http://', '').strip('/')
+
+        if not instance or not MASTODON_INSTANCE_RE.match(instance):
+            return render_template(
+                'mastodon_login.htm.j2',
+                error='Please provide a valid instance domain.',
+            )
+
+        # Random state value protects the callback against CSRF.
+        state = secrets.token_urlsafe(32)
+        session['mastodon_instance'] = instance
+        session['mastodon_state'] = state
+        redirect_uri = url_for('mastodon_callback', _external=True)
+
+        auth_url = (
+            f"https://{instance}/oauth/authorize?"
+            f"client_id={quote(MASTODON_CLIENT_ID, safe='')}&"
+            f"scope=read:accounts&"
+            f"redirect_uri={quote(redirect_uri, safe='')}&"
+            f"response_type=code&"
+            f"state={state}"
+        )
+        return redirect(auth_url)
+
+    return render_template('mastodon_login.htm.j2')
+
+
+@app.route('/auth/mastodon/callback')
+def mastodon_callback():
+    """Step 2: Handle the Mastodon OAuth callback and verify account credentials."""
+    error = request.args.get('error')
+    if error:
+        logger.error('Mastodon auth error: %s', error)
+        return redirect(url_for('index'))
+
+    code = request.args.get('code')
+    instance = session.pop('mastodon_instance', None)
+    expected_state = session.pop('mastodon_state', None)
+    returned_state = request.args.get('state', '')
+
+    if not code or not instance:
+        logger.error('Missing authorization code or instance session.')
+        return redirect(url_for('index'))
+
+    if not expected_state or not secrets.compare_digest(
+        expected_state, returned_state
+    ):
+        logger.error('Mastodon auth state mismatch.')
+        return redirect(url_for('index'))
+
+    redirect_uri = url_for('mastodon_callback', _external=True)
+    token_url = f"https://{instance}/oauth/token"
+
+    payload = {
+        'client_id': MASTODON_CLIENT_ID,
+        'client_secret': MASTODON_CLIENT_SECRET,
+        'redirect_uri': redirect_uri,
+        'code': code,
+        'grant_type': 'authorization_code',
+        'scope': 'read:accounts',
+    }
+
+    try:
+        token_res = requests.post(
+            token_url, data=payload, timeout=MASTODON_HTTP_TIMEOUT
+        ).json()
+    except (requests.RequestException, ValueError):
+        logger.exception('Mastodon token request failed.')
+        return redirect(url_for('index'))
+
+    if 'access_token' not in token_res:
+        logger.error('Mastodon token exchange failed: %s', token_res)
+        return redirect(url_for('index'))
+
+    access_token = token_res['access_token']
+
+    # Fetch account credentials from the instance
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        account_res = requests.get(
+            f"https://{instance}/api/v1/accounts/verify_credentials",
+            headers=headers,
+            timeout=MASTODON_HTTP_TIMEOUT,
+        ).json()
+    except (requests.RequestException, ValueError):
+        logger.exception('Mastodon verify_credentials request failed.')
+        return redirect(url_for('index'))
+
+    if 'id' not in account_res:
+        logger.error('Mastodon verify_credentials failed: %s', account_res)
+        return redirect(url_for('index'))
+
+    mastodon_user_id = f"mastodon|{account_res['id']}@{instance}"
+    nickname = account_res.get('username')
+    # Mastodon's verify_credentials does not return an email address.
+    email = account_res.get('email')
+
+    session['profile'] = {
+        'sub': mastodon_user_id,
+        'nickname': nickname,
+        'name': account_res.get('display_name') or nickname,
+        'picture': account_res.get('avatar'),
+    }
+
+    final_slug = storage.Inbox.link_or_create(mastodon_user_id, nickname, email)
+    if not email:
+        # Same behaviour as the Auth0 flow: no email, no notifications.
+        storage.Inbox.disable_email(final_slug)
+        logger.info(
+            "Email notifications disabled for %s due to missing email.",
+            final_slug,
+        )
+    session['profile']['nickname'] = final_slug
+
     return redirect(url_for('inbox'))
