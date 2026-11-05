@@ -594,8 +594,11 @@ def user_logout():
 
 @app.route('/callback')
 def callback_handling():
-    # The identity provider (or Auth0 itself) can redirect back here with an
-    # error instead of a code - e.g. a misconfigured social connection.
+    """The identity provider (or Auth0 itself) can redirect back here with an error instead of a code - e.g. a misconfigured social connection.
+
+    Returns:
+        Response object: which file to go to if there is an error
+    """
     error = request.args.get('error')
     if error:
         logger.error(
