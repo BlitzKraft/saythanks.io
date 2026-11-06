@@ -374,7 +374,11 @@ def disable_inbox():
 @app.route('/enable-inbox')
 @requires_auth
 def enable_inbox():
-    # Auth0 stored account information.
+    """Auth0 stored account information.
+
+    Returns:
+        Response object: which page to go to
+    """
     slug = session['profile']['nickname']
     storage.Inbox.enable_account(slug)
     return redirect(url_for('inbox'))
@@ -597,7 +601,7 @@ def callback_handling():
     """The identity provider (or Auth0 itself) can redirect back here with an error instead of a code - e.g. a misconfigured social connection.
 
     Returns:
-        Response object: which file to go to if there is an error
+        Response object: which page to go to if there is an error
     """
     error = request.args.get('error')
     if error:
