@@ -356,7 +356,11 @@ def enable_email():
 @app.route('/toggle-template')
 @requires_auth
 def toggle_template():
-    # Auth0 stored account information.
+    """Updates the user's email template
+
+    Returns:
+        Response object: which page to go to
+    """
     slug = session['profile']['nickname']
     storage.Inbox.toggle_template(slug)
     return redirect(url_for('inbox'))
