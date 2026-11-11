@@ -347,7 +347,11 @@ def disable_email():
 @app.route('/enable-email')
 @requires_auth
 def enable_email():
-    # Auth0 stored account information.
+    """Allows email to be sent from the sender's email
+
+    Returns:
+        Response object: which page to go to
+    """
     slug = session['profile']['nickname']
     storage.Inbox.enable_email(slug)
     return redirect(url_for('inbox'))
