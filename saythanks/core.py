@@ -338,7 +338,11 @@ def thanks():
 @app.route('/disable-email')
 @requires_auth
 def disable_email():
-    # Auth0 stored account information.
+    """Stops email to be sent from the sender's email
+
+        Returns:
+            Response object: which page to go to
+        """
     slug = session['profile']['nickname']
     storage.Inbox.disable_email(slug)
     return redirect(url_for('inbox'))
@@ -347,7 +351,11 @@ def disable_email():
 @app.route('/enable-email')
 @requires_auth
 def enable_email():
-    # Auth0 stored account information.
+    """Allows email to be sent from the sender's email
+
+    Returns:
+        Response object: which page to go to
+    """
     slug = session['profile']['nickname']
     storage.Inbox.enable_email(slug)
     return redirect(url_for('inbox'))
@@ -356,7 +364,11 @@ def enable_email():
 @app.route('/toggle-template')
 @requires_auth
 def toggle_template():
-    # Auth0 stored account information.
+    """Updates the user's email template
+
+    Returns:
+        Response object: which page to go to
+    """
     slug = session['profile']['nickname']
     storage.Inbox.toggle_template(slug)
     return redirect(url_for('inbox'))
@@ -365,7 +377,11 @@ def toggle_template():
 @app.route('/disable-inbox')
 @requires_auth
 def disable_inbox():
-    # Auth0 stored account information.
+    """Auth0 stored account information. Disable's inbox.
+
+    Returns:
+        Response object: which page to go to
+    """
     slug = session['profile']['nickname']
     storage.Inbox.disable_account(slug)
     return redirect(url_for('inbox'))
@@ -374,7 +390,11 @@ def disable_inbox():
 @app.route('/enable-inbox')
 @requires_auth
 def enable_inbox():
-    # Auth0 stored account information.
+    """Auth0 stored account information. Enable's inbox.
+
+    Returns:
+        Response object: which page to go to
+    """
     slug = session['profile']['nickname']
     storage.Inbox.enable_account(slug)
     return redirect(url_for('inbox'))
@@ -594,8 +614,11 @@ def user_logout():
 
 @app.route('/callback')
 def callback_handling():
-    # The identity provider (or Auth0 itself) can redirect back here with an
-    # error instead of a code - e.g. a misconfigured social connection.
+    """The identity provider (or Auth0 itself) can redirect back here with an error instead of a code - e.g. a misconfigured social connection.
+
+    Returns:
+        Response object: which page to go to if there is an error
+    """
     error = request.args.get('error')
     if error:
         logger.error(
