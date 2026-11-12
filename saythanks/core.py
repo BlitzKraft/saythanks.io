@@ -338,7 +338,11 @@ def thanks():
 @app.route('/disable-email')
 @requires_auth
 def disable_email():
-    # Auth0 stored account information.
+    """Stops email to be sent from the sender's email
+
+        Returns:
+            Response object: which page to go to
+        """
     slug = session['profile']['nickname']
     storage.Inbox.disable_email(slug)
     return redirect(url_for('inbox'))
