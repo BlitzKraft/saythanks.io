@@ -557,6 +557,9 @@ def submit_note(inbox_id, topic):
                 topic=topic,
                 template_name=template_name,
             )
+        else: 
+            logger.info('Email notifications are disabled for inbox: %s', inbox_db.slug)
+
         return redirect(url_for('thanks'))
     # Strip any HTML away.
 
@@ -581,7 +584,8 @@ def submit_note(inbox_id, topic):
             topic=topic,
             template_name=template_name,
         )
-
+    else: 
+        logger.info('Email notifications are disabled for inbox: %s', inbox_db.slug)
     return redirect(url_for('thanks'))
 
 
