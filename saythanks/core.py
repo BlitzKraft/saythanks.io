@@ -400,7 +400,7 @@ def display_submit_note(inbox_id, topic):
 
     print("topic received:", topic if topic else "No topic provided")
 
-    name_style = request.args.get('name_style', 'american')
+    name_style = request.args.get('name_style', 'american').strip().lower()
     if name_style == 'indian':
         fake_name = random.choice(INDIAN_NAMES)
     else:
