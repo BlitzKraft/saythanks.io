@@ -550,7 +550,8 @@ def submit_note(inbox_id, topic):
         submitted_note = inbox_db.submit_note(
             body=body, byline=byline, audio_path=audio_filename
         )
-        if storage.Inbox.is_email_enabled(inbox_db.slug):
+        email_forwarded = storage.Inbox.is_email_enabled(inbox_db.slug)
+        if email_forwarded:
             # Now notify, so the note has a UUID for the public URL
             submitted_note.notify(
                 email_address,
@@ -560,7 +561,11 @@ def submit_note(inbox_id, topic):
         else: 
             logger.info('Email notifications are disabled for inbox: %s', inbox_db.slug)
 
-        return redirect(url_for('thanks'))
+        return redirect(url_for(
+            'thanks',
+            status='sent',
+            email_forwarded='true' if email_forwarded else 'false',
+        ))
     # Strip any HTML away.
 
     body = markdown(body, extensions=['tables', 'fenced_code'])
@@ -578,7 +583,8 @@ def submit_note(inbox_id, topic):
         body=body, byline=byline, audio_path=audio_filename
     )
     # Email the user the new note.
-    if storage.Inbox.is_email_enabled(inbox_db.slug):
+    email_forwarded = storage.Inbox.is_email_enabled(inbox_db.slug)
+    if email_forwarded:
         submitted_note.notify(
             email_address,
             topic=topic,
@@ -586,7 +592,11 @@ def submit_note(inbox_id, topic):
         )
     else: 
         logger.info('Email notifications are disabled for inbox: %s', inbox_db.slug)
-    return redirect(url_for('thanks'))
+    return redirect(url_for(
+        'thanks',
+        status='sent',
+        email_forwarded='true' if email_forwarded else 'false',
+    ))
 
 
 @app.route('/logout', methods=["POST"])

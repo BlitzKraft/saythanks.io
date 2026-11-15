@@ -289,8 +289,9 @@ thoughtful words, so far… (shoot for 42!)</h6>
       ? (offlineAudio.name || (offlineAudio.type.includes('mp4')
         ? 'voice_note.m4a' : 'voice_note.webm'))
       : null;
+    const id = createOutboxId();
     await writeOutbox({
-      id: createOutboxId(),
+      id: id,
       action: new URL(form.getAttribute('action'), window.location.href).href,
       body: editor.getMarkdown(),
       byline: document.getElementById('byline').value,
@@ -304,6 +305,7 @@ thoughtful words, so far… (shoot for 42!)</h6>
     });
     await saveDraft();
     await refreshOutboxStatus();
+    return id;
   }
 
   function scheduleDraftSave() {
@@ -331,8 +333,9 @@ thoughtful words, so far… (shoot for 42!)</h6>
     submitBtn.disabled = true;
 
     if (!navigator.onLine) {
-      queueOfflineNote().then(() => {
-        window.location.href = '/thanks?status=queued';
+      queueOfflineNote().then(id => {
+        window.location.href =
+          `/thanks?status=queued&outbox_id=${encodeURIComponent(id)}`;
       }).catch(error => {
         submitBtn.disabled = false;
         recordingStatus.innerText = error.message;
@@ -360,7 +363,11 @@ thoughtful words, so far… (shoot for 42!)</h6>
     request.open("POST", form.getAttribute('action'));
     request.onload  = () => {
       if (request.status >= 200 && request.status < 400) {
-        window.location.href = '/thanks?status=sent';
+        const responseUrl = new URL(request.responseURL);
+        const emailForwarded =
+          responseUrl.searchParams.get('email_forwarded') === 'true';
+        window.location.href =
+          `/thanks?status=sent&email_forwarded=${emailForwarded}`;
       }
       else { submitBtn.disabled = false; recordingStatus.innerText = 'Send failed: ' + request.status; }
     };
