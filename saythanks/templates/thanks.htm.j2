@@ -6,7 +6,7 @@
     <div class="eight columns offset-by-one">
       <h4>Thanks for spreading positivity!</h4>
       <div id="delivery-status" role="status" aria-live="polite">
-        <p id="delivery-message">Checking note delivery status...</p>
+        <p><span id="delivery-message">Checking note delivery status...</span> <strong id="email-forwarding-message" class="delivery-warning"></strong></p>
         <p id="outbox-count"></p>
       </div>
       <p>
@@ -66,11 +66,14 @@
   <script>
     (function showDeliveryStatus() {
       const message = document.getElementById('delivery-message');
+      const emailForwardingMessage =
+        document.getElementById('email-forwarding-message');
       const outboxCount = document.getElementById('outbox-count');
       const params = new URLSearchParams(window.location.search);
       const status = params.get('status');
       const emailForwarded = params.get('email_forwarded') === 'true';
       const queuedOutboxId = params.get('outbox_id');
+      let completedQueuedEmailForwarded = null;
       const databaseName = 'saythanks-pwa';
       const outboxStoreName = 'outbox';
 
@@ -78,6 +81,18 @@
         return forwarded
           ? 'Your note was sent successfully. A copy was also forwarded via email.'
           : 'Your note was sent successfully.';
+      }
+
+      function showSentStatus(forwarded) {
+        message.textContent = sentMessage(forwarded);
+        emailForwardingMessage.textContent = forwarded
+          ? ''
+          : 'Email delivery was disabled.';
+      }
+
+      function showPendingStatus(text) {
+        message.textContent = text;
+        emailForwardingMessage.textContent = '';
       }
 
       function setWaitingCount(count) {
@@ -173,28 +188,39 @@
       async function updateStatus() {
         try {
           const queuedEmailForwarded = await syncOutbox();
+          if (queuedEmailForwarded !== null) {
+            completedQueuedEmailForwarded = queuedEmailForwarded;
+          }
           const records = await readOutboxRecords();
           const count = records.filter(record => record.status !== 'sent').length;
           setWaitingCount(count);
           if (status === 'queued') {
-            if (queuedEmailForwarded !== null) {
-              message.textContent = sentMessage(queuedEmailForwarded);
+            if (completedQueuedEmailForwarded !== null) {
+              showSentStatus(completedQueuedEmailForwarded);
             } else {
-              message.textContent = count
+              showPendingStatus(count
                 ? 'Note saved to offline outbox.'
-                : sentMessage(false);
+                : sentMessage(false));
             }
           } else if (status === 'sent') {
-            message.textContent = sentMessage(emailForwarded);
+            showSentStatus(emailForwarded);
           } else if (count) {
-            message.textContent = 'Some notes are still waiting to send.';
+            showPendingStatus('Some notes are still waiting to send.');
           } else {
-            message.textContent = 'Your note delivery is complete.';
+            showPendingStatus('Your note delivery is complete.');
           }
         } catch (error) {
-          message.textContent = status === 'queued'
-            ? 'Note saved to offline outbox.'
-            : sentMessage(emailForwarded);
+          if (status === 'sent') {
+            showSentStatus(emailForwarded);
+          } else if (status === 'queued') {
+            if (completedQueuedEmailForwarded !== null) {
+              showSentStatus(completedQueuedEmailForwarded);
+            } else {
+              showPendingStatus('Note saved to offline outbox.');
+            }
+          } else {
+            showPendingStatus(sentMessage(false));
+          }
         }
       }
 

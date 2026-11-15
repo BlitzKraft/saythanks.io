@@ -263,6 +263,10 @@ textarea:focus-visible {
   min-height: 1.5em;
 }
 
+.delivery-warning {
+  color: #8a4b08;
+}
+
 #badge-modal textarea {
   font-size: 16px;
 }
