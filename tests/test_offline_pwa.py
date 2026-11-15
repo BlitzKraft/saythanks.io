@@ -331,6 +331,13 @@ def test_thanks_page_reports_delivery_status_and_waiting_count():
         "Your note was sent successfully. A copy was also forwarded via email."
         in thanks_template
     )
+    assert (
+        '<p><span id="delivery-message">Checking note delivery status...</span>'
+        ' <strong id="email-forwarding-message" class="delivery-warning">'
+        '</strong></p>'
+        in thanks_template
+    )
+    assert "Email delivery was disabled." in thanks_template
     assert "params.get('email_forwarded') === 'true'" in thanks_template
     assert "params.get('outbox_id')" in thanks_template
     assert "const outboxStoreName = 'outbox';" in thanks_template
