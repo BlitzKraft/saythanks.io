@@ -308,8 +308,15 @@ def test_submission_redirects_to_shared_thanks_statuses():
     """Test that submissions redirect to the appropriate thanks statuses."""
     submit_template = _read('saythanks/templates/submit_note.htm.j2')
 
-    assert "window.location.href = '/thanks?status=queued';" in submit_template
-    assert "window.location.href = '/thanks?status=sent';" in submit_template
+    assert (
+        "`/thanks?status=queued&outbox_id=${encodeURIComponent(id)}`"
+        in submit_template
+    )
+    assert "responseUrl.searchParams.get('email_forwarded')" in submit_template
+    assert (
+        "`/thanks?status=sent&email_forwarded=${emailForwarded}`"
+        in submit_template
+    )
 
 
 def test_thanks_page_reports_delivery_status_and_waiting_count():
@@ -317,13 +324,19 @@ def test_thanks_page_reports_delivery_status_and_waiting_count():
     thanks_template = _read('saythanks/templates/thanks.htm.j2')
 
     assert '<div id="delivery-status" role="status" aria-live="polite">' in thanks_template
-    assert "new URLSearchParams(window.location.search).get('status')" in thanks_template
+    assert "params.get('status')" in thanks_template
     assert "Note saved to offline outbox." in thanks_template
     assert "Your note was sent successfully." in thanks_template
+    assert (
+        "Your note was sent successfully. A copy was also forwarded via email."
+        in thanks_template
+    )
+    assert "params.get('email_forwarded') === 'true'" in thanks_template
+    assert "params.get('outbox_id')" in thanks_template
     assert "const outboxStoreName = 'outbox';" in thanks_template
     assert "getAll();" in thanks_template
     assert "Sending saved notes..." in thanks_template
-    assert "await sendRecord(record);" in thanks_template
+    assert "const emailForwarded = await sendRecord(record);" in thanks_template
     assert "await deleteRecord(record.id);" in thanks_template
     assert "formData.append('audio', record.audioBlob, record.audioFileName);" in thanks_template
     assert "window.addEventListener('online', updateStatus);" in thanks_template
