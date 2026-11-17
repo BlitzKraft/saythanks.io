@@ -54,6 +54,12 @@
     </svg>
   </a>
 
+  {% if 'profile' in session %}
+  <a class="share archive-note"
+     aria-label="Archive note" title="Archive note"
+     href="{{ url_for('archive_note', uuid=note.uuid) }}">♻</a>
+  {% endif %}
+
 </div>
 <br>
 
