@@ -145,6 +145,7 @@ app.jinja_env.filters['strip_html'] = strip_html
 QRcode(app)
 app.secret_key = os.environ.get('APP_SECRET', 'CHANGEME')
 app.config['MAX_RECORDING_TIME'] = int(os.environ.get('MAX_RECORDING_TIME', 30))
+app.config['MAX_CONTENT_LENGTH'] = 25 * 1024 * 1024 # 25 MB limit for uploads
 app.debug = True
 
 # Flask-Common.
