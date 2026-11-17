@@ -83,6 +83,7 @@ CREATE TABLE public.notes (
     inboxes_auth_id text NOT NULL,
     body text NOT NULL,
     byline text,
+    topic text,
     archived boolean DEFAULT false NOT NULL,
     "timestamp" timestamp without time zone DEFAULT now()
 );

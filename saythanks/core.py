@@ -548,7 +548,10 @@ def submit_note(inbox_id, topic):
         # print("after markup", body)
         # Store the note first, so it gets a UUID
         submitted_note = inbox_db.submit_note(
-            body=body, byline=byline, audio_path=audio_filename
+            body=body,
+            byline=byline,
+            audio_path=audio_filename,
+            topic=topic,
         )
         email_forwarded = storage.Inbox.is_email_enabled(inbox_db.slug)
         if email_forwarded:
@@ -580,7 +583,10 @@ def submit_note(inbox_id, topic):
     body = body + audio_html
 
     submitted_note = inbox_db.submit_note(
-        body=body, byline=byline, audio_path=audio_filename
+        body=body,
+        byline=byline,
+        audio_path=audio_filename,
+        topic=topic,
     )
     # Email the user the new note.
     email_forwarded = storage.Inbox.is_email_enabled(inbox_db.slug)
