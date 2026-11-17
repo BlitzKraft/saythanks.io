@@ -122,7 +122,7 @@ def _send_email(email_address, subject, html_content, plaintext_content):
 
     Returns
     - bool: True when the send routine reports success or is queued.
-      Logs errors for response codes >= 400.
+      Logs and returns False for unsuccessful or unrecognized responses.
 
     Notes
     - This function relies on the module-level `mailer` object initialized
@@ -138,29 +138,40 @@ def _send_email(email_address, subject, html_content, plaintext_content):
     mailer.set_plaintext_content(plaintext_content, mail_body)
 
     response = mailer.send(mail_body)
-    logger.info(f"MailerSend SDK send response: {response.strip()}")
+    if hasattr(response, 'status_code'):
+        status_code = response.status_code
+        error_text = getattr(response, 'text', '')
+        response_text = f"{status_code}\n{error_text}".strip()
+    else:
+        response_text = str(response).strip()
+        status_line, _, error_text = response_text.partition('\n')
+        try:
+            status_code = int(status_line)
+        except ValueError:
+            logger.error(
+                "Unexpected MailerSend SDK response: %s", response_text
+            )
+            return False
 
-    if not hasattr(response, 'status_code'):
-        logger.info(
-            f"Email request submitted successfully to {email_address}"
-        )
-        return True
+    logger.info("MailerSend SDK send response: %s", response_text)
 
-    if response.status_code == 202:
-        logger.error(
-            f"Email queued successfully for delivery to {email_address}"
-        )
+    if status_code == 202:
+        logger.info(f"Email queued successfully for delivery to {email_address}")
         return True
-    if response.status_code == 200:
+    if status_code == 200:
         logger.info(f"Email sent successfully to {email_address}")
         return True
-    if response.status_code >= 400:
-        error_text = response.text if hasattr(response, 'text') \
-            else 'Unknown error'
-        error_msg = f"MailerSend API error {response.status_code}: {error_text}"
+    if status_code >= 400:
+        error_msg = f"MailerSend API error {status_code}: {error_text}"
         logger.error(error_msg)
+        return False
 
-    return True
+    logger.error(
+        "Unexpected MailerSend API response status %s for %s",
+        status_code,
+        email_address,
+    )
+    return False
 
 
 def notify(note, email_address, topic=None,
