@@ -270,6 +270,17 @@ class Inbox:
 
     @classmethod
     def link_or_create(cls, auth_id, nickname, email):
+        """ Creates a new row in the database.
+
+        Args:
+            auth_id (str): Auth0 user id to check.
+            nickname (str): Nickname for the slug.
+            email_address (str): Email address to be kept.
+
+        Returns:
+            slug_to_try: A slug used in the database.
+
+        """
         q = sqlalchemy.text(
             'SELECT slug, email FROM inboxes WHERE auth_id = :auth_id'
         )
