@@ -327,6 +327,11 @@ def archived_inbox():
 
 @app.route('/thanks')
 def thanks():
+    """Creates the page called thanks
+
+    Returns:
+        str: HTML with Jinja2 placeholders
+    """
     return render_template(
         'thanks.htm.j2',
         callback_url=auth_callback_url,
